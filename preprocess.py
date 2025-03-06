@@ -100,6 +100,7 @@ def preprocess(path):
     updated_headers.insert(3, DERIVED_HEADERS[0])
     updated_headers.insert(4, DERIVED_HEADERS[1])
     updated_headers.insert(8, DERIVED_HEADERS[2])
+    write_header = True
 
     for file in [month + "_23" for month in ["DEC"]] + [month + "_24" for month in
                                                         ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP",
@@ -138,7 +139,9 @@ def preprocess(path):
 
         with open(path + '/airlines_delay_data.csv', 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, delimiter=',', fieldnames=updated_headers, extrasaction='ignore')
-            writer.writeheader()
+            if write_header:
+                writer.writeheader()
+                write_header = False
             for data in dataset:
                 writer.writerow(data)
 
