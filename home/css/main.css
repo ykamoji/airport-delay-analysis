@@ -9,21 +9,40 @@ body {
     color: #aaa;
 }
 
+
 #searchbox .search {
     border-radius: 0;
     font-size: 14px;
     border:none;
     background-color: inherit;
-    border-bottom: 1px solid black;
+    /*border-bottom: 2px solid black;*/
 }
+
+#searchbox .search:focus::placeholder {
+    color: transparent;
+}
+
 #searchbox .search:focus{
     outline: none;
     box-shadow: none;
-    border-bottom: 1px solid black;
-    /*border-color: #dee2e6;*/
+    /*border-bottom: 2px solid black;*/
 }
 
-#searchbox #suggestions{
+#searchbox .progress{
+    background-color: #cccccc;
+}
+
+#searchbox .progress-bar{
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+#searchbox .progress-bar.focused{
+    width: 100%;
+    transition: width 0.4s ease-in-out;
+}
+
+#searchbox .suggestions{
     font-size: 13px;
 }
 

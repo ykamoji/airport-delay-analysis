@@ -1,16 +1,4 @@
 // Map loading script
-
-const states = [
-    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
-    "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-    "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
-    "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
-    "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina",
-    "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-    "Wisconsin", "Wyoming"
-];
-
-
 $(document).ready(function () {
 
     const mapContainer = document.getElementById("map-container")
@@ -58,75 +46,101 @@ $(document).ready(function () {
                 text.setAttribute("font-size", "8px")
                 text.setAttribute("fill", "grey")
                 text.textContent =  state_id
-                console.log(state_id)
+                // console.log(state_id)
                 svgDoc.querySelector("svg").appendChild(text)
             }
         });
     });
 
-    const searchInput = $("#state-search");
-    const suggestionsBox = $("#suggestions");
-    const selectedItemsContainer = $("#selected-items");
 
-    let selectedItems = [];
+    let selectedItems = {
+        "states": [],
+        "airlines":[],
+        "airports":[]
+    };
 
+    function showSuggestions(value, id, $suggestion) {
+        let search_list = []
 
-    function showSuggestions(value) {
-        let filtered = states.filter(state => state.toLowerCase().includes(value.toLowerCase()));
+        if(id === "states"){
+            search_list = states
+        }
+        else if(id === "airlines"){
+            search_list = airlines
+        }
+        else if(id === "airports"){
+            search_list = airports
+        }
+
+        let filtered = search_list.filter(state => state.toLowerCase().includes(value.toLowerCase()));
+
         if (filtered.length > 0) {
-            let suggestionHTML = filtered.map(state => `<div class="dropdown-item">${state}</div>`).join("");
-            suggestionsBox.html(suggestionHTML).addClass("show");
+            let suggestionHTML = filtered.map(state => `<div class="dropdown-item text-wrap">${state}</div>`).join("");
+            $suggestion.html(suggestionHTML).addClass("show");
         } else {
-            suggestionsBox.removeClass("show");
+            $suggestion.removeClass("show");
         }
     }
 
 
-    searchInput.on("input", function () {
+    $(".search").on("input", function () {
         let value = $(this).val();
+        let id = $(this).attr('id').split('-')[0]
         if (value.length > 0) {
-            showSuggestions(value);
+            showSuggestions(value, id, $(this).next().next());
         } else {
-            suggestionsBox.removeClass("show");
+            $(this).next().next().removeClass("show");
         }
     });
 
 
-    suggestionsBox.on("click", ".dropdown-item", function () {
-        searchInput.val($(this).text());
-        suggestionsBox.removeClass("show");
-    });
-
-    suggestionsBox.on("click", ".dropdown-item", function () {
+    $(".suggestions").on("click", ".dropdown-item", function () {
         let selectedText = $(this).text();
 
-        if (!selectedItems.includes(selectedText)) {
-            selectedItems.push(selectedText);
-            updateSelectedItems();
+        $input = $(this).parent().prev().prev()
+
+        let id = $input.attr('id').split('-')[0]
+
+        if (!selectedItems[id].includes(selectedText)) {
+            selectedItems[id].push(selectedText);
+            updateSelectedItems($(this).parent().parent().next(), id);
         }
 
-        searchInput.val(""); // Clear input for next search
-        suggestionsBox.removeClass("show");
+        $input.val("");
+        $(this).removeClass("show");
     });
 
-    function updateSelectedItems() {
-        selectedItemsContainer.html(selectedItems.map(item =>
-            `<span class="badge bg-primary">${item} 
+    function updateSelectedItems($selectedContainer, id) {
+        $selectedContainer.html(selectedItems[id].map(item =>
+            `<span class="badge bg-primary text-wrap">${item} 
                         <span class="remove" data-item="${item}">&times;</span>
                     </span>`
         ).join(""));
     }
 
-    selectedItemsContainer.on("click", ".remove", function () {
+    $(".selected-items").on("click", ".remove", function () {
         let itemToRemove = $(this).data("item");
-        selectedItems = selectedItems.filter(item => item !== itemToRemove);
-        updateSelectedItems();
+
+        let $selectedContainer = $(this).parent().parent()
+        let id = $selectedContainer.prev().children('.search').attr('id').split('-')[0]
+        selectedItems[id] = selectedItems[id].filter(item => item !== itemToRemove);
+        updateSelectedItems($selectedContainer, id);
     });
 
 
     $(document).click(function (e) {
         if (!$(e.target).closest(".position-relative").length) {
-            suggestionsBox.removeClass("show");
+            $(".suggestions").removeClass("show");
         }
     });
+
+    $("#searchbox input").focusin(function (){
+        $(this).next().children('.progress-bar').addClass("focused")
+    }).focusout(function (){
+        $(this).next().children('.progress-bar').removeClass("focused")
+    })
+
+    // TODO:: Get the maximum delay here based on the search results.
+    const color = d3.scaleSequential([0, 10000], d3.interpolateOranges);
+
 });
