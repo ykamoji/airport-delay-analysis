@@ -11,10 +11,10 @@ HEADERS = [
               'YEAR', 'MONTH', 'DAY_OF_MONTH',
 
               # Origin airport details
-              'ORIGIN_CITY_NAME', 'ORIGIN_STATE_ABR', 'ORIGIN_STATE_NM',
+              'ORIGIN_STATE_ABR', 'ORIGIN_STATE_NM',
 
               # Destination airport details
-              'DEST_CITY_NAME', 'DEST_STATE_ABR', 'DEST_STATE_NM',
+              'DEST_STATE_ABR', 'DEST_STATE_NM',
 
               # Departure details
               'CRS_DEP_TIME', 'DEP_TIME', 'DEP_DELAY_NEW', 'TAXI_OUT', 'WHEELS_OFF',
@@ -63,13 +63,6 @@ origins_to_filter = dict()
 dest_to_filter = dict()
 
 
-def addMap(map, key):
-    if key not in map.keys():
-        map[key] = 1
-    else:
-        map[key] += 1
-
-
 def check_delay(row):
     for delay in DELAYS:
         if row[delay] and int(float(row[delay])) > 0:
@@ -96,12 +89,13 @@ def preprocess(path):
     complete_data = 0
     total_size_approx = 0
 
-    updated_headers = HEADERS[:]
-    updated_headers.insert(3, DERIVED_HEADERS[0])
-    updated_headers.insert(4, DERIVED_HEADERS[1])
+    updated_headers = ["ID"] + HEADERS[:]
+    updated_headers.insert(4, DERIVED_HEADERS[0])
+    updated_headers.insert(5, DERIVED_HEADERS[1])
     updated_headers.insert(8, DERIVED_HEADERS[2])
     write_header = True
 
+    id_counter = 0
     for file in [month + "_23" for month in ["DEC"]] + [month + "_24" for month in
                                                         ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP",
                                                          "OCT", "NOV"]]:
@@ -127,7 +121,11 @@ def preprocess(path):
                     clean_data(extracted_rows)
 
                     dataset.append(extracted_rows)
+
+                    extracted_rows["ID"] = id_counter
+
                     parsed += 1
+                    id_counter += 1
                 total += 1
 
         complete_data += parsed
@@ -137,7 +135,7 @@ def preprocess(path):
         print(f"Compressed = {compressed:.3f} %")
         total_size_approx += compressed * f_size
 
-        with open(path + '/airlines_delay_data.csv', 'a', newline='') as csvfile:
+        with open(path + '/airlines_delay_data_v2.csv', 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, delimiter=',', fieldnames=updated_headers, extrasaction='ignore')
             if write_header:
                 writer.writeheader()
