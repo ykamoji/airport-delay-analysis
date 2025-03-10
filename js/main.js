@@ -56,7 +56,7 @@ $(document).ready(function () {
     let selectedItems = {
         "states": [],
         "airlines":[],
-        "airports":[]
+        // "airports":[]
     };
 
     function showSuggestions(value, id, $suggestion) {
@@ -68,9 +68,9 @@ $(document).ready(function () {
         else if(id === "airlines"){
             search_list = airlines
         }
-        else if(id === "airports"){
-            search_list = airports
-        }
+        // else if(id === "airports"){
+        //     search_list = airports
+        // }
 
         let filtered = search_list.filter(state => state.toLowerCase().includes(value.toLowerCase()));
 
