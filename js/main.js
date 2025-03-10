@@ -1,6 +1,8 @@
 // Map loading script
 $(document).ready(function () {
 
+    populateMap()
+
     const mapContainer = document.getElementById("map-container")
 
     let correctionMap = {
@@ -63,19 +65,16 @@ $(document).ready(function () {
         let search_list = []
 
         if(id === "states"){
-            search_list = states
+            search_list = Object.keys(STATES)
         }
         else if(id === "airlines"){
-            search_list = airlines
+            search_list = AIRLINES
         }
-        // else if(id === "airports"){
-        //     search_list = airports
-        // }
 
-        let filtered = search_list.filter(state => state.toLowerCase().includes(value.toLowerCase()));
+        let filtered = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()));
 
         if (filtered.length > 0) {
-            let suggestionHTML = filtered.map(state => `<div class="dropdown-item text-wrap">${state}</div>`).join("");
+            let suggestionHTML = filtered.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join("");
             $suggestion.html(suggestionHTML).addClass("show");
         } else {
             $suggestion.removeClass("show");
@@ -111,11 +110,22 @@ $(document).ready(function () {
     });
 
     function updateSelectedItems($selectedContainer, id) {
-        $selectedContainer.html(selectedItems[id].map(item =>
-            `<span class="badge bg-primary text-wrap">${item} 
+
+        $selectedContainer.html(selectedItems[id].map(item => {
+
+            let data_ele = null
+            if(id === "states"){
+                data_ele = 'data='+'"'+ STATES[item]+'"'
+            }
+            else{
+                data_ele = 'data='+'"'+ item+'"'
+            }
+
+            return `<span class="badge bg-primary text-wrap" ${data_ele}>${item} 
                         <span class="remove" data-item="${item}">&times;</span>
                     </span>`
-        ).join(""));
+        }).join(""));
+        populateMap()
     }
 
     $(".selected-items").on("click", ".remove", function () {
@@ -125,6 +135,10 @@ $(document).ready(function () {
         let id = $selectedContainer.prev().children('.search').attr('id').split('-')[0]
         selectedItems[id] = selectedItems[id].filter(item => item !== itemToRemove);
         updateSelectedItems($selectedContainer, id);
+    });
+
+    $('#searchbox .form-check-input').on("change", function (){
+        populateMap()
     });
 
 
