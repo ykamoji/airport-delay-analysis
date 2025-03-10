@@ -20,6 +20,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/initializations.js"></script>
+    <script src="js/geomap.js"></script>
     <script src="js/main.js"></script>
 </head>
 <body>
@@ -66,41 +67,55 @@
             <div class="selected-items"></div>
         </div>
         <div class="mt-5">
-            <label class="form-label">Delays</label>
+            <span class="form-label">Delays</span>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="carrier">
-                <label class="form-check-label" for="carrier">Carrier</label>
+                <input class="form-check-input" type="checkbox" id="carrier-delay">
+                <label class="form-check-label" for="carrier-delay">Carrier</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="weather">
-                <label class="form-check-label" for="weather">Weather</label>
+                <input class="form-check-input" type="checkbox" id="weather-delay">
+                <label class="form-check-label" for="weather-delay">Weather</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="nas">
-                <label class="form-check-label" for="nas">National Air System (NAS)</label>
+                <input class="form-check-input" type="checkbox" id="nas-delay">
+                <label class="form-check-label" for="nas-delay">National Air System (NAS)</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="security">
-                <label class="form-check-label" for="security">Security</label>
+                <input class="form-check-input" type="checkbox" id="security-delay">
+                <label class="form-check-label" for="security-delay">Security</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="late_aircraft">
-                <label class="form-check-label" for="late_aircraft">Late Aircraft</label>
+                <input class="form-check-input" type="checkbox" id="late_aircraft-delay">
+                <label class="form-check-label" for="late_aircraft-delay">Late Aircraft</label>
             </div>
         </div>
         <div class="mt-5">
             <div class="d-flex flex-wrap gap-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="weekday">
-                    <label class="form-check-label" for="weekday">Weekday</label>
+                    <input class="form-check-input" type="checkbox" id="origin-type">
+                    <label class="form-check-label" for="origin-type">Departures</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="weekend">
-                    <label class="form-check-label" for="weekend">Weekend</label>
+                    <input class="form-check-input" type="checkbox" id="dest-type">
+                    <label class="form-check-label" for="dest-type">Arrivals</label>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            <div class="d-flex flex-wrap gap-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="weekday-week">
+                    <label class="form-check-label" for="weekday-week">Weekday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="weekend-week">
+                    <label class="form-check-label" for="weekend-week">Weekend</label>
                 </div>
             </div>
         </div>
         <div class="input-group mt-5">
+<!--            <input type="hidden" id="from-date">-->
+<!--            <input type="hidden" id="to-date">-->
             <div id="app1" >
                 <v-app style="background-color: inherit;position: absolute;">
                     <v-main>
@@ -115,6 +130,7 @@
                                 min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
+                                        id="from-date"
                                         v-model="date"
                                         label="Start Date"
                                         prepend-icon="mdi-calendar"
@@ -128,18 +144,21 @@
                                     color="primary"
                                     header-color="primary"
                                     type="month"
+                                    picker-date="2024-01"
+                                    min="2024-01"
+                                    max="2024-12"
                                     scrollable>
                                 <v-spacer></v-spacer>
                                 <v-btn
                                         text
                                         color="primary"
-                                        @click="modal = false">
-                                    Cancel
+                                        @click="onDateCleared">
+                                    CLEAR
                                 </v-btn>
                                 <v-btn
                                         text
                                         color="primary"
-                                        @click="$refs.dialog.save(date)">
+                                        @click="onDateSelected">
                                     OK
                                 </v-btn>
                             </v-date-picker>
@@ -161,6 +180,7 @@
                                 min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
+                                        id="to-date"
                                         v-model="date"
                                         label="End Date"
                                         prepend-icon="mdi-calendar"
@@ -174,18 +194,21 @@
                                     color="primary"
                                     header-color="primary"
                                     type="month"
+                                    picker-date="2024-01"
+                                    min="2024-01"
+                                    max="2024-12"
                                     scrollable>
                                 <v-spacer></v-spacer>
                                 <v-btn
                                         text
                                         color="primary"
-                                        @click="modal = false">
-                                    Cancel
+                                        @click="onDateCleared">
+                                    CLEAR
                                 </v-btn>
                                 <v-btn
                                         text
                                         color="primary"
-                                        @click="$refs.dialog.save(date)">
+                                        @click="onDateSelected">
                                     OK
                                 </v-btn>
                             </v-date-picker>
@@ -198,18 +221,40 @@
                     el: '#app1',
                     vuetify: new Vuetify(),
                     data: () => ({
-                        date: new Date().toISOString().substr(0, 7),
+                        date: null,
                         modal: false
-                    })
+                    }),
+                    methods :{
+                        onDateSelected(){
+                            this.$refs.dialog.save(this.date)
+                            populateMap()
+
+                        },
+                        onDateCleared(){
+                            this.$refs.dialog.save(null)
+                            populateMap()
+                        }
+                    }
                 })
 
                 new Vue({
                     el: '#app2',
                     vuetify: new Vuetify(),
                     data: () => ({
-                        date: new Date().toISOString().substr(0, 7),
+                        date: null,
                         modal: false
-                    })
+                    }),
+                    methods :{
+                        onDateSelected(){
+                            this.$refs.dialog.save(this.date)
+                            populateMap()
+
+                        },
+                        onDateCleared(){
+                            this.$refs.dialog.save(null)
+                            populateMap()
+                        }
+                    }
                 })
 
             </script>
