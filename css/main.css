@@ -2,6 +2,38 @@ body {
     background-color: whitesmoke;
 }
 
+#map-container .state {
+    cursor: pointer;
+    fill: none;
+}
+
+#map-container text{
+    cursor: pointer;
+}
+
+#map-container .borders {
+    stroke:#fff;
+    stroke-width:1.5
+}
+
+#map-container .state .ak, #map-container .state .hi{
+    stroke: dimgrey;
+    stroke-width:0.2
+}
+
+#map-container .dccircle {
+
+}
+#map-container .separator {
+    stroke:#B0B0B0;
+    stroke-width:1
+}
+
+#map-container svg {
+    transform: scale(2);
+    transform-origin: center;
+}
+
 #searchbox .search-icon {
     position: relative;
     /*bottom: 10px;*/
@@ -76,4 +108,8 @@ body {
     margin-left: 5px;
 }
 
+#searchbox .check-control{
+    position: relative;
+
+}
 

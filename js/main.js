@@ -3,8 +3,6 @@ $(document).ready(function () {
 
     populateMap()
 
-    const mapContainer = document.getElementById("map-container")
-
     let correctionMap = {
         'LA': { 'x': -20, 'y': 0 },
         'VA': { 'x': 20, 'y': 0},
@@ -20,38 +18,33 @@ $(document).ready(function () {
         'NH': { 'x': -3, 'y': 10},
     }
 
-    mapContainer.addEventListener("load", function () {
+    $('#map-container svg path').each((idx, state) => {
 
-        const svgDoc = mapContainer.contentDocument;
-        const states = svgDoc.querySelectorAll("path")
+        let state_id = state.classList[0].toUpperCase()
 
-        states.forEach(state => {
+        if (!state_id.includes('-') && state_id.length === 2) {
 
-            let state_id = state.classList[0].toUpperCase()
+            let bbox = state.getBBox(); // Get bounding box of the state
+            let text = document.createElementNS("http://www.w3.org/2000/svg", "text")
 
-            if(!state_id.includes('-') && state_id.length === 2) {
+            let x = bbox.x + bbox.width / 2
+            let y = bbox.y + bbox.height / 2
 
-                let bbox = state.getBBox(); // Get bounding box of the state
-                let text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-
-                let x = bbox.x + bbox.width / 2
-                let y = bbox.y + bbox.height / 2
-
-                if(state_id in correctionMap){
-                    x += correctionMap[state_id]['x']
-                    y += correctionMap[state_id]['y']
-                }
-
-                text.setAttribute("x", x)
-                text.setAttribute("y", y)
-                text.setAttribute("text-anchor", "middle")
-                text.setAttribute("font-size", "8px")
-                text.setAttribute("fill", "grey")
-                text.textContent =  state_id
-                // console.log(state_id)
-                svgDoc.querySelector("svg").appendChild(text)
+            if (state_id in correctionMap) {
+                x += correctionMap[state_id]['x']
+                y += correctionMap[state_id]['y']
             }
-        });
+
+            text.setAttribute("x", x)
+            text.setAttribute("y", y)
+            text.setAttribute("text-anchor", "middle")
+            text.setAttribute("font-size", "8px")
+            text.setAttribute("font-weight", "600")
+            text.setAttribute("fill", "black")
+            text.textContent = state_id
+            // console.log(state_id)
+            $('#map-container svg').append(text)
+        }
     });
 
 
@@ -154,7 +147,5 @@ $(document).ready(function () {
         $(this).next().children('.progress-bar').removeClass("focused")
     })
 
-    // TODO:: Get the maximum delay here based on the search results.
-    const color = d3.scaleSequential([0, 10000], d3.interpolateOranges);
 
 });

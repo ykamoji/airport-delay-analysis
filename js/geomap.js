@@ -113,6 +113,7 @@ function states_render(states, data){
 
 }
 
+
 function airlines_render(airlines, data){
 
     let worklist = []
@@ -146,31 +147,95 @@ function week_render(week, data){
 }
 
 
-function populateMap(){
+function delay_render(delays, data){
 
-    let {states, airlines, delays, week, type, dates} = get_controls()
+    let delay_population = new Map()
 
-    $.getJSON("assets/all_summerized.json", function(data) {
-        render(data)
-    });
+    Object.values(STATES).forEach(st => delay_population.set(st.trim(),0))
 
+    if(delays.length === 0){
+        delays = ['5','6','7','8','9']
+    }
 
-    function render(data){
+    for (let i = 0; i < data.length; i++) {
 
-        let data_list = type_render(type, data)
+        let row = data[i]
 
-        data_list = date_render(dates, data_list)
+        let count = 0
+        for (let j = 0; j < delays.length; j++) {
+            count += parseInt(row[''+delays[j]])
+        }
 
-        data_list = states_render(states, data_list)
+        let k = row['1'].toLowerCase().trim()
 
-        data_list = airlines_render(airlines, data_list)
-
-        data_list = week_render(week, data_list)
-
-        console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
-            "\nDelays:",delays, "\nWeek:",week, "\nResults", data_list.length)
+        if(delay_population.has(k))
+            delay_population.set(k, delay_population.get(k) + count)
 
     }
 
+    return delay_population
+
 }
 
+
+function populateMap(){
+    $.getJSON("assets/all_summerized.json", function(data) {
+        data_render(data)
+    });
+}
+
+function UI_render(delay_population){
+
+    let max_val = Math.max(...delay_population.values())
+
+    // console.log(max_val)
+
+    const color = d3.scaleSequential([0, max_val],d3.interpolateOranges)
+
+    const colorScheme = d3.scaleSequential([0, 100],d3.interpolateOranges)
+
+    const gradient = d3.select("#map-container #gradient1");
+
+
+    const stops = gradient.selectAll("stop")
+        .data(d3.range(0, 1.1, 0.1))
+        .enter().append("stop")
+        .attr("offset", d => `${d * 100}%`)
+        .attr("stop-color", d => colorScheme(d * 100))
+        // .attr("stop-opacity", 1);
+
+
+
+    $('#map-container svg path').each((idx, st)=> {
+        $(st).css("fill", null)
+        let id = $(st).attr('class')
+        if(id.length === 2){
+            $(st).css("fill", color(delay_population.get(id)))
+        }
+    })
+}
+
+function data_render(data){
+
+    let {states, airlines, delays, week, type, dates} = get_controls()
+
+    let data_list = type_render(type, data)
+
+    data_list = date_render(dates, data_list)
+
+    data_list = states_render(states, data_list)
+
+    data_list = airlines_render(airlines, data_list)
+
+    data_list = week_render(week, data_list)
+
+    let delay_population = delay_render(delays, data_list)
+
+    console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
+        "\nDelays:",delays, "\nWeek:",week, "\nResults", data_list.length)
+
+    // console.log(delay_population)
+
+    UI_render(delay_population)
+
+}
