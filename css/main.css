@@ -52,6 +52,16 @@ body {
     color: #aaa;
 }
 
+#map-container svg g.legend{
+    transition: opacity 0.5s ease;
+}
+
+/** TODO:: Add border transition */
+
+#map-container svg.zooming .state .borders .zoomed{
+    stroke: darkgreen;
+    stroke-width: 0.5;
+}
 
 #searchbox .search {
     border-radius: 0;

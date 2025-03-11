@@ -5,8 +5,10 @@ $(document).ready(function () {
 
     let correctionMap = {
         'LA': { 'x': -20, 'y': 0 },
+        'MA': { 'x': 10, 'y': -4 },
+        'RI': { 'x': 0, 'y': 1 },
         'VA': { 'x': 20, 'y': 0},
-        'MD': { 'x': 5, 'y': -4},
+        'MD': { 'x': 15, 'y': -4},
         'FL': { 'x': 45, 'y': 0},
         'ID': { 'x': -10, 'y': 0},
         'NJ': { 'x': 5, 'y': 0},
@@ -14,6 +16,7 @@ $(document).ready(function () {
         'MN': { 'x': -20, 'y': 0},
         'KY': { 'x': 0, 'y': 10},
         'MI': { 'x': 25, 'y': 30},
+        'TX': { 'x': 25, 'y': 0},
         'WV': { 'x': -10, 'y': 5},
         'NH': { 'x': -3, 'y': 10},
         'CA': { 'x': -15, 'y': 0},
@@ -39,8 +42,8 @@ $(document).ready(function () {
             text.setAttribute("x", x)
             text.setAttribute("y", y)
             text.setAttribute("text-anchor", "middle")
-            text.setAttribute("font-size", "8px")
-            text.setAttribute("font-weight", "600")
+            text.setAttribute("font-size", "7px")
+            text.setAttribute("font-weight", "bolder")
             text.setAttribute("fill", "black")
             text.setAttribute("id", "text-"+state_id.toLowerCase())
             text.textContent = state_id

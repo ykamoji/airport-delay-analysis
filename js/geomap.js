@@ -207,7 +207,7 @@ function UI_render(delay_population){
 
     const color = d3.scaleSequential([min_val, max_val],d3.interpolateOranges)
 
-    let map_svg = d3.select('#map-container svg .legend')
+    let map_svg = d3.select('#map-container svg g.legend')
 
     map_svg.selectAll('#map-container svg .legend rect').remove()
     map_svg.selectAll('#map-container svg .legend text').remove()
@@ -247,6 +247,8 @@ function UI_render(delay_population){
     $('#map-container svg path').each((idx, st)=> {
         // $(st).css("fill", null)
         let id = $(st).attr('class')
+        let $text = $('#text-' + id)
+
         if(id.length === 2){
             if(delay_population.get(id) === 0 || !delay_population.has(id)) {
                 $(st).css("opacity", 0.1)
@@ -255,11 +257,21 @@ function UI_render(delay_population){
             else {
                 $(st).css("fill", color(delay_population.get(id)))
                 $(st).css("opacity", 1)
-                $('#text-' + id).css("opacity", 1)
+
+                let x = $text.attr('x')
+                let y = parseFloat($text.attr('y')) + 8
+                let v =  Math.round(delay_population.get(id) / 1000)
+
+                $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
+                    '<tspan font-size="6px" x="'+ x +'" y="'+ y +'">'+ v +'</tspan>'
+
+                $text.html($html)
+                    .css("opacity", 1)
             }
         }
     })
 }
+
 
 function data_render(data){
 
@@ -286,7 +298,80 @@ function data_render(data){
 
 }
 
+
 $(document).ready(function () {
 
-    // TODO: Zoom in feature of the MAP
+    const svg = d3.select("#map-container svg")
+
+    const g = svg.select("g.state");
+
+    const zoom = d3.zoom()
+        .scaleExtent([1, 5])
+        .on("zoom", (event) => {
+            g.attr("transform", event.transform);
+        });
+
+    // svg.call(zoom)
+
+    $('#map-container svg g.state path').on("click", function(event) {
+
+        let id = $(this).attr('class')
+
+        if(id.includes('-')){
+            return
+        }
+
+        // console.log(this)
+
+        if($(this).hasClass('zoomed')){
+            reset()
+            return
+        }
+
+        $('#map-container svg g.state path').removeClass('zoomed')
+
+        event.stopPropagation();
+
+        $('#map-container svg g.legend').css('opacity',0)
+
+        const bbox = this.getBBox();
+        const scale = 5; // Zoom level
+
+        const width = bbox.width * scale;
+        const height = bbox.height * scale;
+        const x = bbox.x + bbox.width / 2;
+        const y = bbox.y + bbox.height / 2;
+
+        const transform = d3.zoomIdentity
+            .translate(550 - x * scale, 300 - y * scale)
+            .scale(scale);
+
+        svg.transition()
+            .duration(800)
+            .call(zoom.transform, transform);
+
+        $('#map-container svg').addClass('zooming')
+
+
+        $('#map-container svg g.state g.borders path').each((idx, ele)=>{
+            let border_id = $(ele).attr('class')
+
+            if(border_id.includes(id)){
+                $(ele).addClass('zoomed')
+            }
+        })
+
+        $(this).addClass('zoomed')
+
+    });
+
+    function reset(){
+        svg.transition()
+            .duration(500)
+            .call(zoom.transform, d3.zoomIdentity);
+        $('#map-container svg g.legend').css('opacity',1)
+
+        $('#map-container svg').removeClass('zooming')
+        $('#map-container svg .state path').removeClass('zoomed')
+    }
 })
