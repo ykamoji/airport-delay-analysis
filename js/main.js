@@ -16,13 +16,14 @@ $(document).ready(function () {
         'MI': { 'x': 25, 'y': 30},
         'WV': { 'x': -10, 'y': 5},
         'NH': { 'x': -3, 'y': 10},
+        'CA': { 'x': -15, 'y': 0},
     }
 
     $('#map-container svg path').each((idx, state) => {
 
         let state_id = state.classList[0].toUpperCase()
 
-        if (!state_id.includes('-') && state_id.length === 2) {
+        if (!state_id.includes('-') && state_id.length === 2 && state_id !== 'DE') {
 
             let bbox = state.getBBox(); // Get bounding box of the state
             let text = document.createElementNS("http://www.w3.org/2000/svg", "text")
@@ -41,17 +42,17 @@ $(document).ready(function () {
             text.setAttribute("font-size", "8px")
             text.setAttribute("font-weight", "600")
             text.setAttribute("fill", "black")
+            text.setAttribute("id", "text-"+state_id.toLowerCase())
             text.textContent = state_id
             // console.log(state_id)
-            $('#map-container svg').append(text)
+            $('#map-container svg .state').append(text)
         }
     });
 
 
     let selectedItems = {
         "states": [],
-        "airlines":[],
-        // "airports":[]
+        "airlines":[]
     };
 
     function showSuggestions(value, id, $suggestion) {
@@ -63,6 +64,8 @@ $(document).ready(function () {
         else if(id === "airlines"){
             search_list = AIRLINES
         }
+
+        search_list = search_list.filter(item => !selectedItems[id].find(selected => selected===item))
 
         let filtered = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()));
 
