@@ -170,8 +170,12 @@ function delay_render(delays, data){
 
         if(delay_population.has(k))
             delay_population.set(k, delay_population.get(k) + count)
-
     }
+
+    delay_population.forEach((v, k, m) => {
+        if(v > 0) m.set(k, Math.round(v/60))
+        else m.delete(k)
+    })
 
     return delay_population
 
@@ -184,33 +188,75 @@ function populateMap(){
     });
 }
 
+
 function UI_render(delay_population){
 
     let max_val = Math.max(...delay_population.values())
+    let min_val = Math.min(...delay_population.values())
+    let num_limit = [...delay_population.values()].reduce((count, v) => count + (v > 0 ? 1 : 0), 0);
 
-    // console.log(max_val)
+    let labels = []
+    if(num_limit > 9){
+        num_limit = 9
+        labels = d3.range(min_val, max_val, Math.round((max_val - min_val)/ num_limit))
+    }
+    else{
+        labels = [...delay_population.values()].sort((a,b) => a-b)
+        // console.log(labels)
+    }
 
-    const color = d3.scaleSequential([0, max_val],d3.interpolateOranges)
+    const color = d3.scaleSequential([min_val, max_val],d3.interpolateOranges)
 
-    const colorScheme = d3.scaleSequential([0, 100],d3.interpolateOranges)
+    let map_svg = d3.select('#map-container svg .legend')
 
-    const gradient = d3.select("#map-container #gradient1");
+    map_svg.selectAll('#map-container svg .legend rect').remove()
+    map_svg.selectAll('#map-container svg .legend text').remove()
 
+    // console.log(labels)
 
-    const stops = gradient.selectAll("stop")
-        .data(d3.range(0, 1.1, 0.1))
-        .enter().append("stop")
-        .attr("offset", d => `${d * 100}%`)
-        .attr("stop-color", d => colorScheme(d * 100))
-        // .attr("stop-opacity", 1);
+    map_svg.selectAll("rect")
+        .data(labels)
+        .enter()
+        .append("rect")
+        .attr("x", (d, i) => 600 + i * 25)
+        .attr("y", 10)
+        .attr("width", 25)
+        .attr("height", 25)
+        .attr("fill", d => color(d))
 
+    labels.push('(HRS)')
+
+    map_svg.selectAll("text")
+        .data(labels)
+        .enter()
+        .append("text")
+        .attr("x", (d, i) => 600 + i * 25 + 25 / 1.5)
+        .attr("y", (d, i) => {
+            if(labels[i] === '(HRS)') return 25
+            else return 10 + 25 + 10
+        })
+        .text(d => {
+            if(parseInt(d))
+                return Math.round(d/1000)
+            else return d
+        })
+        .attr("font-size", "8px")
+        .attr("alignment-baseline", "middle")
 
 
     $('#map-container svg path').each((idx, st)=> {
-        $(st).css("fill", null)
+        // $(st).css("fill", null)
         let id = $(st).attr('class')
         if(id.length === 2){
-            $(st).css("fill", color(delay_population.get(id)))
+            if(delay_population.get(id) === 0 || !delay_population.has(id)) {
+                $(st).css("opacity", 0.1)
+                $('#text-' + id).css("opacity", 0)
+            }
+            else {
+                $(st).css("fill", color(delay_population.get(id)))
+                $(st).css("opacity", 1)
+                $('#text-' + id).css("opacity", 1)
+            }
         }
     })
 }
@@ -231,11 +277,16 @@ function data_render(data){
 
     let delay_population = delay_render(delays, data_list)
 
-    console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
-        "\nDelays:",delays, "\nWeek:",week, "\nResults", data_list.length)
+    // console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
+    //     "\nDelays:",delays, "\nWeek:",week, "\nResults", data_list.length)
 
     // console.log(delay_population)
 
     UI_render(delay_population)
 
 }
+
+$(document).ready(function () {
+
+    // TODO: Zoom in feature of the MAP
+})
