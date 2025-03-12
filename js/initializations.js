@@ -71,6 +71,25 @@ const AIRLINES = [
     'PSA Airlines Inc.'
 ]
 
+const CORRECTION_MAP = {
+    'LA': { 'x': -20, 'y': 0 },
+    'MA': { 'x': 10, 'y': -4 },
+    'RI': { 'x': 0, 'y': 1 },
+    'VA': { 'x': 20, 'y': 0},
+    'MD': { 'x': 15, 'y': -4},
+    'FL': { 'x': 45, 'y': 0},
+    'ID': { 'x': -10, 'y': 0},
+    'NJ': { 'x': 5, 'y': 0},
+    'DE': { 'x': 2, 'y': 8},
+    'MN': { 'x': -20, 'y': 0},
+    'KY': { 'x': 0, 'y': 10},
+    'MI': { 'x': 25, 'y': 30},
+    'TX': { 'x': 25, 'y': 0},
+    'WV': { 'x': -10, 'y': 5},
+    'NH': { 'x': -3, 'y': 10},
+    'CA': { 'x': -15, 'y': 0},
+}
+
 const DELAY_DATA_MAPPING = {
     "carrier": 5,
     "weather": 6,
