@@ -182,8 +182,14 @@ function delay_render(delays, count, data){
 
 
 function populateMap(){
+
+    if (CACHE.has('all_summerized')){
+        return CACHE.get('all_summerized')
+    }
+
     $.getJSON("assets/all_summerized.json", function(data) {
         data_render(data)
+        CACHE.set('all_summerized', data)
     });
 }
 

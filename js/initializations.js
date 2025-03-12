@@ -488,3 +488,5 @@ const AIRPORTS = [
     'Yakutat, AK: Yakutat Airport',
     'Yuma, AZ: Yuma MCAS/Yuma International'
 ]
+
+const CACHE = new Map()
