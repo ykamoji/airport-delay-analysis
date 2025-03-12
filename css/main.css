@@ -23,7 +23,7 @@ body {
 
 #map-container .borders {
     stroke:#fff;
-    stroke-width:1.5
+    stroke-width:2
 }
 
 #map-container .state .ak, #map-container .state .hi{
@@ -56,10 +56,24 @@ body {
     transition: opacity 0.5s ease;
 }
 
-/** TODO:: Add border transition */
+#map-container svg .state .borders path{
+    transition: stroke-width 0.3s ease;
+}
 
-#map-container svg.zooming .state .borders .zoomed{
-    stroke: darkgreen;
+#map-container svg.hovered .state .borders path.hovered{
+    transition: stroke-width 0.3s ease;
+    stroke-width: 4;
+    filter: drop-shadow(0px 0px 2px #ccc);
+}
+
+#map-container svg.hovered .state .borders path:not(.hovered){
+    transition: stroke-width 0.3s ease;
+    stroke-width: 1
+}
+
+#map-container svg.zooming .state .borders path.zoomed{
+    transition: stroke 1s ease-in;
+    stroke: darkred;
     stroke-width: 0.5;
 }
 

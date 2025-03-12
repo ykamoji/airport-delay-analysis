@@ -311,9 +311,22 @@ $(document).ready(function () {
             g.attr("transform", event.transform);
         });
 
+    const scale_map = {
+        'tx': 2.5,
+        'ca': 2.5,
+        'nv': 3.5,
+        'mn': 4.5,
+        'fl': 4.5,
+        'az': 4.5,
+        'mi': 4.5,
+        'ak': 4,
+        'id': 3.5,
+    }
+
     // svg.call(zoom)
 
-    $('#map-container svg g.state path').on("click", function(event) {
+    $('#map-container svg g.state path')
+        .on("click", function(event){
 
         let id = $(this).attr('class')
 
@@ -335,7 +348,10 @@ $(document).ready(function () {
         $('#map-container svg g.legend').css('opacity',0)
 
         const bbox = this.getBBox();
-        const scale = 5; // Zoom level
+
+        let scale = 5;
+
+        if(scale_map[id]) scale = scale_map[id]
 
         const width = bbox.width * scale;
         const height = bbox.height * scale;
@@ -363,7 +379,33 @@ $(document).ready(function () {
 
         $(this).addClass('zoomed')
 
-    });
+    })
+        .on('mouseenter', function (event){
+
+            let id = $(this).attr('class')
+
+            if(id.includes('-')){
+                return
+            }
+
+            event.stopPropagation();
+
+            $('#map-container svg .state .borders path').removeClass('hovered')
+
+            $('#map-container svg g.state g.borders path').each((idx, ele)=>{
+                let border_id = $(ele).attr('class')
+
+                if(border_id.includes(id)){
+                    $(ele).addClass('hovered')
+                }
+            })
+
+            $('#map-container svg').addClass('hovered')
+
+    })
+        .on('mouseleave', function (){
+        $('#map-container svg').removeClass('hovered')
+    })
 
     function reset(){
         svg.transition()
