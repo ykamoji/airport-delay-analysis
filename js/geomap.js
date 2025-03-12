@@ -160,22 +160,19 @@ function delay_render(delays, count, data){
     for (let i = 0; i < data.length; i++) {
 
         let row = data[i]
-
         let total = 0
-
         for (let j = 0; j < delays.length; j++) {
-                total += count ? 1: parseInt(row['' + delays[j]])
+            let delay = parseInt(row['' + delays[j]])
+            total += count ? ( delay > 0 ? 1 : 0) : delay
         }
 
-
         let k = row['1'].toLowerCase().trim()
-
         if(delay_population.has(k))
             delay_population.set(k, delay_population.get(k) + total)
     }
 
     delay_population.forEach((v, k, m) => {
-        if(v > 0) m.set(k, Math.round(v/60))
+        if(v > 0) m.set(k, count ? v : Math.round(v/60))
         else m.delete(k)
     })
 
@@ -248,12 +245,12 @@ function UI_render(count, delay_population){
         })
         .text(d => {
             if(parseInt(d))
-                return count ? d : Math.round(d/1000)
+                return Math.round(d/1000)+'k'
             else return d
         })
         .attr("font-size", (d,i)=>{
-            if(labels[i] === legend_desc) return "9px"
-            return "8px"
+            if(labels[i] === legend_desc) return "8px"
+            return "7px"
         })
         .attr("alignment-baseline", "middle")
 
@@ -275,10 +272,10 @@ function UI_render(count, delay_population){
                 let x = $text.attr('x')
                 let y = parseFloat($text.attr('y')) + 8
                 let v = delay_population.get(id)
-                v =  count ? v : Math.round( v/ 1000)
+                v =  Math.round( v/ 1000)
 
                 $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
-                    '<tspan font-size="6px" x="'+ x +'" y="'+ y +'">'+ v +'</tspan>'
+                    '<tspan font-size="6px" x="'+ x +'" y="'+ y +'">'+ v +'k</tspan>'
 
                 $text.html($html)
                     .css("opacity", 1)
@@ -326,17 +323,6 @@ $(document).ready(function () {
             g.attr("transform", event.transform);
         });
 
-    const scale_map = {
-        'tx': 2.5,
-        'ca': 2.5,
-        'nv': 3.5,
-        'mn': 4.5,
-        'fl': 4.5,
-        'az': 4.5,
-        'mi': 4.5,
-        'ak': 4,
-        'id': 3.5,
-    }
 
     // svg.call(zoom)
 
@@ -365,8 +351,7 @@ $(document).ready(function () {
         const bbox = this.getBBox();
 
         let scale = 5;
-
-        if(scale_map[id]) scale = scale_map[id]
+        if(SCALE_MAP[id]) scale = SCALE_MAP[id]
 
         const width = bbox.width * scale;
         const height = bbox.height * scale;
@@ -397,6 +382,10 @@ $(document).ready(function () {
     })
         .on('mouseenter', function (event){
 
+            if($(svg).hasClass('zooming')){
+                return
+            }
+
             let id = $(this).attr('class')
 
             if(id.includes('-')){
@@ -419,7 +408,10 @@ $(document).ready(function () {
 
     })
         .on('mouseleave', function (){
-        $('#map-container svg').removeClass('hovered')
+            if($(svg).hasClass('zooming')){
+                return
+            }
+            $('#map-container svg').removeClass('hovered')
     })
 
     function reset(){

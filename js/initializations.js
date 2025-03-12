@@ -98,6 +98,35 @@ const DELAY_DATA_MAPPING = {
     "late_aircraft": 9
 }
 
+const SCALE_MAP = {
+    'tx': 2.5,
+    'ca': 2.5,
+    'nv': 3.5,
+    'mn': 4.5,
+    'fl': 4.5,
+    'az': 4.5,
+    'mi': 4.5,
+    'tn': 6,
+    'ar': 7,
+    'sd': 7,
+    'mo': 6,
+    'wa': 7,
+    'ak': 4,
+    'wv': 7,
+    'sc': 7,
+    'oh': 7,
+    'ky': 7,
+    'ia': 8,
+    'nh': 8,
+    'ny': 6,
+    'vt': 8,
+    'ma': 9,
+    'ct': 9,
+    'nd': 8,
+    'ne': 9,
+    'id': 3.5,
+}
+
 const AIRPORTS = [
     'Aberdeen, SD: Aberdeen Regional',
     'Abilene, TX: Abilene Regional',

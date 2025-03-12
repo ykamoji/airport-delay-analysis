@@ -53,13 +53,13 @@ body {
     transition: stroke-width 0.3s ease;
 }
 
-#map-container svg.hovered .state .borders path.hovered{
+#map-container svg:not(.zooming).hovered .state .borders path.hovered{
     transition: stroke-width 0.3s ease;
     stroke-width: 4;
     filter: drop-shadow(0px 0px 2px #ccc);
 }
 
-#map-container svg.hovered .state .borders path:not(.hovered){
+#map-container svg:not(.zooming).hovered .state .borders path:not(.hovered){
     transition: stroke-width 0.3s ease;
     stroke-width: 1
 }
@@ -95,6 +95,19 @@ body {
     transition: transform 0.5s ease;
     transform: translateX(0%);
 }
+
+#searchbox .toggle-btn{
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 2px solid whitesmoke;
+}
+
+#searchbox .toggle-btn.turn {
+    color: darkred;
+    font-weight: 500;
+    border-bottom: 2px solid darkred;
+}
+
 
 #searchbox #toggle-slider.turn{
     transform: translateX(100%);
@@ -204,10 +217,10 @@ body {
 }
 
 #searchbox .control .form-check-input:checked {
-    background-color: orangered;
+    background-color: darkred;
     outline: none;
     box-shadow: none;
-    border-color: orangered;
+    border-color: darkred;
 }
 
 #searchbox .control .form-check-input:focus{

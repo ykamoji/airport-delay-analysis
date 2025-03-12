@@ -43,25 +43,42 @@ $(document).ready(function () {
 
     populateMap()
 
+    const $toggle_switch = $('.toggle-switch')
     const $toggle_svg = $('.toggle-switch svg')
+    const $toggle_btn = $('#searchbox .toggle-btn')
     const $toggle_slider = $('#toggle-slider')
 
+    $toggle_btn.click(function (){
+        if($(this).hasClass('turn')){
+        }
+        else{
+            $toggle_btn.removeClass('turn')
+            $(this).addClass('turn')
+            if($toggle_btn[0] === this){
+                $($toggle_switch[0]).click()
+            }else{
+                $($toggle_switch[1]).click()
+            }
+        }
+    })
 
-    // TODO:: Fix this
-    $('.toggle-switch').click(function(){
-
-        if($(this).children('svg')[0] === $toggle_svg[0]){
-            console.log('here')
+    $toggle_switch.click(function(e){
+        e.preventDefault()
+        if($(this).hasClass('turn')){
             return
         }
-
-
         let l = 1
         let r = 0
         if($toggle_slider.hasClass('turn')){
             $toggle_slider.removeClass('turn')
+            $($toggle_switch[1]).removeClass('turn')
+            $($toggle_switch[0]).addClass('turn')
+            $($toggle_btn[0]).click()
         }else{
             $toggle_slider.addClass('turn')
+            $($toggle_switch[0]).removeClass('turn')
+            $($toggle_switch[1]).addClass('turn')
+            $($toggle_btn[1]).click()
             l = 0
             r = 1
         }
