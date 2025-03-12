@@ -9,11 +9,11 @@ function get_controls(){
         "dates":{
             "from":0,
             "to":12
-        }
+        },
+        "count":$('#toggle-slider').hasClass('turn')
     }
 
     let $form = $("#searchbox input")
-
 
     for (let i = 0; i < $form.length; i++) {
         let $ele = $($form[i])
@@ -147,7 +147,7 @@ function week_render(week, data){
 }
 
 
-function delay_render(delays, data){
+function delay_render(delays, count, data){
 
     let delay_population = new Map()
 
@@ -161,15 +161,17 @@ function delay_render(delays, data){
 
         let row = data[i]
 
-        let count = 0
+        let total = 0
+
         for (let j = 0; j < delays.length; j++) {
-            count += parseInt(row[''+delays[j]])
+                total += count ? 1: parseInt(row['' + delays[j]])
         }
+
 
         let k = row['1'].toLowerCase().trim()
 
         if(delay_population.has(k))
-            delay_population.set(k, delay_population.get(k) + count)
+            delay_population.set(k, delay_population.get(k) + total)
     }
 
     delay_population.forEach((v, k, m) => {
@@ -189,7 +191,7 @@ function populateMap(){
 }
 
 
-function UI_render(delay_population){
+function UI_render(count, delay_population){
 
     let max_val = Math.max(...delay_population.values())
     let min_val = Math.min(...delay_population.values())
@@ -214,33 +216,45 @@ function UI_render(delay_population){
 
     // console.log(labels)
 
+    const legend_start_x = 550
+    const x_size = 25.1
+    // const x_gap = count ? 5 : 10
+
     map_svg.selectAll("rect")
         .data(labels)
         .enter()
         .append("rect")
-        .attr("x", (d, i) => 600 + i * 25)
+        .attr("x", (d, i) => legend_start_x + i * x_size)
         .attr("y", 10)
         .attr("width", 25)
         .attr("height", 25)
         .attr("fill", d => color(d))
 
-    labels.push('(HRS)')
+    const legend_desc = count ? 'Delays (count)': 'Delays (in hrs)'
+
+    labels.push(legend_desc)
 
     map_svg.selectAll("text")
         .data(labels)
         .enter()
         .append("text")
-        .attr("x", (d, i) => 600 + i * 25 + 25 / 1.5)
+        .attr("x", (d, i) => {
+            if(labels[i] === legend_desc) return legend_start_x + i * x_size + 10
+            return legend_start_x + i * x_size + x_size / 1.5
+        })
         .attr("y", (d, i) => {
-            if(labels[i] === '(HRS)') return 25
-            else return 10 + 25 + 10
+            if(labels[i] === legend_desc) return 25
+            return 10 + 25 + 10
         })
         .text(d => {
             if(parseInt(d))
-                return Math.round(d/1000)
+                return count ? d : Math.round(d/1000)
             else return d
         })
-        .attr("font-size", "8px")
+        .attr("font-size", (d,i)=>{
+            if(labels[i] === legend_desc) return "9px"
+            return "8px"
+        })
         .attr("alignment-baseline", "middle")
 
 
@@ -260,7 +274,8 @@ function UI_render(delay_population){
 
                 let x = $text.attr('x')
                 let y = parseFloat($text.attr('y')) + 8
-                let v =  Math.round(delay_population.get(id) / 1000)
+                let v = delay_population.get(id)
+                v =  count ? v : Math.round( v/ 1000)
 
                 $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
                     '<tspan font-size="6px" x="'+ x +'" y="'+ y +'">'+ v +'</tspan>'
@@ -275,7 +290,7 @@ function UI_render(delay_population){
 
 function data_render(data){
 
-    let {states, airlines, delays, week, type, dates} = get_controls()
+    let {states, airlines, delays, week, type, dates, count} = get_controls()
 
     let data_list = type_render(type, data)
 
@@ -287,14 +302,14 @@ function data_render(data){
 
     data_list = week_render(week, data_list)
 
-    let delay_population = delay_render(delays, data_list)
+    let delay_population = delay_render(delays, count, data_list)
 
     // console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
-    //     "\nDelays:",delays, "\nWeek:",week, "\nResults", data_list.length)
-
+    //     "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
+    //
     // console.log(delay_population)
 
-    UI_render(delay_population)
+    UI_render(count, delay_population)
 
 }
 
