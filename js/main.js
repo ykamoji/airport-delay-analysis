@@ -1,26 +1,76 @@
 // Map loading script
 $(document).ready(function () {
 
+    new Vue({
+        el: '#app1',
+        vuetify: new Vuetify(),
+        data: () => ({
+            date: null,
+            modal: false
+        }),
+        methods :{
+            onDateSelected(){
+                this.$refs.dialog.save(this.date)
+                populateMap()
+
+            },
+            onDateCleared(){
+                this.$refs.dialog.save(null)
+                populateMap()
+            }
+        }
+    })
+
+    new Vue({
+        el: '#app2',
+        vuetify: new Vuetify(),
+        data: () => ({
+            date: null,
+            modal: false
+        }),
+        methods :{
+            onDateSelected(){
+                this.$refs.dialog.save(this.date)
+                populateMap()
+
+            },
+            onDateCleared(){
+                this.$refs.dialog.save(null)
+                populateMap()
+            }
+        }
+    })
+
     populateMap()
 
-    let correctionMap = {
-        'LA': { 'x': -20, 'y': 0 },
-        'MA': { 'x': 10, 'y': -4 },
-        'RI': { 'x': 0, 'y': 1 },
-        'VA': { 'x': 20, 'y': 0},
-        'MD': { 'x': 15, 'y': -4},
-        'FL': { 'x': 45, 'y': 0},
-        'ID': { 'x': -10, 'y': 0},
-        'NJ': { 'x': 5, 'y': 0},
-        'DE': { 'x': 2, 'y': 8},
-        'MN': { 'x': -20, 'y': 0},
-        'KY': { 'x': 0, 'y': 10},
-        'MI': { 'x': 25, 'y': 30},
-        'TX': { 'x': 25, 'y': 0},
-        'WV': { 'x': -10, 'y': 5},
-        'NH': { 'x': -3, 'y': 10},
-        'CA': { 'x': -15, 'y': 0},
-    }
+    const $toggle_svg = $('.toggle-switch svg')
+    const $toggle_slider = $('#toggle-slider')
+
+
+    // TODO:: Fix this
+    $('.toggle-switch').click(function(){
+
+        if($(this).children('svg')[0] === $toggle_svg[0]){
+            console.log('here')
+            return
+        }
+
+
+        let l = 1
+        let r = 0
+        if($toggle_slider.hasClass('turn')){
+            $toggle_slider.removeClass('turn')
+        }else{
+            $toggle_slider.addClass('turn')
+            l = 0
+            r = 1
+        }
+
+        $($toggle_svg[l]).css('color','rgba(255, 255, 255, 0.5)')
+        $($toggle_svg[r]).css('color','white')
+
+        populateMap()
+    })
 
     $('#map-container svg path').each((idx, state) => {
 
@@ -34,9 +84,9 @@ $(document).ready(function () {
             let x = bbox.x + bbox.width / 2
             let y = bbox.y + bbox.height / 2
 
-            if (state_id in correctionMap) {
-                x += correctionMap[state_id]['x']
-                y += correctionMap[state_id]['y']
+            if (state_id in CORRECTION_MAP) {
+                x += CORRECTION_MAP[state_id]['x']
+                y += CORRECTION_MAP[state_id]['y']
             }
 
             text.setAttribute("x", x)
@@ -140,7 +190,6 @@ $(document).ready(function () {
         populateMap()
     });
 
-
     $(document).click(function (e) {
         if (!$(e.target).closest(".position-relative").length) {
             $(".suggestions").removeClass("show");
@@ -153,5 +202,12 @@ $(document).ready(function () {
         $(this).next().children('.progress-bar').removeClass("focused")
     })
 
+    $('#searchbox .check-single .form-check-input').change(function () {
+        $other_input = $(this).parent().siblings().children('.form-check-input')
+
+        if($other_input.prop('checked'))
+            $other_input.prop('checked', false)
+
+    })
 
 });
