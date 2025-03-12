@@ -45,13 +45,6 @@ body {
     transform-origin: center;
 }
 
-#searchbox .search-icon {
-    position: relative;
-    /*bottom: 10px;*/
-    font-size: 16px;
-    color: #aaa;
-}
-
 #map-container svg g.legend{
     transition: opacity 0.5s ease;
 }
@@ -76,6 +69,44 @@ body {
     stroke: darkred;
     stroke-width: 0.5;
 }
+
+
+#searchbox{
+
+}
+
+#searchbox #toggle-container{
+    display: flex;
+    border-radius: 10px;
+    background-color: rgba(139, 0, 0, 0.3);
+    position: relative;
+    width: 80px;
+    height: 20px;
+}
+
+#searchbox #toggle-slider{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 50%;
+    height: 100%;
+    background-color: darkred;
+    border-radius: 10px;
+    transition: transform 0.5s ease;
+    transform: translateX(0%);
+}
+
+#searchbox #toggle-slider.turn{
+    transform: translateX(100%);
+}
+
+#searchbox .search-icon {
+    position: relative;
+    /*bottom: 10px;*/
+    font-size: 16px;
+    color: #aaa;
+}
+
 
 #searchbox .search {
     border-radius: 0;
@@ -125,6 +156,11 @@ body {
     cursor: pointer;
 }
 
+#searchbox .dropdown-item:hover {
+    background-color: darkred;
+    color:white;
+}
+
 #searchbox .selected-items {
     display: flex;
     flex-wrap: wrap;
@@ -133,18 +169,60 @@ body {
 }
 #searchbox .selected-items .badge {
     padding: 5px 10px;
-    font-size: 14px;
+    font-size: 12px;
     display: flex;
     align-items: center;
     cursor: pointer;
+    border-radius: 0;
+    background-color: darkred!important;
 }
 
 #searchbox .badge .remove {
     margin-left: 5px;
+    font-size: 16px;
 }
 
-#searchbox .check-control{
+#searchbox #delay-filter-label{
     position: relative;
+    font-weight: bold;
+    left:-20px
+}
 
+#searchbox .control{
+    position: relative;
+    font-size: 15px;
+    left:-20px
+}
+
+#searchbox .control .v-label, #searchbox .control .v-text-field__slot input{
+    font-size: 14px;
+}
+
+#searchbox .control .form-check-input{
+    cursor: pointer;
+    outline: none;
+}
+
+#searchbox .control .form-check-input:checked {
+    background-color: orangered;
+    outline: none;
+    box-shadow: none;
+    border-color: orangered;
+}
+
+#searchbox .control .form-check-input:focus{
+    outline: none;
+    box-shadow: none;
+}
+
+#searchbox .control .form-check-input:focus-visible{
+    outline: none;
+    box-shadow: none;
+    /*border-color: orangered;*/
+}
+
+#searchbox .control .form-check-label{
+    user-select: none;
+    cursor: pointer;
 }
 
