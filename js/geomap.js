@@ -275,7 +275,7 @@ function UI_render(count, delay_population){
                 v =  Math.round( v/ 1000)
 
                 $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
-                    '<tspan font-size="6px" x="'+ x +'" y="'+ y +'">'+ v +'k</tspan>'
+                    '<tspan x="'+ x +'" y="'+ y +'">'+ v +'k</tspan>'
 
                 RESET_COORDINATE_MAP.set(id, y)
 
@@ -309,12 +309,14 @@ function data_render(data){
     // console.log(delay_population)
 
     UI_render(count, delay_population)
-
 }
 
 
 function populateState(id){
     console.log('populate state airports for ', id)
+
+    $('#map-container svg g.state text').removeClass('zoomed')
+    $('#map-container svg g.state #text-'+id).addClass('zoomed')
 }
 
 
@@ -390,11 +392,19 @@ $(document).ready(function () {
 
             setTimeout(function() {
                 $('#map-container svg g.state text tspan:nth-of-type(2)').each((idx, html) => {
-                    $(html).attr('y', $(html).attr('y') - 5)
+                    let inner_id = $(html).parent().attr('id').split('-')[1]
+                    let time_to_hide = 0
+                    if(id === inner_id) {
+                        time_to_hide = 600
+                    }
+                    setTimeout(function() {
+                        $(html).attr('y', RESET_COORDINATE_MAP.get(inner_id) - 5)
+                        $(html).parent().css('font-size', '2px')
+                    }, time_to_hide)
                 })
+                populateState(id)
             }, 300)
 
-            populateState(id)
 
     })
         .on('mouseenter', function (event){
@@ -438,13 +448,17 @@ $(document).ready(function () {
         $('#map-container svg g.legend').css('opacity',1)
         $('#map-container svg').removeClass('zooming')
         $('#map-container svg .state path').removeClass('zoomed')
+        $('#map-container svg g.state text')
+            .removeClass('zoomed')
+            .addClass('not-zoomed')
 
         setTimeout(function() {
             $('#map-container svg g.state text tspan:nth-of-type(2)').each((idx, html) => {
                 let id = $(html).parent().attr('id').split('-')[1]
                 let reset_value = RESET_COORDINATE_MAP.get(id)
-                $(html).attr('y', reset_value)
+                $(html).attr('y', reset_value).parent().css('font-size','7px')
             })
+            $('#map-container svg g.state text').removeClass('not-zoomed')
         }, 300)
     }
 })

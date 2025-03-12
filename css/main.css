@@ -41,12 +41,15 @@ body {
 
 #map-container svg {
     transition: transform 1s ease;
-    /*transform: scale(2);*/
     transform-origin: center;
 }
 
 #map-container svg g.legend{
     transition: opacity 0.5s ease;
+}
+
+#map-container svg .state text{
+    font-size: 7px;
 }
 
 #map-container svg .state .borders path{
@@ -70,17 +73,17 @@ body {
     stroke-width: 0.5;
 }
 
-#map-container svg .state text tspan{
-    transition: font-size 1s ease;
+#map-container svg .state text.not-zoomed tspan{
+    transition: font-size, opacity 0.5s linear;
 }
 
 #map-container svg.zooming .state text tspan{
-    transition: font-size 1s ease;
-    font-size: 2px;
+    transition: font-size 0.5s ease;
 }
 
-#map-container svg.zooming .state.zoomed text{
-
+#map-container svg.zooming .state text.zoomed tspan{
+    transition: font-size,opacity 0.5s linear;
+    opacity: 0;
 }
 
 
