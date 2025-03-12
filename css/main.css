@@ -70,6 +70,19 @@ body {
     stroke-width: 0.5;
 }
 
+#map-container svg .state text tspan{
+    transition: font-size 1s ease;
+}
+
+#map-container svg.zooming .state text tspan{
+    transition: font-size 1s ease;
+    font-size: 2px;
+}
+
+#map-container svg.zooming .state.zoomed text{
+
+}
+
 
 #searchbox{
 

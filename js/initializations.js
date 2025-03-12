@@ -127,6 +127,8 @@ const SCALE_MAP = {
     'id': 3.5,
 }
 
+const RESET_COORDINATE_MAP = new Map()
+
 const AIRPORTS = [
     'Aberdeen, SD: Aberdeen Regional',
     'Abilene, TX: Abilene Regional',

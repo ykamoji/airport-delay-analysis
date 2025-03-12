@@ -277,6 +277,8 @@ function UI_render(count, delay_population){
                 $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
                     '<tspan font-size="6px" x="'+ x +'" y="'+ y +'">'+ v +'k</tspan>'
 
+                RESET_COORDINATE_MAP.set(id, y)
+
                 $text.html($html)
                     .css("opacity", 1)
             }
@@ -311,7 +313,13 @@ function data_render(data){
 }
 
 
+function populateState(id){
+    console.log('populate state airports for ', id)
+}
+
+
 $(document).ready(function () {
+
 
     const svg = d3.select("#map-container svg")
 
@@ -329,55 +337,64 @@ $(document).ready(function () {
     $('#map-container svg g.state path')
         .on("click", function(event){
 
-        let id = $(this).attr('class')
+            let id = $(this).attr('class')
 
-        if(id.includes('-')){
-            return
-        }
-
-        // console.log(this)
-
-        if($(this).hasClass('zoomed')){
-            reset()
-            return
-        }
-
-        $('#map-container svg g.state path').removeClass('zoomed')
-
-        event.stopPropagation();
-
-        $('#map-container svg g.legend').css('opacity',0)
-
-        const bbox = this.getBBox();
-
-        let scale = 5;
-        if(SCALE_MAP[id]) scale = SCALE_MAP[id]
-
-        const width = bbox.width * scale;
-        const height = bbox.height * scale;
-        const x = bbox.x + bbox.width / 2;
-        const y = bbox.y + bbox.height / 2;
-
-        const transform = d3.zoomIdentity
-            .translate(550 - x * scale, 300 - y * scale)
-            .scale(scale);
-
-        svg.transition()
-            .duration(800)
-            .call(zoom.transform, transform);
-
-        $('#map-container svg').addClass('zooming')
-
-
-        $('#map-container svg g.state g.borders path').each((idx, ele)=>{
-            let border_id = $(ele).attr('class')
-
-            if(border_id.includes(id)){
-                $(ele).addClass('zoomed')
+            if(id.includes('-')){
+                return
             }
-        })
 
-        $(this).addClass('zoomed')
+            // console.log(this)
+
+            if($(this).hasClass('zoomed')){
+                reset()
+                return
+            }
+
+            $('#map-container svg g.state path').removeClass('zoomed')
+
+            event.stopPropagation();
+
+            $('#map-container svg g.legend').css('opacity',0)
+
+            const bbox = this.getBBox();
+
+            let scale = 5;
+            if(SCALE_MAP[id]) scale = SCALE_MAP[id]
+
+            const width = bbox.width * scale;
+            const height = bbox.height * scale;
+            const x = bbox.x + bbox.width / 2;
+            const y = bbox.y + bbox.height / 2;
+
+            const transform = d3.zoomIdentity
+                .translate(550 - x * scale, 300 - y * scale)
+                .scale(scale);
+
+            svg.transition()
+                .duration(800)
+                .call(zoom.transform, transform);
+
+            $('#map-container svg').addClass('zooming')
+
+
+            $('#map-container svg g.state g.borders path').each((idx, ele)=>{
+                let border_id = $(ele).attr('class')
+
+                if(border_id.includes(id)){
+                    $(ele).addClass('zoomed')
+                }
+            })
+
+            $(this).addClass('zoomed')
+
+
+            setTimeout(function() {
+                $('#map-container svg g.state text tspan:nth-of-type(2)').each((idx, html) => {
+                    $(html).attr('y', $(html).attr('y') - 5)
+                })
+            }, 300)
+
+            populateState(id)
 
     })
         .on('mouseenter', function (event){
@@ -419,8 +436,15 @@ $(document).ready(function () {
             .duration(500)
             .call(zoom.transform, d3.zoomIdentity);
         $('#map-container svg g.legend').css('opacity',1)
-
         $('#map-container svg').removeClass('zooming')
         $('#map-container svg .state path').removeClass('zoomed')
+
+        setTimeout(function() {
+            $('#map-container svg g.state text tspan:nth-of-type(2)').each((idx, html) => {
+                let id = $(html).parent().attr('id').split('-')[1]
+                let reset_value = RESET_COORDINATE_MAP.get(id)
+                $(html).attr('y', reset_value)
+            })
+        }, 300)
     }
 })
