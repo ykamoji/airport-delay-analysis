@@ -74,15 +74,15 @@ body {
 }
 
 #map-container svg .state text.not-zoomed tspan{
-    transition: font-size, opacity 0.5s linear;
+    transition: font-size, opacity 1s linear;
 }
 
 #map-container svg.zooming .state text tspan{
-    transition: font-size 0.5s ease;
+    transition: font-size 0.3s ease;
 }
 
 #map-container svg.zooming .state text.zoomed tspan{
-    transition: font-size,opacity 0.5s linear;
+    transition: font-size,opacity 0.3s linear;
     opacity: 0;
 }
 

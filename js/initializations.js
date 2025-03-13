@@ -74,7 +74,7 @@ const AIRLINES = [
 const CORRECTION_MAP = {
     'LA': { 'x': -20, 'y': 0 },
     'MA': { 'x': 10, 'y': -4 },
-    'RI': { 'x': 0, 'y': 1 },
+    'RI': { 'x': 5, 'y': 10},
     'VA': { 'x': 20, 'y': 0},
     'MD': { 'x': 15, 'y': -4},
     'FL': { 'x': 45, 'y': 0},
@@ -106,6 +106,7 @@ const SCALE_MAP = {
     'fl': 4.5,
     'az': 4.5,
     'mi': 4.5,
+    'ri': 20,
     'tn': 6,
     'ar': 6,
     'sd': 7,
@@ -118,17 +119,17 @@ const SCALE_MAP = {
     'ky': 7,
     'ia': 8,
     'nh': 8,
+    'nj': 9,
     'ny': 6,
     'vt': 8,
     'ma': 9,
-    'ct': 9,
+    'ct': 10,
     'nd': 8,
     'ne': 7,
     'id': 3.5,
 }
 
 const RESET_COORDINATE_MAP = new Map()
-
 
 const STATE_CORRECTION_MAP = {
     'ny': {
