@@ -321,24 +321,68 @@ function data_render(data){
 
     let delay_population = delay_render(delays, count, data_list)
 
-    console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
-        "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
+    // console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
+    //     "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
 
     // console.log(delay_population)
+
+    // console.log(data_list)
 
     UI_render(count, delay_population)
 }
 
 
-function populateState(id){
-    console.log('populate state airports for ', id)
 
+function populateState(id){
     $('#map-container svg g.state text').removeClass('zoomed')
     $('#map-container svg g.state #text-'+id).addClass('zoomed')
+
+
+    setTimeout(function (){
+        let $state = $('#map-container svg g.state path.'+id)
+
+        let box = $state[0].getBoundingClientRect()
+        // console.log(box)
+
+        // $base = $('#state-overview')
+        //
+        // let adjust = {
+        //     'width': 150,
+        //     'height': 150,
+        //     'top': 75,
+        //     'left': 75,
+        // }
+        //
+        // if(STATE_CORRECTION_MAP[id])
+        //     adjust =  STATE_CORRECTION_MAP[id]
+        //
+        // console.log(adjust)
+        //
+        // $base.css({
+        //     "width": box.width - adjust['width'] +'px',
+        //     "height": box.height  - adjust['height'] + 'px',
+        //     "top": box.top + adjust['top'] + 'px',
+        //     "left": box.left + adjust['left'] + 'px',
+        //     // "right":box.right + 'px',
+        //     // "bottom": box.bottom + 'px',
+        //     "border": "5px solid darkred",
+        //     "z-index":"0"
+        // })
+
+    }, 500)
+
+
+
 }
 
-
+// D3 Zoom logic
 $(document).ready(function () {
+
+    // $('#map-container svg g.state path').hover(function (){
+    //     let $state = $(this)
+    //     console.log($state[0].getBoundingClientRect())
+    //     console.log(d3.select($(this)[0]).node().getBBox())
+    // })
 
 
     const svg = d3.select("#map-container svg")
@@ -389,6 +433,8 @@ $(document).ready(function () {
             const transform = d3.zoomIdentity
                 .translate(550 - x * scale, 300 - y * scale)
                 .scale(scale);
+
+            // console.log(transform.k, transform.x, transform.y)
 
             svg.transition()
                 .duration(800)

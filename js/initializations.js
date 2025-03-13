@@ -107,7 +107,7 @@ const SCALE_MAP = {
     'az': 4.5,
     'mi': 4.5,
     'tn': 6,
-    'ar': 7,
+    'ar': 6,
     'sd': 7,
     'mo': 6,
     'wa': 7,
@@ -123,11 +123,21 @@ const SCALE_MAP = {
     'ma': 9,
     'ct': 9,
     'nd': 8,
-    'ne': 9,
+    'ne': 7,
     'id': 3.5,
 }
 
 const RESET_COORDINATE_MAP = new Map()
+
+
+const STATE_CORRECTION_MAP = {
+    'ny': {
+        'width': 350,
+        'height': 350,
+        'top': 150,
+        'left': 75,
+    }
+}
 
 const AIRPORTS = [
     'Aberdeen, SD: Aberdeen Regional',
