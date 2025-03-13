@@ -48,7 +48,7 @@ function get_controls(){
         else if(id.includes('date')){
             if($ele.val().length > 0){
                 let k = id.split('-')[0]
-                let v =  parseInt($ele.val().split('-')[1])
+                let v =  $ele.val()
                 controls['dates'][k] = '' + v
             }
         }
@@ -81,15 +81,22 @@ function type_render(type, data){
 
 function date_render(dates, data){
 
-    let worklist = null
-    let from = parseInt(dates['from'])
-    let to = parseInt(dates['to'])
-
-    if(from === null || to === null){
+    if(dates['from'] === null || dates['to'] === null){
         return data
     }
 
-    worklist = data.filter(d => parseInt(d['0']) >= from).filter(d => parseInt(d['0']) <= to)
+    let worklist = null
+    let from_year = parseInt(dates['from'].split('-')[0])
+    let to_year = parseInt(dates['to'].split('-')[0])
+
+    let from_month = parseInt(dates['from'].split('-')[1])
+    let to_month = parseInt(dates['to'].split('-')[1])
+
+    worklist = data.filter(d => {
+        return parseInt(d['0'].split('-')[0]) >= from_year && parseInt(d['0'].split('-')[1]) >= from_month
+    }).filter(d => {
+        return parseInt(d['0'].split('-')[0]) <= to_year &&  parseInt(d['0'].split('-')[1]) <= to_month
+    })
 
     return worklist
 }
@@ -184,7 +191,7 @@ function delay_render(delays, count, data){
 function populateMap(){
 
     if (CACHE.has('all_summerized')){
-        return CACHE.get('all_summerized')
+        data_render(CACHE.get('all_summerized'))
     }
 
     $.getJSON("assets/all_summerized.json", function(data) {
@@ -201,8 +208,8 @@ function UI_render(count, delay_population){
     let num_limit = [...delay_population.values()].reduce((count, v) => count + (v > 0 ? 1 : 0), 0);
 
     let labels = []
-    if(num_limit > 9){
-        num_limit = 9
+    if(num_limit > 8){
+        num_limit = 8
         labels = d3.range(min_val, max_val, Math.round((max_val - min_val)/ num_limit))
     }
     else{
@@ -250,8 +257,10 @@ function UI_render(count, delay_population){
             return 10 + 25 + 10
         })
         .text(d => {
-            if(parseInt(d))
-                return Math.round(d/1000)+'k'
+            if(parseInt(d)){
+                if(d > 500000) return (d/1000000).toFixed(1)+'M'
+                return Math.round(d/1000)+'K'
+            }
             else return d
         })
         .attr("font-size", (d,i)=>{
@@ -278,10 +287,13 @@ function UI_render(count, delay_population){
                 let x = $text.attr('x')
                 let y = parseFloat($text.attr('y')) + 8
                 let v = delay_population.get(id)
-                v =  Math.round( v/ 1000)
+                if(v > 500000)
+                    v = (v/1000000).toFixed(1)+'M'
+                else
+                    v =  Math.round( v/ 1000)+'K'
 
                 $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
-                    '<tspan x="'+ x +'" y="'+ y +'">'+ v +'k</tspan>'
+                    '<tspan x="'+ x +'" y="'+ y +'">'+ v +'</tspan>'
 
                 RESET_COORDINATE_MAP.set(id, y)
 
@@ -309,9 +321,9 @@ function data_render(data){
 
     let delay_population = delay_render(delays, count, data_list)
 
-    // console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
-    //     "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
-    //
+    console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
+        "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
+
     // console.log(delay_population)
 
     UI_render(count, delay_population)
