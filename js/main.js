@@ -5,7 +5,7 @@ $(document).ready(function () {
         el: '#app1',
         vuetify: new Vuetify(),
         data: () => ({
-            date: null,
+            date: '2023-01',
             modal: false
         }),
         methods :{
@@ -25,7 +25,7 @@ $(document).ready(function () {
         el: '#app2',
         vuetify: new Vuetify(),
         data: () => ({
-            date: null,
+            date: '2024-11',
             modal: false
         }),
         methods :{
