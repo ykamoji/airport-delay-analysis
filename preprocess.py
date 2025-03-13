@@ -33,6 +33,8 @@ DERIVED_HEADERS = [
     'DEST_AIRPORT_NAME',  # From DEST using L_airport
 ]
 
+months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+
 AIRPORT_MAPPING = dict()
 AIRLINES_MAPPING = dict()
 
@@ -48,12 +50,12 @@ def load_mapping(filepath):
 
 def load_airports(path):
     AIRPORT_MAPPING.update(load_mapping(path + '/L_AIRPORT.csv'))
-    print(f"Loaded {len(AIRPORT_MAPPING)} Airports")
+    # print(f"Loaded {len(AIRPORT_MAPPING)} Airports")
 
 
 def load_airlines(path):
     AIRLINES_MAPPING.update(load_mapping(path + '/L_UNIQUE_CARRIERS.csv'))
-    print(f"Loaded {len(AIRLINES_MAPPING)} Airlines")
+    # print(f"Loaded {len(AIRLINES_MAPPING)} Airlines")
 
 
 dataset = []
@@ -95,13 +97,16 @@ def preprocess(path):
     updated_headers.insert(8, DERIVED_HEADERS[2])
     write_header = True
 
+    files = ['2023/'+m+'_23' for m in months] + ['2024/'+m+'_24' for m in months]
     id_counter = 0
-    for file in [month + "_23" for month in ["DEC"]] + [month + "_24" for month in
-                                                        ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP",
-                                                         "OCT", "NOV"]]:
+    for file in files:
         total = 0
         parsed = 0
         file_name = '/' + file + '.csv'
+
+        if not os.path.exists(path + file_name):
+            print(f"File {file_name} does not exist!")
+            continue
 
         print(f"\n{file}:")
 
@@ -135,7 +140,7 @@ def preprocess(path):
         print(f"Compressed = {compressed:.3f} %")
         total_size_approx += compressed * f_size
 
-        with open(path + '/airlines_delay_data_v2.csv', 'a', newline='') as csvfile:
+        with open(path + '/airlines_delay_data_v3.csv', 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, delimiter=',', fieldnames=updated_headers, extrasaction='ignore')
             if write_header:
                 writer.writeheader()
