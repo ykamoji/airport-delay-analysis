@@ -44,7 +44,7 @@ $(document).ready(function () {
     populateMap()
 
     $map_container =  $('#map-container')
-    $airport = $('#map-container .airport')
+    $airport = $('#map-container .airport-base')
     for (var i = 0; i < 5; i++) {
         $map_container.append($airport.clone())
     }
