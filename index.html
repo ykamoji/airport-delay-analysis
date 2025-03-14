@@ -313,23 +313,35 @@
         </g>
 
         </svg>
-        <div class="airport" style="display: none">
-            <span class="rank"></span>
-            <div class="point"></div>
-            <div class="card border-0 rounded-0 mb-3" style="max-width: 250px">
-                <span class="name bg-primary card-header rounded-0"></span>
-                <div class="card-body stats bg-light">
-                    <span class="card-title"></span>
-                    <div class="card-text">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item"></li>
-                        </ul>
-                    </div>
-                </div>
+        <div class="container-fluid airport-base">
+            <div class="airport">
+            <div class="point"><span class="rank"></span></div>
+        </div>
+            <div class="card stats border-0 rounded-0 mb-3" style="max-width: 250px;display: none;">
+            <span class="name border-primary card-header rounded-0 text-primary text-center"></span>
+            <div class="card-body pt-2 pb-0">
+                <div class="card-title text-center"></div>
+                <table class="table table-borderless table-hover">
+                    <tbody>
+                    <tr>
+                        <th scope="row" class="pt-0">Congestion</th>
+                        <th scope="row" class="pt-0"></th>
+                    </tr>
+                    <tr>
+                        <th scope="col" class="pt-0">Time Deviation</th>
+                        <th scope="row" class="pt-0"></th>
+                    <tr>
+                        <th scope="col" class="pt-0">Speed Deviation</th>
+                        <th scope="row" class="pt-0"></th>
+                    </tr>
+                    <tr>
+                        <th scope="col" class="pt-0">Recovery Efficiency</th>
+                        <th scope="row" class="pt-0"></th>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
         </div>
     </div>
     <div id="searchbox" class="col-2">
