@@ -488,11 +488,19 @@ function populateState(id){
 
             $($airports[c]).children('.rank').text(state_population.length - c)
 
+            console.log(airport)
+            $($airports[c]).find('.name').text(airport.get('airport'))
 
-            $($airports[c]).children('.stats').html([...airport.values()])
+            let d = (airport.get('delays') / 1000).toFixed(2)
+
+            $($airports[c]).find('.card-title').text('Delays: '+ d + 'K hrs')
+
+            $($airports[c]).find('.list-group-item').each(list_item => {
+
+            })
 
             $($airports[c]).css({
-                "top": points[c]['t']  + 'px',
+                "top": points[c]['t'] + 'px',
                 "left": points[c]['l'] + 'px',
             })
                 .addClass('show')
