@@ -227,7 +227,7 @@ function state_render(delays, is_count, data, id){
     state_population.forEach((v,k,m) => {
         Object.keys(v).forEach(k => {
             if(k !== 'count' && k !== 'delays')
-                v[k]=(v[k]/v['count']).toFixed(4)
+                v[k]=(v[k]/v['count']).toFixed(3)
             else if(k === 'delays'){
                 v[k] = is_count ? v[k] : Math.round(v[k]/60)
             }
@@ -429,90 +429,35 @@ function populateState(id){
 
     setTimeout(function (){
 
-        // let box = $state[0].getBoundingClientRect()
-        // console.log(box)
-        // $base = $('#state-overview')
-        // console.log(adjust)
-        // let adjust = {
-        //     'width': 150,
-        //     'height': 150,
-        //     'top': 150,
-        //     'left': 75,
-        // }
-        // $base.css({
-        //     "width": box.width - adjust['width'] +'px',
-        //     "height": box.height  - adjust['height'] + 'px',
-        //     "top": box.top + adjust['top'] + 'px',
-        //     "left": box.left + adjust['left'] + 'px',
-        //     // "right":box.right + 'px',
-        //     // "bottom": box.bottom + 'px',
-        //     "border": "5px solid darkred",
-        //     "z-index":"0"
-        // })
-        // let $state = $('#map-container svg g.state path.'+id)
-
-        let points = []
-        if(AIRPORT_POINTS[id]){
-            points = AIRPORT_POINTS[id]
-        }
-        else{
-            // let min_dist = 10
-            // let tries = 0
-            // while(points.length < state_population.length){
-            //     let candidate ={
-            //         't' : getRandom(box.top + adjust['top'] + 100, box.top + adjust['top'] + box.height - adjust['height'] - 100),
-            //         'l' :getRandom(box.left + adjust['left'] + 100, box.left + adjust['left'] + box.width - adjust['width'] - 100)
-            //     }
-            //
-            //     if (points.every(p => Math.abs(p.l - candidate.l) >= min_dist && Math.abs(p.t - candidate.t) >= min_dist)) {
-            //         points.push(candidate);
-            //     }
-            //
-            //     tries += 1
-            //     if(tries > 20000){
-            //         console.log('Too small bounding values for ', id)
-            //         break
-            //     }
-            // }
-            //
-            // let st = ',\n"'+id+'":[\n'
-            // points.forEach(p => {
-            //     st += "{'t': "+ p['t'].toFixed(3) +", 'l': "+ p['l'].toFixed(3) + "},\n"
-            // })
-            //
-            // st += ']'
-            //
-            // console.log(st)
-        }
-
+        let points= AIRPORT_POINTS[id]
         let c = 0
         let radius = [25, 35, 45, 55, 65, 70].reverse()
-        let gap = [25, 35, 45, 55, 75, 80].reverse()
-        $airports =  $('.airport')
+        let gap = [35, 45, 55, 65, 85, 90].reverse()
+        $airports =  $('.airport-base')
         state_population.forEach(airport=> {
+            // console.log(airport)
 
             $($airports[c]).find('.point').css('--radius',radius[c] +'px')
 
             $($airports[c]).find('.rank').text(c+1)
 
-            $($airports[c]).siblings().find('.name').text(airport.get('airport'))
+            $($airports[c]).find('.name').text(airport.get('airport'))
 
             let d = is_count ? airport.get('delays') : (airport.get('delays') / 1000).toFixed(2)+ 'K hrs '
 
-            $($airports[c]).siblings().find('.card-title').html(d)
+            $($airports[c]).find('.stats .card-title').html(d)
 
-            $($airports[c]).siblings().find('.table tr').each((idx, grp) => {
+            $($airports[c]).find('.stats .table tr th:nth-of-type(2)').each((idx, grp) => {
                 let val = airport.get(idx+'')
                 let cls = 'neg'
                 if(val > 0){
                     val = '+'+val
                     cls = 'pos'
                 }
-
-                $(grp).siblings().find('th:nth-of-type(2)').text(val).addClass(cls)
+                $(grp).text(val).addClass(cls)
             })
 
-            $($airports[c]).css({
+            $($airports[c]).find('.airport').css({
                 "top": points[c]['t'] + 'px',
                 "left": points[c]['l'] + 'px',
             })
@@ -520,9 +465,9 @@ function populateState(id){
                 .parent()
                 .addClass('show')
 
-            $($airports[c]).siblings().css({
+            $($airports[c]).find('.stats').css({
                 "top": points[c]['t'] + gap[c]+ 'px',
-                "left": points[c]['l'] - gap[c] + 'px',
+                "left": points[c]['l'] - 100 + 'px',
             })
 
             c += 1
@@ -664,15 +609,15 @@ $(document).ready(function () {
 
 
 
-    $('.airport').on('mouseenter',function (){
-        $('.airport').css({'z-index':'10'})
-        $(this).css({'z-index':'100'})
-            .siblings()
+    $('.airport-base').on('mouseenter',function (){
+        $('.airport-base .stats').css({'z-index':'10'})
+        $(this)
+            .find('.stats')
+            .css({'z-index':'100'})
             .fadeIn(0)
     }).on('mouseleave',function () {
-        $('.airport')
+        $('.airport-base .stats')
             .css({'z-index':'10'})
-            .siblings()
             .fadeOut(0)
     })
 
