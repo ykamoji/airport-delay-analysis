@@ -239,6 +239,7 @@ function state_render(delays, is_count, data, id){
             m.set('airport', k)
             Object.keys(v).filter(en_k => en_k !== 'count').forEach(en_k => m.set(en_k, v[en_k]))
             return m
+
         })
 
     if(state_population.length > 6){
@@ -346,6 +347,7 @@ function geo_map_render(data){
         let $text = $('#text-' + id)
 
         if(id.length === 2){
+            // console.log(id, AIRPORT_POINTS[id])
             if(delay_population.get(id) === 0 || !delay_population.has(id)) {
                 $(st).css("opacity", 0.1)
                 $text.css("opacity", 0)
@@ -403,6 +405,10 @@ function data_search(data, search_type, id){
 }
 
 
+function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 function populateState(id){
 
     $('#map-container svg g.state text').removeClass('zoomed')
@@ -414,27 +420,17 @@ function populateState(id){
 
 
     setTimeout(function (){
-        let $state = $('#map-container svg g.state path.'+id)
 
-        let box = $state[0].getBoundingClientRect()
+        // let box = $state[0].getBoundingClientRect()
         // console.log(box)
-
-
-
         // $base = $('#state-overview')
-        //
+        // console.log(adjust)
         // let adjust = {
         //     'width': 150,
         //     'height': 150,
-        //     'top': 75,
+        //     'top': 150,
         //     'left': 75,
         // }
-        //
-        // if(STATE_CORRECTION_MAP[id])
-        //     adjust =  STATE_CORRECTION_MAP[id]
-        //
-        // console.log(adjust)
-        //
         // $base.css({
         //     "width": box.width - adjust['width'] +'px',
         //     "height": box.height  - adjust['height'] + 'px',
@@ -445,6 +441,66 @@ function populateState(id){
         //     "border": "5px solid darkred",
         //     "z-index":"0"
         // })
+        // let $state = $('#map-container svg g.state path.'+id)
+
+        let points = []
+        if(AIRPORT_POINTS[id]){
+            points = AIRPORT_POINTS[id]
+        }
+        else{
+            // let min_dist = 10
+            // let tries = 0
+            // while(points.length < state_population.length){
+            //     let candidate ={
+            //         't' : getRandom(box.top + adjust['top'] + 100, box.top + adjust['top'] + box.height - adjust['height'] - 100),
+            //         'l' :getRandom(box.left + adjust['left'] + 100, box.left + adjust['left'] + box.width - adjust['width'] - 100)
+            //     }
+            //
+            //     if (points.every(p => Math.abs(p.l - candidate.l) >= min_dist && Math.abs(p.t - candidate.t) >= min_dist)) {
+            //         points.push(candidate);
+            //     }
+            //
+            //     tries += 1
+            //     if(tries > 20000){
+            //         console.log('Too small bounding values for ', id)
+            //         break
+            //     }
+            // }
+            //
+            // let st = ',\n"'+id+'":[\n'
+            // points.forEach(p => {
+            //     st += "{'t': "+ p['t'].toFixed(3) +", 'l': "+ p['l'].toFixed(3) + "},\n"
+            // })
+            //
+            // st += ']'
+            //
+            // console.log(st)
+        }
+
+        let c = 0
+        let radius = [25, 35, 45, 55, 65, 70]
+        $airports =  $('.airport')
+        state_population.forEach(airport=> {
+
+            $($airports[c])
+                .children('.point')
+                .css('--radius',radius[c] +'px')
+
+            $($airports[c]).children('.rank').text(state_population.length - c)
+
+
+            $($airports[c]).children('.stats').html([...airport.values()])
+
+            $($airports[c]).css({
+                "top": points[c]['t']  + 'px',
+                "left": points[c]['l'] + 'px',
+            })
+                .addClass('show')
+                .fadeIn()
+
+            c += 1
+        })
+
 
     }, 500)
 
@@ -479,6 +535,10 @@ $(document).ready(function () {
             }
 
             // console.log(this)
+
+            $('#map-container .airport')
+                .fadeOut(0)
+                .removeClass('show')
 
             if($(this).hasClass('zoomed')){
                 reset()
@@ -577,6 +637,7 @@ $(document).ready(function () {
     })
 
     function reset(){
+
         svg.transition()
             .duration(500)
             .call(zoom.transform, d3.zoomIdentity);
