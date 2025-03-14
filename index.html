@@ -20,6 +20,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/initializations.js"></script>
+    <script src="js/airport_locations.js"></script>
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
 </head>
@@ -43,7 +44,6 @@
 
 <div id="map_distribution" class="row">
     <div id="map-container" class="col-10">
-<!--        <div id="state-overview" class="hide" style="position: absolute;"></div>-->
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
             <g class="legend"></g>
             <g class="state">
@@ -313,6 +313,11 @@
         </g>
 
         </svg>
+        <div class="airport">
+            <span class="rank"></span>
+            <div class="point"></div>
+            <div class="stats"></div>
+        </div>
     </div>
     <div id="searchbox" class="col-2">
         <div class="input-group row mt-5">
