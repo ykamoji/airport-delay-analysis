@@ -414,6 +414,15 @@ function data_search(data, search_type, id){
 }
 
 
+function camelCasing(text){
+
+    return text.split(' ').map(word => {
+        console.log(word)
+        let txt = '<span style="font-size:55px">'+ word.substring(0,1) +'</span>' + word.substring(1,)
+        return txt + '&nbsp;&nbsp;'
+    })
+}
+
 function populateState(id){
 
     $airports = $('.airport-base')
@@ -421,9 +430,6 @@ function populateState(id){
     $('#map-container svg g.state text').removeClass('zoomed')
 
     $airports.removeClass('show')
-
-    $('#map-container #map-header').fadeOut(0)
-    $('.airport-base .loc').fadeOut(0)
 
     $('#map-container svg g.state #text-'+id).addClass('zoomed')
 
@@ -433,11 +439,20 @@ function populateState(id){
 
     setTimeout(function (){
 
+        let points = AIRPORT_POINTS[id]
+
         let state_name = Object.entries(STATES).filter(st => st[1] === id)[0][0]
+        let header_top = points.reduce((a,b) => a['t'] < b['t'] ? a : b)['t'] - 70
 
-        $('#map-container #map-header').html(state_name.toUpperCase()).fadeIn(0).css({'opacity':'1'})
+        $('#map-container #map-header')
+            .html(camelCasing(state_name.toUpperCase()))
+            .fadeIn(0)
+            .css({
+                'opacity':'1',
+                'top': header_top + 'px',
+            })
 
-        let points= AIRPORT_POINTS[id]
+
         let c = 0
         let radius = [25, 35, 45, 55, 65, 70].reverse()
         state_population.forEach(airport=> {
@@ -524,6 +539,7 @@ $(document).ready(function () {
             }
 
             // console.log(this)
+            $('#map-container #map-header').fadeOut(0)
             $('.airport-base .loc').fadeOut(0)
 
             $('#map-container .airport')
