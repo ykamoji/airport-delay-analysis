@@ -43,6 +43,13 @@ $(document).ready(function () {
 
     populateMap()
 
+    $map_container =  $('#map-container')
+    $airport = $('#map-container .airport')
+    for (var i = 0; i < 5; i++) {
+        $map_container.append($airport.clone())
+    }
+
+
     const $toggle_switch = $('.toggle-switch')
     const $toggle_svg = $('.toggle-switch svg')
     const $toggle_btn = $('#searchbox .toggle-btn')

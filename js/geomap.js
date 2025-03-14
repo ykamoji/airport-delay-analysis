@@ -10,7 +10,7 @@ function get_controls(){
             "from":0,
             "to":12
         },
-        "count":$('#toggle-slider').hasClass('turn')
+        "is_count":$('#toggle-slider').hasClass('turn')
     }
 
     let $form = $("#searchbox input")
@@ -154,7 +154,7 @@ function week_render(week, data){
 }
 
 
-function delay_render(delays, count, data){
+function delay_render(delays, is_count, data){
 
     let delay_population = new Map()
 
@@ -170,7 +170,7 @@ function delay_render(delays, count, data){
         let total = 0
         for (let j = 0; j < delays.length; j++) {
             let delay = parseInt(row['' + delays[j]])
-            total += count ? ( delay > 0 ? 1 : 0) : delay
+            total += is_count ? ( delay > 0 ? 1 : 0) : delay
         }
 
         let k = row['1'].toLowerCase().trim()
@@ -179,7 +179,7 @@ function delay_render(delays, count, data){
     }
 
     delay_population.forEach((v, k, m) => {
-        if(v > 0) m.set(k, count ? v : Math.round(v/60))
+        if(v > 0) m.set(k, is_count ? v : Math.round(v/60))
         else m.delete(k)
     })
 
@@ -188,24 +188,95 @@ function delay_render(delays, count, data){
 }
 
 
+function state_render(delays, is_count, data, id){
+
+    let state_population = new Map()
+
+    let states_data = data.filter(d => d['1'].toLowerCase() === id)
+
+    let airports_in_state = new Set(states_data.map(d => d['2']))
+
+    airports_in_state.forEach(airport => state_population.set(airport, {
+        'count': 0,
+        'delays': 0,
+        'congestion':0,
+        'time_deviation':0,
+        'speed_deviation':0,
+        'recovery_efficiency':0
+    }))
+
+    if(delays.length === 0){
+        delays = ['5','6','7','8','9']
+    }
+
+    states_data.forEach(state => {
+        let total = 0
+        for (let j = 0; j < delays.length; j++) {
+            let delay = parseInt(state['' + delays[j]])
+            total += is_count ? (delay > 0 ? 1 : 0) : delay
+        }
+        let state_data = state_population.get(state['2'])
+        state_data['count'] += 1
+        state_data['delays'] += total
+        state_data['congestion'] += state['10']
+        state_data['time_deviation'] += state['11']
+        state_data['speed_deviation'] += state['12']
+        state_data['recovery_efficiency'] += state['13']
+    })
+
+    state_population.forEach((v,k,m) => {
+        Object.keys(v).forEach(k => {
+            if(k !== 'count' && k !== 'delays')
+                v[k]=(v[k]/v['count']).toFixed(4)
+        })
+        m.set(k, v)
+    })
+
+    state_population = [...state_population.entries()]
+        .sort((a, b) => b[1]['delays'] - a[1]['delays'])
+        .map(([k,v]) => {
+            let m = new Map()
+            m.set('airport', k)
+            Object.keys(v).filter(en_k => en_k !== 'count').forEach(en_k => m.set(en_k, v[en_k]))
+            return m
+
+        })
+
+    if(state_population.length > 6){
+        state_population = [...state_population.slice(0, 3),...state_population.slice(-3)]
+    }
+    // console.log(state_population)
+
+    return state_population
+}
+
+
 function populateMap(){
 
     if (CACHE.has('all_summerized')){
-        data_render(CACHE.get('all_summerized'))
+        geo_map_render(CACHE.get('all_summerized'))
     }
 
     $.getJSON("assets/all_summerized.json", function(data) {
-        data_render(data)
         CACHE.set('all_summerized', data)
+        geo_map_render(data)
     });
 }
 
 
-function UI_render(count, delay_population){
+function geo_map_render(data){
+
+    let delay_population =  data_search(data, 'geo', null)
+
+    // console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
+    //     "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
+
+    // console.log(delay_population)
 
     let max_val = Math.max(...delay_population.values())
     let min_val = Math.min(...delay_population.values())
-    let num_limit = [...delay_population.values()].reduce((count, v) => count + (v > 0 ? 1 : 0), 0);
+    let num_limit = [...delay_population.values()].reduce((c, v) => c + (v > 0 ? 1 : 0), 0);
+    let is_count = $('#toggle-slider').hasClass('turn')
 
     let labels = []
     if(num_limit > 8){
@@ -240,7 +311,7 @@ function UI_render(count, delay_population){
         .attr("height", 25)
         .attr("fill", d => color(d))
 
-    const legend_desc = count ? 'Delays (count)': 'Delays (in hrs)'
+    const legend_desc = is_count ? 'Delays (count)': 'Delays (in hrs)'
 
     labels.push(legend_desc)
 
@@ -276,9 +347,10 @@ function UI_render(count, delay_population){
         let $text = $('#text-' + id)
 
         if(id.length === 2){
+            // console.log(id, AIRPORT_POINTS[id])
             if(delay_population.get(id) === 0 || !delay_population.has(id)) {
                 $(st).css("opacity", 0.1)
-                $('#text-' + id).css("opacity", 0)
+                $text.css("opacity", 0)
             }
             else {
                 $(st).css("fill", color(delay_population.get(id)))
@@ -305,9 +377,9 @@ function UI_render(count, delay_population){
 }
 
 
-function data_render(data){
+function data_search(data, search_type, id){
 
-    let {states, airlines, delays, week, type, dates, count} = get_controls()
+    let {states, airlines, delays, week, type, dates, is_count} = get_controls()
 
     let data_list = type_render(type, data)
 
@@ -319,27 +391,134 @@ function data_render(data){
 
     data_list = week_render(week, data_list)
 
-    let delay_population = delay_render(delays, count, data_list)
+    if(search_type === 'geo'){
+        data_list = delay_render(delays, is_count, data_list)
+    }
 
-    console.log("Type:",type, "\nDates:",dates, "\nStates:", states, "\nAirlines:",airlines,
-        "\nDelays:",delays, "\nWeek:",week, "\nCount:", count, "\nResults", data_list.length)
+    if(search_type === 'state'){
+        data_list = state_render(delays, is_count, data_list, id)
+    }
 
-    // console.log(delay_population)
+    // console.log(data_list)
 
-    UI_render(count, delay_population)
+    return data_list
 }
 
 
+function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 function populateState(id){
-    console.log('populate state airports for ', id)
 
     $('#map-container svg g.state text').removeClass('zoomed')
     $('#map-container svg g.state #text-'+id).addClass('zoomed')
+
+    let state_population = data_search(CACHE.get('all_summerized'), 'state', id)
+
+    // console.log(state_population)
+
+
+    setTimeout(function (){
+
+        // let box = $state[0].getBoundingClientRect()
+        // console.log(box)
+        // $base = $('#state-overview')
+        // console.log(adjust)
+        // let adjust = {
+        //     'width': 150,
+        //     'height': 150,
+        //     'top': 150,
+        //     'left': 75,
+        // }
+        // $base.css({
+        //     "width": box.width - adjust['width'] +'px',
+        //     "height": box.height  - adjust['height'] + 'px',
+        //     "top": box.top + adjust['top'] + 'px',
+        //     "left": box.left + adjust['left'] + 'px',
+        //     // "right":box.right + 'px',
+        //     // "bottom": box.bottom + 'px',
+        //     "border": "5px solid darkred",
+        //     "z-index":"0"
+        // })
+        // let $state = $('#map-container svg g.state path.'+id)
+
+        let points = []
+        if(AIRPORT_POINTS[id]){
+            points = AIRPORT_POINTS[id]
+        }
+        else{
+            // let min_dist = 10
+            // let tries = 0
+            // while(points.length < state_population.length){
+            //     let candidate ={
+            //         't' : getRandom(box.top + adjust['top'] + 100, box.top + adjust['top'] + box.height - adjust['height'] - 100),
+            //         'l' :getRandom(box.left + adjust['left'] + 100, box.left + adjust['left'] + box.width - adjust['width'] - 100)
+            //     }
+            //
+            //     if (points.every(p => Math.abs(p.l - candidate.l) >= min_dist && Math.abs(p.t - candidate.t) >= min_dist)) {
+            //         points.push(candidate);
+            //     }
+            //
+            //     tries += 1
+            //     if(tries > 20000){
+            //         console.log('Too small bounding values for ', id)
+            //         break
+            //     }
+            // }
+            //
+            // let st = ',\n"'+id+'":[\n'
+            // points.forEach(p => {
+            //     st += "{'t': "+ p['t'].toFixed(3) +", 'l': "+ p['l'].toFixed(3) + "},\n"
+            // })
+            //
+            // st += ']'
+            //
+            // console.log(st)
+        }
+
+        let c = 0
+        let radius = [25, 35, 45, 55, 65, 70]
+        $airports =  $('.airport')
+        state_population.forEach(airport=> {
+
+            $($airports[c])
+                .children('.point')
+                .css('--radius',radius[c] +'px')
+
+            $($airports[c]).children('.rank').text(state_population.length - c)
+
+            console.log(airport)
+            $($airports[c]).find('.name').text(airport.get('airport'))
+
+            let d = (airport.get('delays') / 1000).toFixed(2)
+
+            $($airports[c]).find('.card-title').text('Delays: '+ d + 'K hrs')
+
+            $($airports[c]).find('.list-group-item').each(list_item => {
+
+            })
+
+            $($airports[c]).css({
+                "top": points[c]['t'] + 'px',
+                "left": points[c]['l'] + 'px',
+            })
+                .addClass('show')
+                .fadeIn()
+
+            c += 1
+        })
+
+
+    }, 500)
+
+
+
 }
 
 
+// D3 Zoom logic
 $(document).ready(function () {
-
 
     const svg = d3.select("#map-container svg")
 
@@ -365,6 +544,10 @@ $(document).ready(function () {
 
             // console.log(this)
 
+            $('#map-container .airport')
+                .fadeOut(0)
+                .removeClass('show')
+
             if($(this).hasClass('zoomed')){
                 reset()
                 return
@@ -389,6 +572,8 @@ $(document).ready(function () {
             const transform = d3.zoomIdentity
                 .translate(550 - x * scale, 300 - y * scale)
                 .scale(scale);
+
+            // console.log(transform.k, transform.x, transform.y)
 
             svg.transition()
                 .duration(800)
@@ -460,6 +645,7 @@ $(document).ready(function () {
     })
 
     function reset(){
+
         svg.transition()
             .duration(500)
             .call(zoom.transform, d3.zoomIdentity);

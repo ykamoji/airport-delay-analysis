@@ -20,6 +20,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/initializations.js"></script>
+    <script src="js/airport_locations.js"></script>
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
 </head>
@@ -312,6 +313,24 @@
         </g>
 
         </svg>
+        <div class="airport" style="display: none">
+            <span class="rank"></span>
+            <div class="point"></div>
+            <div class="card border-0 rounded-0 mb-3" style="max-width: 250px">
+                <span class="name bg-primary card-header rounded-0"></span>
+                <div class="card-body stats bg-light">
+                    <span class="card-title"></span>
+                    <div class="card-text">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"></li>
+                            <li class="list-group-item"></li>
+                            <li class="list-group-item"></li>
+                            <li class="list-group-item"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="searchbox" class="col-2">
         <div class="input-group row mt-5">
