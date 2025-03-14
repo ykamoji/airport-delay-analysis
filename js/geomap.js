@@ -199,10 +199,10 @@ function state_render(delays, is_count, data, id){
     airports_in_state.forEach(airport => state_population.set(airport, {
         'count': 0,
         'delays': 0,
-        'congestion':0,
-        'time_deviation':0,
-        'speed_deviation':0,
-        'recovery_efficiency':0
+        '0':0,
+        '1':0,
+        '2':0,
+        '3':0
     }))
 
     if(delays.length === 0){
@@ -218,16 +218,19 @@ function state_render(delays, is_count, data, id){
         let state_data = state_population.get(state['2'])
         state_data['count'] += 1
         state_data['delays'] += total
-        state_data['congestion'] += state['10']
-        state_data['time_deviation'] += state['11']
-        state_data['speed_deviation'] += state['12']
-        state_data['recovery_efficiency'] += state['13']
+        state_data['0'] += state['10']
+        state_data['1'] += state['11']
+        state_data['2'] += state['12']
+        state_data['3'] += state['13']
     })
 
     state_population.forEach((v,k,m) => {
         Object.keys(v).forEach(k => {
             if(k !== 'count' && k !== 'delays')
                 v[k]=(v[k]/v['count']).toFixed(4)
+            else if(k === 'delays'){
+                v[k] = is_count ? v[k] : Math.round(v[k]/60)
+            }
         })
         m.set(k, v)
     })
@@ -261,6 +264,8 @@ function populateMap(){
         CACHE.set('all_summerized', data)
         geo_map_render(data)
     });
+
+
 }
 
 
@@ -374,6 +379,11 @@ function geo_map_render(data){
             }
         }
     })
+
+    if($('#map-container svg').hasClass('zooming')){
+       let id = $('#map-container svg.zooming g.state path.zoomed').attr('class').split(' ')[0]
+       populateState(id)
+    }
 }
 
 
@@ -405,16 +415,14 @@ function data_search(data, search_type, id){
 }
 
 
-function getRandom(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 function populateState(id){
 
     $('#map-container svg g.state text').removeClass('zoomed')
     $('#map-container svg g.state #text-'+id).addClass('zoomed')
 
     let state_population = data_search(CACHE.get('all_summerized'), 'state', id)
+
+    let is_count = $('#toggle-slider').hasClass('turn')
 
     // console.log(state_population)
 
@@ -478,37 +486,47 @@ function populateState(id){
         }
 
         let c = 0
-        let radius = [25, 35, 45, 55, 65, 70]
+        let radius = [25, 35, 45, 55, 65, 70].reverse()
+        let gap = [25, 35, 45, 55, 75, 80].reverse()
         $airports =  $('.airport')
         state_population.forEach(airport=> {
 
-            $($airports[c])
-                .children('.point')
-                .css('--radius',radius[c] +'px')
+            $($airports[c]).find('.point').css('--radius',radius[c] +'px')
 
-            $($airports[c]).children('.rank').text(state_population.length - c)
+            $($airports[c]).find('.rank').text(c+1)
 
-            console.log(airport)
-            $($airports[c]).find('.name').text(airport.get('airport'))
+            $($airports[c]).siblings().find('.name').text(airport.get('airport'))
 
-            let d = (airport.get('delays') / 1000).toFixed(2)
+            let d = is_count ? airport.get('delays') : (airport.get('delays') / 1000).toFixed(2)+ 'K hrs '
 
-            $($airports[c]).find('.card-title').text('Delays: '+ d + 'K hrs')
+            $($airports[c]).siblings().find('.card-title').html(d)
 
-            $($airports[c]).find('.list-group-item').each(list_item => {
+            $($airports[c]).siblings().find('.table tr').each((idx, grp) => {
+                let val = airport.get(idx+'')
+                let cls = 'neg'
+                if(val > 0){
+                    val = '+'+val
+                    cls = 'pos'
+                }
 
+                $(grp).siblings().find('th:nth-of-type(2)').text(val).addClass(cls)
             })
 
             $($airports[c]).css({
                 "top": points[c]['t'] + 'px',
                 "left": points[c]['l'] + 'px',
             })
+                .fadeIn(300)
+                .parent()
                 .addClass('show')
-                .fadeIn()
+
+            $($airports[c]).siblings().css({
+                "top": points[c]['t'] + gap[c]+ 'px',
+                "left": points[c]['l'] - gap[c] + 'px',
+            })
 
             c += 1
         })
-
 
     }, 500)
 
@@ -642,6 +660,20 @@ $(document).ready(function () {
                 return
             }
             $('#map-container svg').removeClass('hovered')
+    })
+
+
+
+    $('.airport').on('mouseenter',function (){
+        $('.airport').css({'z-index':'10'})
+        $(this).css({'z-index':'100'})
+            .siblings()
+            .fadeIn(0)
+    }).on('mouseleave',function () {
+        $('.airport')
+            .css({'z-index':'10'})
+            .siblings()
+            .fadeOut(0)
     })
 
     function reset(){
