@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <link href="css/main.css" rel="stylesheet">
 
@@ -34,7 +35,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="#">Map</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Map</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">State</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Trend</a></li>
             </ul>
@@ -44,6 +45,7 @@
 
 <div id="map_distribution" class="row">
     <div id="map-container" class="col-10">
+        <div id="map-header" class=""></div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
             <g class="legend"></g>
             <g class="state">
@@ -313,21 +315,34 @@
         </g>
 
         </svg>
-        <div class="airport" style="display: none">
-            <span class="rank"></span>
-            <div class="point"></div>
-            <div class="card border-0 rounded-0 mb-3" style="max-width: 250px">
-                <span class="name bg-primary card-header rounded-0"></span>
-                <div class="card-body stats bg-light">
-                    <span class="card-title"></span>
-                    <div class="card-text">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item"></li>
-                            <li class="list-group-item"></li>
-                        </ul>
-                    </div>
+        <div class="container-fluid airport-base">
+            <span class="name text-wrap"></span>
+            <i class="fas fa-map-marker-alt loc"></i>
+            <div class="airport">
+                <div class="point"><span class="rank"></span></div>
+            </div>
+            <div class="card stats rounded-0 mb-3" style="max-width: 250px;display: none;">
+                <div class="card-body pt-2 pb-0">
+                    <div class="card-title text-center"></div>
+                    <table class="table table-borderless table-hover">
+                        <tbody>
+                        <tr>
+                            <th scope="row" class="pt-0">Congestion</th>
+                            <th scope="row" class="pt-0"></th>
+                        </tr>
+                        <tr>
+                            <th scope="col" class="pt-0">Time Deviation</th>
+                            <th scope="row" class="pt-0"></th>
+                        <tr>
+                            <th scope="col" class="pt-0">Speed Deviation</th>
+                            <th scope="row" class="pt-0"></th>
+                        </tr>
+                        <tr>
+                            <th scope="col" class="pt-0">Recovery Efficiency</th>
+                            <th scope="row" class="pt-0"></th>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
