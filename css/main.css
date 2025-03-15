@@ -104,7 +104,7 @@ body {
     opacity: 0;
 }
 
-#map-container .airport-base .airport, #map-container .airport-base .loc, #map-container .airport-base .stats{
+#map-container .airport-base .airport, #map-container .airport-base .loc, #map-container .airport-base .stats, #map-container .airport-base .name{
     position: absolute;
     cursor: pointer;
     transition: all 0.5s ease;
@@ -112,6 +112,7 @@ body {
 }
 
 #map-container .airport-base .loc{
+    color: seagreen;
     font-size: 1.2em;
     opacity: 0;
 }
@@ -152,7 +153,14 @@ body {
     opacity: 0;
 }
 
-#map-container .airport-base.show .airport .rank, #map-container .airport-base.show .loc{
+#map-container .airport-base .name{
+    font-size: 12px;
+    color: seagreen;
+    font-weight: bold;
+    opacity: 0;
+}
+
+#map-container .airport-base.show .airport .rank, #map-container .airport-base.show .loc, #map-container .airport-base.show .name{
     opacity: 1;
 }
 
@@ -160,11 +168,6 @@ body {
 #map-container .airport-base .stats{
     font-size: 12px;
     box-shadow: 0 0 5px grey;
-}
-
-#map-container .airport-base .name{
-    font-size: 12px;
-    font-weight: bolder;
 }
 
 #map-container .airport-base .stats .card-title{

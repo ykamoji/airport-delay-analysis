@@ -259,11 +259,12 @@ function populateMap(){
     if (CACHE.has('all_summerized')){
         geo_map_render(CACHE.get('all_summerized'))
     }
-
-    $.getJSON("assets/all_summerized.json", function(data) {
-        CACHE.set('all_summerized', data)
-        geo_map_render(data)
-    });
+    else{
+        $.getJSON("assets/all_summerized.json", function(data) {
+            CACHE.set('all_summerized', data)
+            geo_map_render(data)
+        });
+    }
 
 }
 
@@ -380,8 +381,8 @@ function geo_map_render(data){
     })
 
     if($('#map-container svg').hasClass('zooming')){
-       let id = $('#map-container svg.zooming g.state path.zoomed').attr('class').split(' ')[0]
-       populateState(id)
+        let id = $('#map-container svg.zooming g.state path.zoomed').attr('class').split(' ')[0]
+        populateState(id,'render')
     }
 }
 
@@ -417,19 +418,36 @@ function data_search(data, search_type, id){
 function camelCasing(text){
 
     return text.split(' ').map(word => {
-        console.log(word)
+        // console.log(word)
         let txt = '<span style="font-size:55px">'+ word.substring(0,1) +'</span>' + word.substring(1,)
         return txt + '&nbsp;&nbsp;'
     })
 }
 
-function populateState(id){
+
+function airport_ordering(airports){
+
+    airports.forEach((airport, idx) => {
+        let a_c = airport.get('airport').split(': ')
+        let city = a_c[0].split(',')[0]
+        airport.set('city',city)
+        airport.set('airport',a_c[1])
+        airport.set('rank', idx)
+    })
+
+
+    return airports.sort((a, b) => a.get('airport').localeCompare(b.get('airport')))
+}
+
+function populateState(id, step){
 
     $airports = $('.airport-base')
 
     $('#map-container svg g.state text').removeClass('zoomed')
 
-    $airports.removeClass('show')
+    if(step === 'enter'){
+        $airports.removeClass('show')
+    }
 
     $('#map-container svg g.state #text-'+id).addClass('zoomed')
 
@@ -442,7 +460,7 @@ function populateState(id){
         let points = AIRPORT_POINTS[id]
 
         let state_name = Object.entries(STATES).filter(st => st[1] === id)[0][0]
-        let header_top = points.reduce((a,b) => a['t'] < b['t'] ? a : b)['t'] - 70
+        let header_top = points.reduce((a,b) => a['t'] < b['t'] ? a : b)['t'] - 100
 
         $('#map-container #map-header')
             .html(camelCasing(state_name.toUpperCase()))
@@ -453,16 +471,18 @@ function populateState(id){
             })
 
 
-        let c = 0
+        state_population = airport_ordering(state_population)
+
+        // console.log(state_population)
+
         let radius = [25, 35, 45, 55, 65, 70].reverse()
-        state_population.forEach(airport=> {
-            // console.log(airport)
+        state_population.forEach((airport, c)=> {
 
-            $($airports[c]).find('.point').css('--radius',radius[c] +'px')
+            let rank = airport.get('rank')
 
-            $($airports[c]).find('.rank').text(c+1)
+            $($airports[c]).find('.point').css('--radius', radius[rank] +'px')
 
-            $($airports[c]).find('.name').text(airport.get('airport'))
+            $($airports[c]).find('.rank').text(rank+1)
 
             let d = $('#toggle-slider').hasClass('turn') ? airport.get('delays') :
                 (airport.get('delays') / 1000).toFixed(2)+ 'K hrs '
@@ -487,19 +507,27 @@ function populateState(id){
                 }).fadeIn(300)
 
             $($airports[c])
+                .find('.name')
+                .text(airport.get('airport')+ ', '+airport.get('city'))
+                .css({
+                    "top": points[c]['t'] - 20  + 'px',
+                    "left": points[c]['l'] + 'px',
+                }).fadeIn(300)
+
+
+            $($airports[c])
                 .find('.airport')
                 .css({
                 "top": points[c]['t'] + 'px',
                 "left": points[c]['l'] + 'px',
-            })
-                .fadeIn(300)
+            }).fadeIn(300)
 
 
             $($airports[c])
                 .addClass('show')
                 .find('.stats')
                 .css({
-                "top": points[c]['t'] + radius[c] + 5 + 'px',
+                "top": points[c]['t'] + radius[rank] + 5 + 'px',
                 "left": points[c]['l'] - 100 + 'px',
             })
 
@@ -508,8 +536,20 @@ function populateState(id){
 
     }, 200)
 
+}
 
+function reset_state() {
+    $('#map-container .airport, #map-container #map-header, .airport-base .loc,.airport-base .loc,.airport-base .name')
+        .fadeOut(0)
 
+    let clear_contents = [
+        '#map-container .airport-base .name',
+        '#map-container .airport-base .rank',
+        '#map-container .airport-base .card-title',
+        '#map-container .airport-base .stats .table tr th:nth-of-type(2)',
+    ]
+
+    clear_contents.forEach(content => $(content).html(''))
 }
 
 
@@ -538,16 +578,10 @@ $(document).ready(function () {
                 return
             }
 
-            // console.log(this)
-            $('#map-container #map-header').fadeOut(0)
-            $('.airport-base .loc').fadeOut(0)
-
-            $('#map-container .airport')
-                .fadeOut(0)
-                .removeClass('show')
+            reset_state()
 
             if($(this).hasClass('zoomed')){
-                reset()
+                reset_geo_map()
                 return
             }
 
@@ -603,7 +637,7 @@ $(document).ready(function () {
                         $(html).parent().css('font-size', '2px')
                     }, time_to_hide)
                 })
-                populateState(id)
+                populateState(id, 'enter')
             }, 300)
 
 
@@ -643,7 +677,6 @@ $(document).ready(function () {
     })
 
 
-
     $('.airport-base').on('mouseenter',function (){
         $('.airport-base .stats').css({'z-index':'10'})
         $(this)
@@ -657,7 +690,7 @@ $(document).ready(function () {
             .fadeOut(0)
     })
 
-    function reset(){
+    function reset_geo_map(){
 
         svg.transition()
             .duration(500)
