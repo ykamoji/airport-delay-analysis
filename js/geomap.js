@@ -453,6 +453,11 @@ function populateState(id, step){
 
     let state_population = data_search(CACHE.get('all_summerized'), 'state', id)
 
+    let airport_coordinates_cache = new Map()
+    if(CACHE.has('airport_coordinates')){
+        airport_coordinates_cache = CACHE.get('airport_coordinates')
+    }
+
     // console.log(state_population)
 
     setTimeout(function (){
@@ -499,27 +504,45 @@ function populateState(id, step){
                 $(grp).text(val).addClass(cls)
             })
 
+            let airport_location = airport.get('airport')+ ', '+airport.get('city')
+
+
+            if(!airport_coordinates_cache.has(airport_location)){
+                if(step === 'enter'){
+                    airport_coordinates_cache.set(airport_location, points[c])
+                }
+                else{
+                    let new_point = {'t':0,'l':0}
+                    new_point['t'] = points[c]['t'] + (Math.random() > 0.5 ?  Math.random(): -Math.random())*50
+                    new_point['l'] = points[c]['l'] + (Math.random() > 0.5 ?  Math.random(): -Math.random())*50
+                    airport_coordinates_cache.set(airport_location, new_point)
+                }
+            }
+
+            let top_val = airport_coordinates_cache.get(airport_location)['t']//points[c]['t']
+            let left_val = airport_coordinates_cache.get(airport_location)['l']//points[c]['l']
+
             $($airports[c])
                 .find('.loc')
                 .css({
-                    "top": points[c]['t'] - 20  + 'px',
-                    "left": points[c]['l'] - 20 + 'px',
+                    "top": top_val - 20  + 'px',
+                    "left": left_val - 20 + 'px',
                 }).fadeIn(300)
 
             $($airports[c])
                 .find('.name')
-                .text(airport.get('airport')+ ', '+airport.get('city'))
+                .text(airport_location)
                 .css({
-                    "top": points[c]['t'] - 20  + 'px',
-                    "left": points[c]['l'] + 'px',
+                    "top": top_val - 20  + 'px',
+                    "left": left_val + 'px',
                 }).fadeIn(300)
 
 
             $($airports[c])
                 .find('.airport')
                 .css({
-                "top": points[c]['t'] + 'px',
-                "left": points[c]['l'] + 'px',
+                "top": top_val + 'px',
+                "left": left_val + 'px',
             }).fadeIn(300)
 
 
@@ -527,12 +550,14 @@ function populateState(id, step){
                 .addClass('show')
                 .find('.stats')
                 .css({
-                "top": points[c]['t'] + radius[rank] + 5 + 'px',
-                "left": points[c]['l'] - 100 + 'px',
+                "top": top_val + radius[rank] + 5 + 'px',
+                "left": left_val - 100 + 'px',
             })
 
             c += 1
         })
+
+        CACHE.set('airport_coordinates', airport_coordinates_cache)
 
     }, 200)
 
@@ -678,16 +703,29 @@ $(document).ready(function () {
 
 
     $('.airport-base').on('mouseenter',function (){
-        $('.airport-base .stats').css({'z-index':'10'})
+        $('.airport-base .stats, .airport-base .name, .airport-base .loc, .airport-base .airport')
+            .css({'z-index':'10'})
         $(this)
             .find('.stats')
             .css({'z-index':'100'})
             .fadeIn(0)
+
+        $(this).find('.name,.loc,.airport').css({'z-index':'100'})
+
+        const $current_hovered = $(this)
+        $('.airport-base').each((idx, ele) => {
+            if($current_hovered[0] !== $(ele)[0]){
+                $(ele).find('.name,.loc')
+                    .css({'opacity':'0.3'})
+            }
+        })
     }).on('mouseleave',function () {
         $base = $('.airport-base')
+        $base.find('.airport-base .airport').css({'z-index':'10'})
         $base.find('.stats')
             .css({'z-index':'10'})
             .fadeOut(0)
+        $base.find('.name,.loc').css({'opacity':'1','z-index':'10'})
     })
 
     function reset_geo_map(){
