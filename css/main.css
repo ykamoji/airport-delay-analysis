@@ -1,5 +1,30 @@
+html {
+    scroll-behavior: smooth;
+}
+
+
 body {
     background-color: whitesmoke;
+}
+
+.nav-link{
+    font-weight: 500;
+}
+
+#slider{
+    position: absolute;
+    bottom: 10px;
+    height: 3px;
+    background-color: whitesmoke;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover{
+    color: whitesmoke;
+}
+
+#map_distribution{
+
 }
 
 #map-container{

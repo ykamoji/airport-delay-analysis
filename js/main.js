@@ -234,4 +234,29 @@ $(document).ready(function () {
 
     })
 
+    function set_slider_width(ele){
+        $('#slider').css({
+            'width':ele.offsetWidth + 'px',
+            'left': ele.offsetLeft +'px'
+        })
+    }
+
+    $('.nav-link.active').each((active, ele) => set_slider_width(ele))
+
+    $('.nav-link').click(function (e){
+        e.preventDefault()
+        $('.nav-link').removeClass('active')
+        $(this).addClass('active')
+        set_slider_width(this)
+
+        let $target = $($(this).attr('href'))[0]
+
+        window.scrollTo({
+            top: $target.offsetTop - $('.navbar').height() - 30,
+            behavior: 'smooth'
+        });
+
+    })
+
+
 });
