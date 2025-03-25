@@ -148,8 +148,8 @@ body {
 
 #map-container .airport .point{
     position: relative;
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     border-radius: 100%;
     display: flex;
     justify-content: center;
@@ -159,8 +159,6 @@ body {
 }
 
 #map-container .airport-base.show .airport .point{
-    height : var(--radius);
-    width : var(--radius);
     background-color: whitesmoke;
     border: 4px solid royalblue;
 }
@@ -224,8 +222,8 @@ body {
 
 #searchbox #toggle-slider{
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     width: 50%;
     height: 100%;
     background-color: darkred;
