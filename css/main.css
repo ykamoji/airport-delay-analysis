@@ -187,6 +187,9 @@ body {
     opacity: 1;
 }
 
+#map-container .airport-base.show .loc.highlight-out, #map-container .airport-base.show .name.highlight-out{
+    opacity: 0.3;
+}
 
 #map-container .airport-base .stats{
     font-size: 12px;
