@@ -700,27 +700,20 @@ $(document).ready(function () {
 
 
     $airport_base.on('mouseenter',function (){
-        $('.airport-base .stats, .airport-base .name, .airport-base .loc, .airport-base .airport')
-            .css({'z-index':'10'})
-        $(this)
-            .find('.stats')
-            .css({'z-index':'100'})
+        $(this).find('.stats')
+            .css({'z-index':'20'})
             .fadeIn(0)
-
-        $(this).find('.name,.loc,.airport').css({'z-index':'100'})
-
         const $current_hovered = $(this)
         $airport_base.each((idx, ele) => {
             if($current_hovered[0] !== $(ele)[0]){
-                $(ele).find('.name,.loc').addClass('highlight-out')
+                $(ele).addClass('highlight-out')
             }
         })
     }).on('mouseleave',function () {
-        $airport_base.find('.airport, .loc, .name').css({'z-index':'10'})
         $airport_base.find('.stats')
             .css({'z-index':'10'})
             .fadeOut(0)
-        $airport_base.find('.name,.loc').removeClass('highlight-out')
+        $airport_base.removeClass('highlight-out')
     })
 
     function reset_geo_map(){
