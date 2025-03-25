@@ -134,6 +134,7 @@ body {
     cursor: pointer;
     transition: all 0.5s ease;
     transform-origin: center;
+    z-index: 20;
 }
 
 #map-container .airport-base .loc{
@@ -187,8 +188,12 @@ body {
     opacity: 1;
 }
 
-#map-container .airport-base.show .loc.highlight-out, #map-container .airport-base.show .name.highlight-out{
-    opacity: 0.3;
+#map-container .airport-base.show.highlight-out .loc,
+#map-container .airport-base.show.highlight-out .name,
+#map-container .airport-base.show.highlight-out .stats,
+#map-container .airport-base.show.highlight-out .airport{
+    z-index: 10;
+    opacity: 0.2;
 }
 
 #map-container .airport-base .stats{
