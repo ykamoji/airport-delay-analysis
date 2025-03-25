@@ -85,20 +85,17 @@ function date_render(dates, data){
         return data
     }
 
-    let worklist = null
     let from_year = parseInt(dates['from'].split('-')[0])
     let to_year = parseInt(dates['to'].split('-')[0])
 
     let from_month = parseInt(dates['from'].split('-')[1])
     let to_month = parseInt(dates['to'].split('-')[1])
 
-    worklist = data.filter(d => {
+    return data.filter(d => {
         return parseInt(d['0'].split('-')[0]) >= from_year && parseInt(d['0'].split('-')[1]) >= from_month
     }).filter(d => {
         return parseInt(d['0'].split('-')[0]) <= to_year &&  parseInt(d['0'].split('-')[1]) <= to_month
     })
-
-    return worklist
 }
 
 
@@ -369,7 +366,7 @@ function geo_map_render(data){
                 else
                     v =  Math.round( v/ 1000)+'K'
 
-                $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
+                let $html = '<tspan>'+ id.toUpperCase() +'</tspan>'+
                     '<tspan x="'+ x +'" y="'+ y +'">'+ v +'</tspan>'
 
                 RESET_COORDINATE_MAP.set(id, y)
@@ -441,7 +438,7 @@ function airport_ordering(airports){
 
 function populateState(id, step){
 
-    $airports = $('.airport-base')
+    let $airports = $('.airport-base')
 
     $('#map-container svg g.state text').removeClass('zoomed')
 
@@ -554,7 +551,6 @@ function populateState(id, step){
                 "left": left_val - 100 + 'px',
             })
 
-            c += 1
         })
 
         CACHE.set('airport_coordinates', airport_coordinates_cache)
@@ -621,8 +617,6 @@ $(document).ready(function () {
             let scale = 5;
             if(SCALE_MAP[id]) scale = SCALE_MAP[id]
 
-            const width = bbox.width * scale;
-            const height = bbox.height * scale;
             const x = bbox.x + bbox.width / 2;
             const y = bbox.y + bbox.height / 2;
 
@@ -702,7 +696,10 @@ $(document).ready(function () {
     })
 
 
-    $('.airport-base').on('mouseenter',function (){
+    let $airport_base = $('.airport-base')
+
+
+    $airport_base.on('mouseenter',function (){
         $('.airport-base .stats, .airport-base .name, .airport-base .loc, .airport-base .airport')
             .css({'z-index':'10'})
         $(this)
@@ -713,19 +710,17 @@ $(document).ready(function () {
         $(this).find('.name,.loc,.airport').css({'z-index':'100'})
 
         const $current_hovered = $(this)
-        $('.airport-base').each((idx, ele) => {
+        $airport_base.each((idx, ele) => {
             if($current_hovered[0] !== $(ele)[0]){
-                $(ele).find('.name,.loc')
-                    .css({'opacity':'0.3'})
+                $(ele).find('.name,.loc').addClass('highlight-out')
             }
         })
     }).on('mouseleave',function () {
-        $base = $('.airport-base')
-        $base.find('.airport-base .airport').css({'z-index':'10'})
-        $base.find('.stats')
+        $airport_base.find('.airport, .loc, .name').css({'z-index':'10'})
+        $airport_base.find('.stats')
             .css({'z-index':'10'})
             .fadeOut(0)
-        $base.find('.name,.loc').css({'opacity':'1','z-index':'10'})
+        $airport_base.find('.name,.loc').removeClass('highlight-out')
     })
 
     function reset_geo_map(){
