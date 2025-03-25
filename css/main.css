@@ -24,7 +24,7 @@ body {
 }
 
 #map_distribution{
-
+    --radius: 0
 }
 
 #map-container{
@@ -159,6 +159,8 @@ body {
 }
 
 #map-container .airport-base.show .airport .point{
+    height : var(--radius);
+    width : var(--radius);
     background-color: whitesmoke;
     border: 4px solid royalblue;
 }
