@@ -43,9 +43,9 @@ $(document).ready(function () {
 
     populateMap()
 
-    $map_container =  $('#map-container')
-    $airport = $('#map-container .airport-base')
-    for (var i = 0; i < 5; i++) {
+    let $map_container =  $('#map-container')
+    let $airport = $('#map-container .airport-base')
+    for (let i = 0; i < 5; i++) {
         $map_container.append($airport.clone())
     }
 
@@ -113,8 +113,8 @@ $(document).ready(function () {
                 y += CORRECTION_MAP[state_id]['y']
             }
 
-            text.setAttribute("x", x)
-            text.setAttribute("y", y)
+            text.setAttribute("x", x+'')
+            text.setAttribute("y", y+'')
             text.setAttribute("text-anchor", "middle")
             text.setAttribute("font-size", "7px")
             text.setAttribute("font-weight", "bolder")
@@ -169,7 +169,7 @@ $(document).ready(function () {
     $(".suggestions").on("click", ".dropdown-item", function () {
         let selectedText = $(this).text();
 
-        $input = $(this).parent().prev().prev()
+        let $input = $(this).parent().prev().prev()
 
         let id = $input.attr('id').split('-')[0]
 
@@ -227,7 +227,7 @@ $(document).ready(function () {
     })
 
     $('#searchbox .check-single .form-check-input').change(function () {
-        $other_input = $(this).parent().siblings().children('.form-check-input')
+        let $other_input = $(this).parent().siblings().children('.form-check-input')
 
         if($other_input.prop('checked'))
             $other_input.prop('checked', false)

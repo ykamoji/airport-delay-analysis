@@ -24,7 +24,7 @@ body {
 }
 
 #map_distribution{
-
+    --radius: 0
 }
 
 #map-container{
@@ -134,6 +134,7 @@ body {
     cursor: pointer;
     transition: all 0.5s ease;
     transform-origin: center;
+    z-index: 20;
 }
 
 #map-container .airport-base .loc{
@@ -148,8 +149,8 @@ body {
 
 #map-container .airport .point{
     position: relative;
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     border-radius: 100%;
     display: flex;
     justify-content: center;
@@ -187,6 +188,13 @@ body {
     opacity: 1;
 }
 
+#map-container .airport-base.show.highlight-out .loc,
+#map-container .airport-base.show.highlight-out .name,
+#map-container .airport-base.show.highlight-out .stats,
+#map-container .airport-base.show.highlight-out .airport{
+    z-index: 10;
+    opacity: 0.2;
+}
 
 #map-container .airport-base .stats{
     font-size: 12px;
@@ -224,8 +232,8 @@ body {
 
 #searchbox #toggle-slider{
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     width: 50%;
     height: 100%;
     background-color: darkred;
