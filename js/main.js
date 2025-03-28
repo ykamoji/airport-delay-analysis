@@ -42,7 +42,6 @@ $(document).ready(function () {
     })
 
     populateMap()
-    populateStateDelays()
 
     let $map_container =  $('#map-container')
     let $airport = $('#map-container .airport-base')
