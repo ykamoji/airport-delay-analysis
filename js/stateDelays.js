@@ -1,4 +1,5 @@
-RANGE = {min:100, max: 150}
+const RANGE = {min:100, max: 150}
+const MIN_DELAY = 20
 const centerX = 250, centerY = 250;
 
 function populateStateDelays(id){
@@ -181,6 +182,13 @@ function resetAirport(){
     $('#state-chart #zoomed-text')
         .text('')
         .css({'opacity':0})
+
+    $('#state-chart #delay-group path').each((index, element) => {
+        $(element).attr('d', '')
+            .attr("fill", '')
+            .attr('data-id','')
+
+    }).css({'opacity': 0})
 }
 
 function getAirportAbbr(data){
@@ -210,21 +218,14 @@ function populateAirport($pie, index, airport_cache){
     let maxVal =  airport_cache.get('maxVal')
 
     let startAngle = index * anglePerSegment;
-    let radius = transformRadius(data['8'], minVal, maxVal, RANGE.min, RANGE.max) * 1.5
+    let radius = transformRadius(data['8'], minVal, maxVal, RANGE.min, RANGE.max) * 1.7
 
     $pie.attr('d', createPath(radius, startAngle, anglePerSegment))
 
     let radii = [];
     ['3', '4', '5', '6', '7'].forEach(delay_idx => {
-        // console.log(data[delay_idx])
         radii.push(data[delay_idx]/ data['8'] * radius)
     })
-
-    // TODO: Fix the data gap issue
-    //  If the gap is too small, introduce small distortion
-    //  Maybe change the order of delays shown according to global sense
-
-    // console.log(radii)
 
     radii = radii.reduce((acc, curr, index) => {
         if (index === 0) {
@@ -235,16 +236,26 @@ function populateAirport($pie, index, airport_cache){
         return acc;
     },[])
 
-    // console.log(radii)
+    console.log(radii)
 
-    $('#state-chart #delay-group path').each((index, element) => {
-        let r = radii[radii.length -1 - index]
-        $(element).attr('d', createPath(r, startAngle, anglePerSegment))
-        $(element).attr('id', r)
-        $(element).attr('fill', $pie.attr('fill'))
+    radii.slice(1,).forEach((v, index)=> {
+        if(radii[index] - radii[index-1] < MIN_DELAY){
+            radii[index] +=  MIN_DELAY - (radii[index] - radii[index-1])
+        }
     })
 
+    console.log(radii)
+
     setTimeout(function (){
+
+        $('#state-chart #delay-group path')
+            .css({'opacity': 0})
+            .each((i, element) => {
+                let r = radii[radii.length -1 - i]
+                $(element).attr('fill', $pie.attr('fill'))
+                $(element).attr('d', createPath(r, startAngle, anglePerSegment))
+                $(element).attr('data-id', index)
+            }).css({'opacity': 1})
 
         let deg = startAngle * (180 / Math.PI)
         // console.log(deg)
@@ -308,5 +319,12 @@ $(document).ready(function (){
             $(this).addClass('zoomed')
             populateAirport($(this), index, airport_cache)
         }
+    })
+
+    $('#state-chart #delay-group path').on('click', function (){
+        let index = $(this).attr('data-id')
+        let airport_cache = CACHE.get('airport_details')
+        $('#state-chart #airport-details path#path-'+index).attr('d',  airport_cache.get(''+index))
+        resetAirport()
     })
 })

@@ -417,3 +417,7 @@ body {
 #state-chart.zoomed #airport-details path.zoomed{
 
 }
+
+#state-chart #delay-group path{
+    transition: opacity 0.5s ease;
+}
