@@ -389,3 +389,31 @@ body {
 #state-chart{
     cursor: pointer;
 }
+
+
+#state-chart #airport-details path, #state-chart #airport-details text, #state-chart #middle_circle{
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+#state-chart.hovering #airport-details path:not(.hovering){
+    stroke-width:0.5;
+}
+
+#state-chart.hovering #airport-details path.hovering{
+    filter: drop-shadow(4px 4px 8px #ccc);
+    stroke-width:5;
+}
+
+
+#state-chart.zoomed #middle_circle{
+    opacity: 0;
+}
+
+#state-chart.zoomed #airport-details path:not(.zoomed), #state-chart.zoomed #airport-details text{
+    opacity: 0;
+}
+
+#state-chart.zoomed #airport-details path.zoomed{
+
+}

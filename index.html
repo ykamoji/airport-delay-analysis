@@ -22,9 +22,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/initializations.js"></script>
     <script src="js/airport_locations.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
     <script src="js/stateDelays.js"></script>
-    <script src="js/main.js"></script>
 </head>
 <body>
 
@@ -558,9 +558,21 @@
     </div>
 </div>
 
-<div id="state_distribution" class="container">
+<div id="state_distribution" class="container-fluid">
     <svg xmlns="http://www.w3.org/2000/svg" id="state-chart" viewBox="0 0 1000 600">
-        <circle cx="200" cy="200" r="30" fill="whitesmoke" stroke="whitesmoke" />
+        <g id="airport-details">
+            <path stroke="whitesmoke" stroke-width="3"></path>
+            <text font-size="9px"></text>
+        </g>
+        <g id="delay-group">
+            <path stroke="whitesmoke" stroke-width="3"></path>
+            <path stroke="whitesmoke" stroke-width="3"></path>
+            <path stroke="whitesmoke" stroke-width="3"></path>
+            <path stroke="whitesmoke" stroke-width="3"></path>
+            <path stroke="whitesmoke" stroke-width="3"></path>
+        </g>
+        <text id="zoomed-text" font-size="8px" font-weight="bold" style="opacity: 0"></text>
+        <circle cx="250" cy="250" r="30" id="middle_circle" fill="whitesmoke" stroke="whitesmoke" />
     </svg>
 </div>
 <div id="trends">

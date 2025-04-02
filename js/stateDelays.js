@@ -1,3 +1,6 @@
+RANGE = {min:100, max: 150}
+const centerX = 250, centerY = 250;
+
 function populateStateDelays(id){
 
     if (CACHE.has('all_states')){
@@ -6,6 +9,7 @@ function populateStateDelays(id){
     else{
         $.getJSON("assets/all_state_data.json", function(data) {
             CACHE.set('all_states', data)
+            CACHE.set('airport_details', new Map())
             state_map_render(data, id)
         });
     }
@@ -83,63 +87,100 @@ function state_data_search(data, id){
     return data_list
 }
 
-function transformRadius(x, inMin, inMax, outMin, outMax) {
-    return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+function state_map_render(data, id){
+
+    let filtered_data = state_data_search(data, id)
+
+    // console.log(filtered_data)
+
+    // $($('.nav-link')[1]).click()
+
+    let dataValues = filtered_data.map(d => d['8'])
+    let minVal = Math.min(...dataValues)
+    let maxVal = Math.max(...dataValues)
+
+    // TODO:: Find condition to manipulate colors
+    if(true){
+        minVal -= 5000
+        maxVal += 1000
+    }
+
+    CACHE.get('airport_details').set('data', filtered_data)
+    CACHE.get('airport_details').set('minVal', minVal)
+    CACHE.get('airport_details').set('maxVal', maxVal)
+
+    let abbrList = getAirportAbbr(filtered_data)
+
+    let colorPalette = d3.scaleSequential([minVal, maxVal], d3.interpolateReds)
+
+    createSegmentedPieChart(dataValues, abbrList, colorPalette, minVal, maxVal);
+}
+
+function transformRadius(x, inMin, inMax) {
+    return (x - inMin) * (RANGE.max - RANGE.min) / (inMax - inMin) + RANGE.min;
+}
+
+function createPath(radius, startAngle, anglePerSegment) {
+    let x1 = centerX + radius * Math.cos(startAngle);
+    let y1 = centerY + radius * Math.sin(startAngle);
+    let x2 = centerX + radius * Math.cos(startAngle + anglePerSegment);
+    let y2 = centerY + radius * Math.sin(startAngle + anglePerSegment);
+
+    return `M${centerX},${centerY} L${x1},${y1} A${radius},${radius} 0 0,1 ${x2},${y2} Z`;
 }
 
 function createSegmentedPieChart(data, abbrList, colors, minVal, maxVal) {
-    let svg = $('#state-chart');
-    let centerX = 200, centerY = 200;
+
     let numSegments = data.length;
     let totalAngle = Math.PI * 2;
     let anglePerSegment = totalAngle / numSegments;
 
+    CACHE.get('airport_details').set('anglePerSegment', anglePerSegment)
+
+    let $path = $('#state-chart #airport-details path')
+    let $text = $('#state-chart #airport-details text')
+
     data.forEach((value, index) => {
         let startAngle = index * anglePerSegment;
-        let radius = transformRadius(value, minVal, maxVal, 100, 200)
+        let radius = transformRadius(value, minVal, maxVal)
+        let pathData = createPath(radius, startAngle, anglePerSegment)
 
-        // console.log(index, radius)
+        CACHE.get('airport_details').set(''+index, pathData)
 
-        let x1 = centerX + radius * Math.cos(startAngle);
-        let y1 = centerY + radius * Math.sin(startAngle);
-        let x2 = centerX + radius * Math.cos(startAngle + anglePerSegment);
-        let y2 = centerY + radius * Math.sin(startAngle + anglePerSegment);
-
-        let pathData = `M${centerX},${centerY} L${x1},${y1} A${radius},${radius} 0 0,1 ${x2},${y2} Z`;
-
-        let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        let path = $path[index];
         path.setAttribute("d", pathData);
+        path.setAttribute("id", 'path-'+index)
         path.setAttribute("fill", colors(value));
-        path.setAttribute("stroke", "whitesmoke");
-        path.setAttribute("stroke-width", "3");
-        svg.prepend(path);
 
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-
-        // console.log(startAngle, startAngle + anglePerSegment)
-
+        const text = $text[index]
         let mid = (startAngle * 2 + anglePerSegment)/2
         let deg = mid * (180 / Math.PI)
-        let text_x = centerX
-        let text_y = centerY
 
         if(deg > 90 && deg < 270){
             radius *= 1.2
-            deg = deg - 180
+            deg -= 180
         }else{
             radius *= 1.05
         }
 
-        text_x = centerX + radius * Math.cos(mid)
-        text_y = centerY + radius * Math.sin(mid)
+        let text_x = centerX + radius * Math.cos(mid)
+        let text_y = centerY + radius * Math.sin(mid)
         text.setAttribute("transform", `rotate(${deg}, ${text_x}, ${text_y})`)
         text.setAttribute("x", text_x+'')
         text.setAttribute("y", text_y+'')
-
-        text.setAttribute("font-size", "11px")
-        text.textContent = abbrList[index]['abbrName']; // Display the original data value
-        svg.append(text);
+        text.setAttribute("id", 'text-'+index)
+        text.textContent = abbrList[index]['abbrName'];
     });
+}
+
+
+function resetAirport(){
+    $('#state-chart, #state-chart #airport-details path, #state-chart #airport-details text')
+        .removeClass('zoomed')
+
+    $('#state-chart #zoomed-text')
+        .text('')
+        .css({'opacity':0})
 }
 
 function getAirportAbbr(data){
@@ -161,27 +202,111 @@ function getAirportAbbr(data){
 
 }
 
-function state_map_render(data, id){
+function populateAirport($pie, index, airport_cache){
 
-    let filtered_data = state_data_search(data, id)
+    let anglePerSegment = airport_cache.get('anglePerSegment')
+    let data = airport_cache.get('data')[index]
+    let minVal =  airport_cache.get('minVal')
+    let maxVal =  airport_cache.get('maxVal')
 
-    // console.log(filtered_data)
+    let startAngle = index * anglePerSegment;
+    let radius = transformRadius(data['8'], minVal, maxVal, RANGE.min, RANGE.max) * 1.5
 
-    $($('.nav-link')[1]).click()
+    $pie.attr('d', createPath(radius, startAngle, anglePerSegment))
 
-    let dataValues = filtered_data.map(d => d['8'])
-    let minVal = Math.min(...dataValues)
-    let maxVal = Math.max(...dataValues)
+    let radii = [];
+    ['3', '4', '5', '6', '7'].forEach(delay_idx => {
+        // console.log(data[delay_idx])
+        radii.push(data[delay_idx]/ data['8'] * radius)
+    })
 
-    // TODO:: Find condition to manipulate colors
-    if(true){
-        minVal -= 5000
-        maxVal += 1000
+    // TODO: Fix the data gap issue
+    //  If the gap is too small, introduce small distortion
+    //  Maybe change the order of delays shown according to global sense
+
+    // console.log(radii)
+
+    radii = radii.reduce((acc, curr, index) => {
+        if (index === 0) {
+            acc.push(curr)
+        }else{
+            acc.push(curr + acc[index - 1])
+        }
+        return acc;
+    },[])
+
+    // console.log(radii)
+
+    $('#state-chart #delay-group path').each((index, element) => {
+        let r = radii[radii.length -1 - index]
+        $(element).attr('d', createPath(r, startAngle, anglePerSegment))
+        $(element).attr('id', r)
+        $(element).attr('fill', $pie.attr('fill'))
+    })
+
+    setTimeout(function (){
+
+        let deg = startAngle * (180 / Math.PI)
+        // console.log(deg)
+        let text_x = centerX
+        let text_y = centerY
+        let x_adj = 10
+        let y_adg = -5
+        if(deg > 90 && deg < 270){
+            deg -= 180
+            text_x = centerX + radius * Math.cos(startAngle);
+            text_y =  centerY + radius * Math.sin(startAngle);
+            x_adj = 5
+            y_adg = 10
+        }
+
+        $('#zoomed-text')
+            .attr("x", text_x+ x_adj)
+            .attr('transform', `rotate(${deg}, ${text_x}, ${text_y})`)
+            .attr("y", text_y + y_adg)
+            .css({'opacity': 1})
+            .text(data['1'])
+    }, 400)
+
+}
+
+$(document).ready(function (){
+
+    let $path = $('#state-chart #airport-details path')
+    let $text = $('#state-chart #airport-details text')
+    let $airport_details = $('#state-chart #airport-details')
+
+    for (let i = 0; i < 15; i++) {
+        $airport_details.append($path.clone())
+        $airport_details.append($text.clone())
     }
 
-    let abbrList = getAirportAbbr(filtered_data)
+    let $state_chart = $('#state-chart')
 
-    let colorPalette = d3.scaleSequential([minVal, maxVal], d3.interpolateReds)
+    $('#state-chart #airport-details path').on('mouseenter',function (){
+        if(!$state_chart.hasClass('zoomed')){
+            $state_chart.addClass('hovering')
+            $(this).addClass('hovering')
+        }
+    }).on('mouseleave',function (){
+        if(!$state_chart.hasClass('zoomed')) {
+            $state_chart.removeClass('hovering')
+            $('#airport-details path').removeClass('hovering')
+        }
+    }).on('click', function (){
+        $state_chart.removeClass('hovering')
+        $('#airport-details path').removeClass('hovering')
 
-    createSegmentedPieChart(dataValues, abbrList, colorPalette, minVal, maxVal);
-}
+        let index = $(this).attr('id').split('-')[1]
+        let airport_cache = CACHE.get('airport_details')
+        if($state_chart.hasClass('zoomed')){
+            $(this).attr('d', airport_cache.get(''+index))
+            resetAirport()
+        }
+        else {
+            $state_chart.addClass('zoomed')
+            $(this).addClass('zoomed')
+            populateAirport($(this), index, airport_cache)
+        }
+    })
+})

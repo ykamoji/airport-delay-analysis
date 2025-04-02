@@ -570,6 +570,22 @@ function reset_state() {
     ]
 
     clear_contents.forEach(content => $(content).html(''))
+
+    let $path = $('#state-chart #airport-details path')
+    let $text = $('#state-chart #airport-details text')
+
+    for (let i = 0; i < 15; i++) {
+        $($path[i]).attr("d", "")
+            .attr("class", "")
+            .attr("id", '')
+            .attr("fill", '')
+
+        $($text[i]).attr("transform", '')
+            .attr("x", '')
+            .attr("y", '')
+            .attr("id", '')
+            .text('')
+    }
 }
 
 
@@ -698,7 +714,6 @@ $(document).ready(function () {
 
 
     let $airport_base = $('.airport-base')
-
 
     $airport_base.on('mouseenter',function (){
         $(this).find('.stats')
