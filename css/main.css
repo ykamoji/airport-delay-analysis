@@ -423,23 +423,23 @@ body {
     font-weight: bold;
 }
 
-#state-chart #delay-group path.hovering.hovering-0{
+#state-chart #delay-group .hovering.hovering-0{
     fill:#a463f2
 }
 
-#state-chart #delay-group path.hovering.hovering-1{
+#state-chart #delay-group .hovering.hovering-1{
     fill: #e377c2
 }
 
-#state-chart #delay-group path.hovering.hovering-2{
+#state-chart #delay-group .hovering.hovering-2{
     fill: #17becf
 }
 
-#state-chart #delay-group path.hovering.hovering-3{
+#state-chart #delay-group .hovering.hovering-3{
     fill: #bcbd22
 }
 
-#state-chart #delay-group path.hovering.hovering-4{
+#state-chart #delay-group .hovering.hovering-4{
     fill: #7f7f7f
 }
 

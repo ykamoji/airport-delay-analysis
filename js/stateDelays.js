@@ -342,16 +342,14 @@ $(document).ready(function (){
         resetAirport()
     }).on('mouseenter', function (){
         let idx = $(this).attr('data-idx')
-        $(this)
-            .addClass('hovering')
-            .addClass('hovering-'+idx)
+        $(this).addClass('hovering')
         $('#state-chart #delay-group text').each((i, element) => {
             if($(element).attr('data-idx') === idx){
-                $(element).css({'opacity': 1})
+                $(element).css({'opacity': 1}).addClass('hovering')
             }
         })
     }).on('mouseleave', function (){
         $('#state-chart #delay-group path').removeClass('hovering')
-        $('#state-chart #delay-group text').css({'opacity':0})
+        $('#state-chart #delay-group text').css({'opacity':0}).removeClass('hovering')
     })
 })
