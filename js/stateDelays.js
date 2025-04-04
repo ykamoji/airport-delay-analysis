@@ -1,5 +1,5 @@
 const RANGE = {min:100, max: 150}
-const MIN_DELAY = 20
+const MIN_DELAY = 10
 const centerX = 250, centerY = 250;
 
 function populateStateDelays(id){
@@ -107,8 +107,6 @@ function state_map_render(data, id){
     }
 
     CACHE.get('airport_details').set('data', filtered_data)
-    CACHE.get('airport_details').set('minVal', minVal)
-    CACHE.get('airport_details').set('maxVal', maxVal)
 
     let abbrList = getAirportAbbr(filtered_data)
 
@@ -132,7 +130,8 @@ function createPath(radius, startAngle, anglePerSegment) {
 
 function createSegmentedPieChart(data, abbrList, colors, minVal, maxVal) {
 
-    let numSegments = data.length;
+
+    let numSegments = data.length < 6 ? 6: data.length;
     let totalAngle = Math.PI * 2;
     let anglePerSegment = totalAngle / numSegments;
 
@@ -187,9 +186,15 @@ function resetAirport(){
         $(element).attr('d', '')
             .attr("fill", '')
             .attr('data-id','')
+    }).css({'opacity': 0})
 
+    $('#state-chart #delay-group text').each((index, element) => {
+        $(element).text('', '')
+            .attr("x", '')
+            .attr('y','')
     }).css({'opacity': 0})
 }
+
 
 function getAirportAbbr(data){
     let abbrList = []
@@ -210,41 +215,35 @@ function getAirportAbbr(data){
 
 }
 
+
+
 function populateAirport($pie, index, airport_cache){
 
     let anglePerSegment = airport_cache.get('anglePerSegment')
     let data = airport_cache.get('data')[index]
-    let minVal =  airport_cache.get('minVal')
-    let maxVal =  airport_cache.get('maxVal')
 
     let startAngle = index * anglePerSegment;
-    let radius = transformRadius(data['8'], minVal, maxVal, RANGE.min, RANGE.max) * 1.7
+    let radius_t = 250
 
-    $pie.attr('d', createPath(radius, startAngle, anglePerSegment))
-
+    $pie.attr('d', createPath(radius_t, startAngle, anglePerSegment))
+    let i = 0
+    let portions = []
     let radii = [];
     ['3', '4', '5', '6', '7'].forEach(delay_idx => {
-        radii.push(data[delay_idx]/ data['8'] * radius)
+        let per = data[delay_idx]/ data['8']
+        let ratio =  (radius_t ** 2) * (per)
+        let cumulative_r = i > 0 ?  radii[i - 1] : 0
+        radii.push(Math.sqrt(ratio + (cumulative_r ** 2)) )
+        portions.push((per * 100).toPrecision(2)+'%')
+        i += 1
+
     })
-
-    radii = radii.reduce((acc, curr, index) => {
-        if (index === 0) {
-            acc.push(curr)
-        }else{
-            acc.push(curr + acc[index - 1])
-        }
-        return acc;
-    },[])
-
-    console.log(radii)
 
     radii.slice(1,).forEach((v, index)=> {
         if(radii[index] - radii[index-1] < MIN_DELAY){
             radii[index] +=  MIN_DELAY - (radii[index] - radii[index-1])
         }
     })
-
-    console.log(radii)
 
     setTimeout(function (){
 
@@ -255,6 +254,7 @@ function populateAirport($pie, index, airport_cache){
                 $(element).attr('fill', $pie.attr('fill'))
                 $(element).attr('d', createPath(r, startAngle, anglePerSegment))
                 $(element).attr('data-id', index)
+                $(element).attr('data-idx', i)
             }).css({'opacity': 1})
 
         let deg = startAngle * (180 / Math.PI)
@@ -265,11 +265,24 @@ function populateAirport($pie, index, airport_cache){
         let y_adg = -5
         if(deg > 90 && deg < 270){
             deg -= 180
-            text_x = centerX + radius * Math.cos(startAngle);
-            text_y =  centerY + radius * Math.sin(startAngle);
+            text_x = centerX + radius_t * Math.cos(startAngle);
+            text_y =  centerY + radius_t * Math.sin(startAngle);
             x_adj = 5
             y_adg = 10
         }
+
+        $('#state-chart #delay-group text')
+            .css({'opacity': 0})
+            .each((i, element) => {
+                let theta =  startAngle + anglePerSegment
+                let r_text = radii[radii.length -1 - i]
+                let t_x = centerX + r_text * Math.cos(theta)
+                let t_y = centerY + r_text * Math.sin(theta)
+                $(element).attr('x', t_x)
+                $(element).attr('y', t_y)
+                $(element).attr('data-idx', i)
+                $(element).text(portions[portions.length -1 - i])
+            })
 
         $('#zoomed-text')
             .attr("x", text_x+ x_adj)
@@ -321,10 +334,24 @@ $(document).ready(function (){
         }
     })
 
+
     $('#state-chart #delay-group path').on('click', function (){
         let index = $(this).attr('data-id')
         let airport_cache = CACHE.get('airport_details')
         $('#state-chart #airport-details path#path-'+index).attr('d',  airport_cache.get(''+index))
         resetAirport()
+    }).on('mouseenter', function (){
+        let idx = $(this).attr('data-idx')
+        $(this)
+            .addClass('hovering')
+            .addClass('hovering-'+idx)
+        $('#state-chart #delay-group text').each((i, element) => {
+            if($(element).attr('data-idx') === idx){
+                $(element).css({'opacity': 1})
+            }
+        })
+    }).on('mouseleave', function (){
+        $('#state-chart #delay-group path').removeClass('hovering')
+        $('#state-chart #delay-group text').css({'opacity':0})
     })
 })
