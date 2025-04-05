@@ -1,5 +1,6 @@
-const RANGE = {min:100, max: 150}
+const RANGE = {min:100, max: 200}
 const MIN_DELAY = 10
+const EXTEND_RADIUS = 400
 const centerX = 250, centerY = 250;
 
 function populateStateDelays(id){
@@ -227,7 +228,7 @@ function populateAirport($pie, index, airport_cache){
     let data = airport_cache.get('data')[index]
 
     let startAngle = index * anglePerSegment;
-    let radius_t = 250
+    let radius_t = EXTEND_RADIUS
 
     $pie.attr('d', createPath(radius_t, startAngle, anglePerSegment))
     let i = 0
@@ -303,6 +304,12 @@ $(document).ready(function (){
     initializeSlider()
 
     airportSelector()
+
+    timeSlotSelector()
+
+    $('#state-chart circle')
+        .attr('cx',centerX)
+        .attr( 'cy',centerY)
 
 
     let $path = $('#state-chart #airport-details path')
@@ -386,16 +393,15 @@ function initializeSlider(){
 function airportSelector(){
 
     $('#state_control .search').on('focus', function (){
-        $(this).next().next().addClass("show");
-    }).on('focusout', function (){
-        // $("#state_control .suggestions").removeClass("show");
+        if(CACHE.has('airport_details')) $(this).next().next().addClass("show")
     }).on('input', function (){
+            if(!CACHE.has('airport_details')) return
         $(this).next().next().addClass("show");
         let value = $(this).val();
         let search_list = CACHE.get('airport_details').get('data').map(d => d['1'])
         // console.log(search_list)
         if(value.length > 0){
-            search_list = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()));
+            search_list = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()))
             if(search_list.length === 0){
                 $(this).next().next().removeClass("show");
                 return
@@ -411,9 +417,23 @@ function airportSelector(){
         }
     })
 
+    $('#state_control .suggestions').on('click',' .dropdown-item',function (){
+        $(this).toggleClass('selected')
+    })
+
+
     $(document).click((e)=>{
         if(!$('#state_control')[0].contains(e.target)){
             $("#state_control .suggestions").removeClass("show");
         }
     })
+}
+
+
+function timeSlotSelector(){
+
+    $('#state_control #time_slots .btn').on('click', function (){
+        $(this).toggleClass('active')
+    })
+
 }

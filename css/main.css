@@ -469,6 +469,23 @@ body {
     color: #0d6efd;
 }
 
+#state_control #time_slots{}
+
+#state_control #time_slots span{
+    font-size: 10px;
+    font-weight: bold;
+}
+
+#state_control #time_slots .btn:last-child{
+    padding-right: 18px;
+    padding-left: 18px;
+}
+
+#state_control #time_slots .btn.active{
+    color: var(--bs-btn-hover-color);
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
+}
 
 
 
