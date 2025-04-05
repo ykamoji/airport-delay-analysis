@@ -155,7 +155,7 @@ $(document).ready(function () {
     }
 
 
-    $(".search").on("input", function () {
+    $("#searchbox .search").on("input", function () {
         let value = $(this).val();
         let id = $(this).attr('id').split('-')[0]
         if (value.length > 0) {
@@ -166,7 +166,8 @@ $(document).ready(function () {
     });
 
 
-    $(".suggestions").on("click", ".dropdown-item", function () {
+    $("#searchbox .suggestions").on("click", ".dropdown-item", function () {
+
         let selectedText = $(this).text();
 
         let $input = $(this).parent().prev().prev()
@@ -180,6 +181,7 @@ $(document).ready(function () {
 
         $input.val("");
         $(this).removeClass("show");
+
     });
 
     function updateSelectedItems($selectedContainer, id) {
@@ -201,6 +203,12 @@ $(document).ready(function () {
         populateMap()
     }
 
+    $(document).click(function (e) {
+        if (!$(e.target).closest(".position-relative").length) {
+            $("#searchbox .suggestions").removeClass("show");
+        }
+    });
+
     $(".selected-items").on("click", ".remove", function () {
         let itemToRemove = $(this).data("item");
 
@@ -214,13 +222,8 @@ $(document).ready(function () {
         populateMap()
     });
 
-    $(document).click(function (e) {
-        if (!$(e.target).closest(".position-relative").length) {
-            $(".suggestions").removeClass("show");
-        }
-    });
 
-    $("#searchbox input").focusin(function (){
+    $("#searchbox input, #state_control input").focusin(function (){
         $(this).next().children('.progress-bar').addClass("focused")
     }).focusout(function (){
         $(this).next().children('.progress-bar').removeClass("focused")

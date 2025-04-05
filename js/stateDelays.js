@@ -113,6 +113,10 @@ function state_map_render(data, id){
     let colorPalette = d3.scaleSequential([minVal, maxVal], d3.interpolateReds)
 
     createSegmentedPieChart(dataValues, abbrList, colorPalette, minVal, maxVal);
+
+    let airport_list = CACHE.get('airport_details').get('data').map(d => d['1'])
+
+    $('#state_control .suggestions').html(airport_list.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join(""))
 }
 
 function transformRadius(x, inMin, inMax) {
@@ -296,6 +300,11 @@ function populateAirport($pie, index, airport_cache){
 
 $(document).ready(function (){
 
+    initializeSlider()
+
+    airportSelector()
+
+
     let $path = $('#state-chart #airport-details path')
     let $text = $('#state-chart #airport-details text')
     let $airport_details = $('#state-chart #airport-details')
@@ -353,3 +362,58 @@ $(document).ready(function (){
         $('#state-chart #delay-group text').css({'opacity':0}).removeClass('hovering')
     })
 })
+
+function initializeSlider(){
+
+    let $slider = $('#num_airports')
+    let $slider_value = $('#selected_num_airports')
+
+    let slider_cord = $slider[0].getBoundingClientRect()
+    let slider_value_cord = $slider_value[0].getBoundingClientRect()
+    $slider_value.css({
+        'left': slider_cord.left - slider_value_cord.left  + slider_cord.width * $slider.val() / $slider.attr('max') - 16  +'px'
+    })
+
+    $slider_value.find('span').html($slider.val())
+    $slider.on("input", function (){
+        $slider_value.find('span').html($(this).val())
+        $slider_value.css({
+            'left': slider_cord.left - slider_value_cord.left  + slider_cord.width * $slider.val() / $slider.attr('max') - 16 +'px'
+        })
+    })
+}
+
+function airportSelector(){
+
+    $('#state_control .search').on('focus', function (){
+        $(this).next().next().addClass("show");
+    }).on('focusout', function (){
+        // $("#state_control .suggestions").removeClass("show");
+    }).on('input', function (){
+        $(this).next().next().addClass("show");
+        let value = $(this).val();
+        let search_list = CACHE.get('airport_details').get('data').map(d => d['1'])
+        // console.log(search_list)
+        if(value.length > 0){
+            search_list = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()));
+            if(search_list.length === 0){
+                $(this).next().next().removeClass("show");
+                return
+            }
+            $('#state_control .suggestions .dropdown-item').each((i, element)=>{
+                if(!search_list.includes(element.innerText)){
+                    $(element).hide(0)
+                }
+            })
+        }
+        else{
+            $('#state_control .suggestions .dropdown-item').show(0)
+        }
+    })
+
+    $(document).click((e)=>{
+        if(!$('#state_control')[0].contains(e.target)){
+            $("#state_control .suggestions").removeClass("show");
+        }
+    })
+}

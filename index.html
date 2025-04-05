@@ -30,11 +30,11 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-sm-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="https://ykamoji.github.io/airport-delay-analysis/">Airport Delay Analysis</a>
+        <a class="navbar-brand fs-4" href="https://ykamoji.github.io/airport-delay-analysis/">Airport Delay Analysis</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse fs-5" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link active" href="#map_distribution">Map</a></li>
                 <li class="nav-item"><a class="nav-link" href="#state_distribution">State</a></li>
@@ -559,7 +559,29 @@
 </div>
 
 <div id="state_distribution" class="container-fluid">
-    <svg xmlns="http://www.w3.org/2000/svg" id="state-chart" viewBox="0 0 1000 600">
+    <div id="state_control" class="offset-sm-1 row gx-3 gy-2 justify-content-center mt-5">
+        <div class="col-sm-3">
+            <label for="num_airports" class="form-label" style="font-size: 14px">Number of Airports</label>
+            <input type="range" class="form-label" id="num_airports" min="1" max="10" value="5">
+            <div id="selected_num_airports">
+                <i class="fa-solid fa-caret-up fs-2"></i>
+                <span></span>
+            </div>
+        </div>
+        <div class="col-sm-4 p-0 mt-0">
+            <div class="input-group">
+            <i class="bi bi-search search-icon col-1"></i>
+            <div class="col-8 p-0">
+                <input type="text" id="airports-search" class="search form-control" placeholder="Airports" autocomplete="off">
+                <div class="progress" role="progressbar" style="height: 2px">
+                    <div class="progress-bar bg-success"></div>
+                </div>
+                <div class="suggestions dropdown-menu"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" class="offset-sm-2" id="state-chart" viewBox="0 0 1000 600">
         <g id="airport-details">
             <path stroke="whitesmoke" stroke-width="3"></path>
             <text font-size="9px"></text>
@@ -577,7 +599,7 @@
             <text font-size="9px" style="opacity: 0;" class="hovering-4">></text>
         </g>
         <text id="zoomed-text" font-size="8px" font-weight="bold" style="opacity: 0"></text>
-        <circle cx="250" cy="250" r="30" id="middle_circle" fill="whitesmoke" stroke="whitesmoke" />
+        <circle cx="250" cy="250" r="30" id="middle_circle" fill="whitesmoke" stroke="whitesmoke"/>
     </svg>
 </div>
 <div id="trends">
