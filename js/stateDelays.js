@@ -1,7 +1,8 @@
 const RANGE = {min:100, max: 200}
 const MIN_DELAY = 10
-const EXTEND_RADIUS = 400
-const centerX = 250, centerY = 250;
+const EXTEND_RADIUS = 275
+const centerX = 350, centerY = 300;
+let INIT = null
 
 function populateStateDelays(id){
 
@@ -18,10 +19,11 @@ function populateStateDelays(id){
 }
 
 function get_state_controls(){
+
     let controls = {
         'time_slots': null,
         'type': null,
-        'num_airports': 10
+        'num_airports': parseInt($('#selected_num_airports span').html())
     }
 
     return controls
@@ -91,6 +93,8 @@ function state_data_search(data, id){
 
 function state_map_render(data, id){
 
+    CACHE.get('airport_details').set('complete_data', data)
+
     let filtered_data = state_data_search(data, id)
 
     // console.log(filtered_data)
@@ -115,9 +119,14 @@ function state_map_render(data, id){
 
     createSegmentedPieChart(dataValues, abbrList, colorPalette, minVal, maxVal);
 
-    let airport_list = CACHE.get('airport_details').get('data').map(d => d['1'])
+    if(INIT === null || INIT !== id){
+       let airport_list = [...new Set(type_render(null, data)
+            .filter(d => id === d['0'].toLowerCase())
+            .map(d => d['1']))]
+        $('#state_control .suggestions').html(airport_list.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join(""))
+        INIT = id
+    }
 
-    $('#state_control .suggestions').html(airport_list.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join(""))
 }
 
 function transformRadius(x, inMin, inMax) {
@@ -135,8 +144,7 @@ function createPath(radius, startAngle, anglePerSegment) {
 
 function createSegmentedPieChart(data, abbrList, colors, minVal, maxVal) {
 
-
-    let numSegments = data.length < 6 ? 6: data.length;
+    let numSegments = data.length;
     let totalAngle = Math.PI * 2;
     let anglePerSegment = totalAngle / numSegments;
 
@@ -179,7 +187,7 @@ function createSegmentedPieChart(data, abbrList, colors, minVal, maxVal) {
 }
 
 
-function resetAirport(){
+function resetSegmentedAirport(){
     $('#state-chart, #state-chart #airport-details path, #state-chart #airport-details text')
         .removeClass('zoomed')
 
@@ -214,7 +222,6 @@ function getAirportAbbr(data){
         abbrList.push({abbrName,name})
     })
 
-    // console.log(abbrList)
 
     return abbrList
 
@@ -307,6 +314,15 @@ $(document).ready(function (){
 
     timeSlotSelector()
 
+    $('#num_airports').on('input', function (){
+        reset_airports()
+        let id = $('#map-container svg g.state path.zoomed')
+            .filter((i,element) => !element.classList[0].includes('-'))
+            .map((i, element) => element.classList[0])[0]
+
+        populateStateDelays(id)
+    })
+
     $('#state-chart circle')
         .attr('cx',centerX)
         .attr( 'cy',centerY)
@@ -327,11 +343,15 @@ $(document).ready(function (){
         if(!$state_chart.hasClass('zoomed')){
             $state_chart.addClass('hovering')
             $(this).addClass('hovering')
+            let index = $(this).attr('id').split('-')[1]
+            $('#state-chart #airport-details #text-'+index).attr('font-size', '12px')
         }
     }).on('mouseleave',function (){
         if(!$state_chart.hasClass('zoomed')) {
             $state_chart.removeClass('hovering')
             $('#airport-details path').removeClass('hovering')
+            $('#state-chart #airport-details text')
+                .attr('font-size', '9px')
         }
     }).on('click', function (){
         $state_chart.removeClass('hovering')
@@ -341,7 +361,7 @@ $(document).ready(function (){
         let airport_cache = CACHE.get('airport_details')
         if($state_chart.hasClass('zoomed')){
             $(this).attr('d', airport_cache.get(''+index))
-            resetAirport()
+            resetSegmentedAirport()
         }
         else {
             $state_chart.addClass('zoomed')
@@ -355,7 +375,7 @@ $(document).ready(function (){
         let index = $(this).attr('data-id')
         let airport_cache = CACHE.get('airport_details')
         $('#state-chart #airport-details path#path-'+index).attr('d',  airport_cache.get(''+index))
-        resetAirport()
+        resetSegmentedAirport()
     }).on('mouseenter', function (){
         let idx = $(this).attr('data-idx')
         $(this).addClass('hovering')
@@ -399,7 +419,6 @@ function airportSelector(){
         $(this).next().next().addClass("show");
         let value = $(this).val();
         let search_list = CACHE.get('airport_details').get('data').map(d => d['1'])
-        // console.log(search_list)
         if(value.length > 0){
             search_list = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()))
             if(search_list.length === 0){
@@ -427,6 +446,24 @@ function airportSelector(){
             $("#state_control .suggestions").removeClass("show");
         }
     })
+}
+
+function reset_airports(){
+    let $path = $('#state-chart #airport-details path')
+    let $text = $('#state-chart #airport-details text')
+
+    for (let i = 0; i < 15; i++) {
+        $($path[i]).attr("d", "")
+            .attr("class", "")
+            .attr("id", '')
+            .attr("fill", '')
+
+        $($text[i]).attr("transform", '')
+            .attr("x", '')
+            .attr("y", '')
+            .attr("id", '')
+            .text('')
+    }
 }
 
 
