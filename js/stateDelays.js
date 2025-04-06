@@ -128,10 +128,10 @@ function state_data_search(data, id){
         data_list = data_list.slice(0, num_airports)
     }
 
-    console.log("Type:",type, "\nNum Airports:",num_airports, "\nTime Slots:", time_slots, "\nAirports:", airports.length,
-        "\nResults", data_list.length)
+    // console.log("Type:",type, "\nNum Airports:",num_airports, "\nTime Slots:", time_slots, "\nAirports:", airports.length,
+    //     "\nResults", data_list.length)
 
-    console.log(data_list)
+    // console.log(data_list)
 
     return data_list
 }
