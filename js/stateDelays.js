@@ -1,5 +1,5 @@
 const RANGE = {min:100, max: 200}
-const MIN_DELAY = 10
+const MIN_DELAY = 5
 const EXTEND_RADIUS = 275
 const centerX = 350, centerY = 300;
 let INIT = null
@@ -119,13 +119,34 @@ function state_map_render(data, id){
 
     createSegmentedPieChart(dataValues, abbrList, colorPalette, minVal, maxVal);
 
-    if(INIT === null || INIT !== id){
-       let airport_list = [...new Set(type_render(null, data)
+    if (INIT === null || INIT !== id) {
+        // console.log('INIT')
+        let airport_list = [...new Set(type_render(null, data)
             .filter(d => id === d['0'].toLowerCase())
             .map(d => d['1']))]
         $('#state_control .suggestions').html(airport_list.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join(""))
+
+
+        let max_value = airport_list.length
+        if (max_value <= 3) {
+
+            $('#num_airports')
+                .attr('max', max_value)
+                .val(1)
+
+            let box = $('#num_airports')[0].getBoundingClientRect()
+
+            $('#selected_num_airports')
+                .css({'left': box.width + 10 })
+                .find('span')
+                .html(1)
+
+        }
+
         INIT = id
     }
+
+
 
 }
 
@@ -144,17 +165,17 @@ function createPath(radius, startAngle, anglePerSegment) {
 
 function createSegmentedPieChart(data, abbrList, colors, minVal, maxVal) {
 
-    let numSegments = data.length;
-    let totalAngle = Math.PI * 2;
-    let anglePerSegment = totalAngle / numSegments;
+    let numSegments = data.length < 5 ? 5 : data.length ;
+    let anglePerSegment = Math.PI * 2 / numSegments;
 
     CACHE.get('airport_details').set('anglePerSegment', anglePerSegment)
 
     let $path = $('#state-chart #airport-details path')
     let $text = $('#state-chart #airport-details text')
 
+
     data.forEach((value, index) => {
-        let startAngle = index * anglePerSegment;
+        let startAngle = index * anglePerSegment - (Math.PI / 2);
         let radius = transformRadius(value, minVal, maxVal)
         let pathData = createPath(radius, startAngle, anglePerSegment)
 
@@ -234,7 +255,7 @@ function populateAirport($pie, index, airport_cache){
     let anglePerSegment = airport_cache.get('anglePerSegment')
     let data = airport_cache.get('data')[index]
 
-    let startAngle = index * anglePerSegment;
+    let startAngle = index * anglePerSegment - (Math.PI / 2);
     let radius_t = EXTEND_RADIUS
 
     $pie.attr('d', createPath(radius_t, startAngle, anglePerSegment))
@@ -286,8 +307,8 @@ function populateAirport($pie, index, airport_cache){
         $('#state-chart #delay-group text')
             .css({'opacity': 0})
             .each((i, element) => {
-                let theta =  startAngle + anglePerSegment
-                let r_text = radii[radii.length -1 - i]
+                let theta =  startAngle + anglePerSegment + (Math.PI / 30)
+                let r_text = radii[radii.length - 1 - i]
                 let t_x = centerX + r_text * Math.cos(theta)
                 let t_y = centerY + r_text * Math.sin(theta)
                 $(element).attr('x', t_x)
@@ -390,6 +411,24 @@ $(document).ready(function (){
     })
 })
 
+
+function get_left($slider, slider_cord, slider_value_cord){
+    let current_val = parseInt($slider.val())
+    let rel = 0
+    let max_val = parseInt($slider.attr('max'))
+    if(current_val === 1){
+        rel = 0
+    }
+    else{
+        rel = parseInt(slider_cord.width) * current_val /  max_val - 15
+        if(max_val < 5)
+            rel -= 10
+
+    }
+    let left = slider_cord.left - slider_value_cord.left
+    return left + rel +'px'
+}
+
 function initializeSlider(){
 
     let $slider = $('#num_airports')
@@ -397,15 +436,16 @@ function initializeSlider(){
 
     let slider_cord = $slider[0].getBoundingClientRect()
     let slider_value_cord = $slider_value[0].getBoundingClientRect()
+
     $slider_value.css({
-        'left': slider_cord.left - slider_value_cord.left  + slider_cord.width * $slider.val() / $slider.attr('max') - 16  +'px'
+        'left': get_left($slider, slider_cord, slider_value_cord)
     })
 
     $slider_value.find('span').html($slider.val())
     $slider.on("input", function (){
         $slider_value.find('span').html($(this).val())
         $slider_value.css({
-            'left': slider_cord.left - slider_value_cord.left  + slider_cord.width * $slider.val() / $slider.attr('max') - 16 +'px'
+            'left': get_left($slider, slider_cord, slider_value_cord)
         })
     })
 }
@@ -419,6 +459,7 @@ function airportSelector(){
         $(this).next().next().addClass("show");
         let value = $(this).val();
         let search_list = CACHE.get('airport_details').get('data').map(d => d['1'])
+
         if(value.length > 0){
             search_list = search_list.filter(v => v.toLowerCase().includes(value.toLowerCase()))
             if(search_list.length === 0){
@@ -448,6 +489,15 @@ function airportSelector(){
     })
 }
 
+
+function timeSlotSelector(){
+
+    $('#state_control #time_slots .btn').on('click', function (){
+        $(this).toggleClass('active')
+    })
+
+}
+
 function reset_airports(){
     let $path = $('#state-chart #airport-details path')
     let $text = $('#state-chart #airport-details text')
@@ -464,13 +514,4 @@ function reset_airports(){
             .attr("id", '')
             .text('')
     }
-}
-
-
-function timeSlotSelector(){
-
-    $('#state_control #time_slots .btn').on('click', function (){
-        $(this).toggleClass('active')
-    })
-
 }
