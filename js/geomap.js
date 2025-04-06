@@ -99,14 +99,14 @@ function date_render(dates, data){
 }
 
 
-function states_render(states, data){
+function states_render(states, data, idx){
 
     let worklist = []
 
     if(states.length > 0){
 
         for (let i = 0; i < states.length; i++) {
-            worklist.push(data.filter(v => v['1'].toLowerCase() === states[i].toLowerCase()))
+            worklist.push(data.filter(v => v[idx].toLowerCase() === states[i].toLowerCase()))
         }
 
         return worklist.flat()
@@ -144,8 +144,7 @@ function week_render(week, data){
         return data
     }
     else{
-        worklist = data.filter(v => v['4'] === week)
-        return worklist
+        return data.filter(v => v['4'] === week)
     }
 
 }
@@ -392,7 +391,7 @@ function data_search(data, search_type, id){
 
     data_list = date_render(dates, data_list)
 
-    data_list = states_render(states, data_list)
+    data_list = states_render(states, data_list, '1')
 
     data_list = airlines_render(airlines, data_list)
 
@@ -571,6 +570,8 @@ function reset_state() {
     ]
 
     clear_contents.forEach(content => $(content).html(''))
+
+    reset_airports()
 }
 
 
@@ -605,6 +606,8 @@ $(document).ready(function () {
                 reset_geo_map()
                 return
             }
+
+            populateStateDelays(id)
 
             $('#map-container svg g.state path').removeClass('zoomed')
 
@@ -697,7 +700,6 @@ $(document).ready(function () {
 
 
     let $airport_base = $('.airport-base')
-
 
     $airport_base.on('mouseenter',function (){
         $(this).find('.stats')

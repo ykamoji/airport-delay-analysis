@@ -24,16 +24,17 @@
     <script src="js/airport_locations.js"></script>
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
+    <script src="js/stateDelays.js"></script>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-sm-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="https://ykamoji.github.io/airport-delay-analysis/">Airport Delay Analysis</a>
+        <a class="navbar-brand fs-4" href="https://ykamoji.github.io/airport-delay-analysis/">Airport Delay Analysis</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse fs-5" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link active" href="#map_distribution">Map</a></li>
                 <li class="nav-item"><a class="nav-link" href="#state_distribution">State</a></li>
@@ -557,8 +558,81 @@
     </div>
 </div>
 
-<div id="state_distribution">
-
+<div id="state_distribution" class="container-fluid">
+    <div id="state_control" class="offset-sm-1 row gx-3 gy-2 mt-5 justify-content-center">
+        <div class="col-sm-3">
+            <label for="num_airports" class="form-label" style="font-size: 14px">Number of Airports</label>
+            <input type="range" class="form-label" id="num_airports" min="1" max="10" value="3">
+            <div id="selected_num_airports">
+                <i class="fa-solid fa-caret-up fs-2"></i>
+                <span></span>
+            </div>
+        </div>
+        <div id="time_slots" class="col-sm-3 p-0">
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="1">
+                <img src="https://img.icons8.com/?size=100&id=9314&format=png&color=000000" height="25px"/><br>
+                <span>Morning</span>
+            </button>
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="2">
+                <i class="fa-solid fa-sun fs-4"></i><br>
+                <span>Afternoon</span>
+            </button>
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="3">
+                <img src="https://img.icons8.com/?size=100&id=3455&format=png&color=000000" height="25px"/><br>
+                <span>Evening</span>
+            </button>
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="0">
+                <i class="fa-solid fa-moon fs-4"></i><br>
+                <span>Night</span>
+            </button>
+        </div>
+        <div class="check-single col-sm-2">
+            <div class="d-flex flex-wrap gap-3">
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="airport-origin">
+                    <label class="form-check-label" for="airport-origin">Departures</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="airport-dest">
+                    <label class="form-check-label" for="airport-dest">Arrivals</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 p-0 mt-0">
+            <div class="input-group">
+            <i class="bi bi-search search-icon col-1"></i>
+            <div class="col-8 p-0">
+                <input type="text" id="airports-search" class="search form-control" placeholder="Airports" autocomplete="off">
+                <div class="progress" role="progressbar" style="height: 2px">
+                    <div class="progress-bar bg-success"></div>
+                </div>
+                <div class="suggestions dropdown-menu"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="offset-sm-2 col-sm-9" >
+        <svg xmlns="http://www.w3.org/2000/svg" id="state-chart" viewBox="0 0 1000 600">
+            <g id="airport-details">
+                <path stroke="whitesmoke" stroke-width="3"></path>
+                <text font-size="9px"></text>
+            </g>
+            <g id="delay-group">
+                <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-0"></path>
+                <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-1"></path>
+                <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-2"></path>
+                <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-3"></path>
+                <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-4"></path>
+                <text font-size="12px" style="opacity: 0;" class="hovering-0">></text>
+                <text font-size="12px" style="opacity: 0;" class="hovering-1">></text>
+                <text font-size="12px" style="opacity: 0;" class="hovering-2">></text>
+                <text font-size="12px" style="opacity: 0;" class="hovering-3">></text>
+                <text font-size="12px" style="opacity: 0;" class="hovering-4">></text>
+            </g>
+            <text id="zoomed-text" font-size="8px" font-weight="bold" style="opacity: 0"></text>
+<!--            <circle r="30" id="middle_circle" fill="whitesmoke" stroke="whitesmoke"/>-->
+        </svg>
+    </div>
 </div>
 <div id="trends">
 
