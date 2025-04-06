@@ -393,10 +393,6 @@ $(document).ready(function (){
         populateStateDelays(id)
     })
 
-    $('#state-chart circle')
-        .attr('cx',centerX)
-        .attr( 'cy',centerY)
-
 
     let $path = $('#state-chart #airport-details path')
     let $text = $('#state-chart #airport-details text')
