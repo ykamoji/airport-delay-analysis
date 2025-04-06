@@ -266,6 +266,10 @@ function resetSegmentedAirport(){
             .attr("x", '')
             .attr('y','')
     }).css({'opacity': 0})
+
+    $('#state_legend')
+        .toggleClass('d-flex')
+        .fadeOut(100)
 }
 
 
@@ -362,7 +366,15 @@ function populateAirport($pie, index, airport_cache){
             .attr("y", text_y + y_adg)
             .css({'opacity': 1})
             .text(data['1'])
-    }, 400)
+
+        d3.range(0,5).forEach(idx => {
+            let text = $('#state-chart #delay-group text.hovering-'+idx).html()
+            $('#state_legend .legend-'+idx+' .legend_val').html('('+ text + ')')
+        })
+        $('#state_legend')
+            .toggleClass('d-flex')
+            .fadeIn(100)
+    }, 200)
 
 }
 
@@ -373,6 +385,10 @@ $(document).ready(function (){
     airportSelector()
 
     timeSlotSelector()
+
+    $('#state_legend')
+        .toggleClass('d-flex')
+        .hide(0)
 
 
     $('#state_control .form-check-input').on("change", function (){

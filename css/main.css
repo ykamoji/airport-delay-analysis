@@ -417,6 +417,7 @@ body {
 
 #state-chart #delay-group path{
     transition: opacity 0.5s ease;
+    cursor: pointer;
 }
 
 #state-chart #delay-group text{
@@ -488,4 +489,42 @@ body {
 }
 
 
+#state_distribution .legend_color{
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+#state_distribution .legend_name{
+    position: relative;
+    left: 10px;
+}
+
+#state_distribution .legend-0 .legend_color{
+    background-color:#a463f2
+}
+
+#state_distribution .legend-1 .legend_color{
+    background-color: #e377c2
+}
+
+#state_distribution .legend-2 .legend_color{
+    background-color: #17becf
+}
+
+#state_distribution .legend-3 .legend_color{
+    background-color: #bcbd22
+}
+
+#state_distribution .legend-4 .legend_color{
+    background-color: #7f7f7f
+}
+
+#state_distribution .legend_val{
+    position: relative;
+    font-size: 12px;
+    font-weight: bolder;
+    left: 20px;
+    line-height: 2;
+}
 
