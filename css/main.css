@@ -358,30 +358,30 @@ body {
     font-size: 14px;
 }
 
-#searchbox .control .form-check-input{
+.form-check-input{
     cursor: pointer;
     outline: none;
 }
 
-#searchbox .control .form-check-input:checked {
+.form-check-input:checked {
     background-color: darkred;
     outline: none;
     box-shadow: none;
     border-color: darkred;
 }
 
-#searchbox .control .form-check-input:focus{
+.form-check-input:focus{
     outline: none;
     box-shadow: none;
 }
 
-#searchbox .control .form-check-input:focus-visible{
+.form-check-input:focus-visible{
     outline: none;
     box-shadow: none;
     /*border-color: orangered;*/
 }
 
-#searchbox .control .form-check-label{
+.form-check-label{
     user-select: none;
     cursor: pointer;
 }

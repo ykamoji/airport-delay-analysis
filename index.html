@@ -569,22 +569,34 @@
             </div>
         </div>
         <div id="time_slots" class="col-sm-3 p-0">
-            <button type="button" class="btn btn-outline-secondary rounded-0">
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="1">
                 <img src="https://img.icons8.com/?size=100&id=9314&format=png&color=000000" height="25px"/><br>
                 <span>Morning</span>
             </button>
-            <button type="button" class="btn btn-outline-secondary rounded-0">
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="2">
                 <i class="fa-solid fa-sun fs-4"></i><br>
                 <span>Afternoon</span>
             </button>
-            <button type="button" class="btn btn-outline-secondary rounded-0">
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="3">
                 <img src="https://img.icons8.com/?size=100&id=3455&format=png&color=000000" height="25px"/><br>
                 <span>Evening</span>
             </button>
-            <button type="button" class="btn btn-outline-secondary rounded-0">
+            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="0">
                 <i class="fa-solid fa-moon fs-4"></i><br>
                 <span>Night</span>
             </button>
+        </div>
+        <div class="check-single col-sm-2">
+            <div class="d-flex flex-wrap gap-3">
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="airport-origin">
+                    <label class="form-check-label" for="airport-origin">Departures</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="airport-dest">
+                    <label class="form-check-label" for="airport-dest">Arrivals</label>
+                </div>
+            </div>
         </div>
         <div class="col-sm-4 p-0 mt-0">
             <div class="input-group">

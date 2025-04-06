@@ -23,21 +23,40 @@ function get_state_controls(){
     let controls = {
         'time_slots': null,
         'type': null,
-        'num_airports': parseInt($('#selected_num_airports span').html())
+        'num_airports': parseInt($('#selected_num_airports span').html()),
+        'airports': []
     }
+
+    let checked_input = $('#state_control .check-single .form-check-input:checked')
+    if(checked_input.length === 1){
+        controls['type'] = checked_input.attr('id').split('-')[1]
+    }
+
+    let selected_time_slots =  $('#state_control #time_slots .btn.active')
+
+    if(selected_time_slots.length > 0){
+        controls['time_slots'] = []
+        selected_time_slots.each((i, element) => {
+            controls['time_slots'].push(parseInt($(element).attr('data-id')))
+        })
+    }
+
+    let airport_names =[]
+    $('#state_control .suggestions .dropdown-item.selected')
+        .each((i, element) => airport_names.push(element.innerText))
+
+    controls['airports'] = airport_names
 
     return controls
 }
 
 function time_slot_render(time_slot, data){
 
-    let worklist = []
-
     if(time_slot === null){
         return data
     }
     else{
-        return data.filter(v => v['2'] === time_slot)
+        return data.filter(v => time_slot.includes(v['2']))
     }
 }
 
@@ -72,9 +91,28 @@ function airports_squeeze(data){
     return worklist.sort((a, b) => b['8'] - a['8']);
 }
 
+
+function airports_render(airports, data){
+
+    let worklist = []
+
+    if(airports.length > 0){
+
+        for (let i = 0; i < airports.length; i++) {
+            worklist.push(data.filter(v => v['1'] === airports[i]))
+        }
+
+        return worklist.flat()
+
+    }
+
+    return data
+}
+
+
 function state_data_search(data, id){
 
-    let {time_slots,type,num_airports} = get_state_controls()
+    let {time_slots,type,num_airports, airports} = get_state_controls()
 
     let data_list = type_render(type, data)
 
@@ -84,16 +122,22 @@ function state_data_search(data, id){
 
     data_list = airports_squeeze(data_list)
 
+    data_list = airports_render(airports, data_list)
+
     if(num_airports !== null){
         data_list = data_list.slice(0, num_airports)
     }
 
+    console.log("Type:",type, "\nNum Airports:",num_airports, "\nTime Slots:", time_slots, "\nAirports:", airports.length,
+        "\nResults", data_list.length)
+
+    console.log(data_list)
+
     return data_list
 }
 
-function state_map_render(data, id){
 
-    CACHE.get('airport_details').set('complete_data', data)
+function state_map_render(data, id){
 
     let filtered_data = state_data_search(data, id)
 
@@ -120,18 +164,14 @@ function state_map_render(data, id){
     createSegmentedPieChart(dataValues, abbrList, colorPalette, minVal, maxVal);
 
     if (INIT === null || INIT !== id) {
+
+        let total = init_airport_list_sorted(id, data)
         // console.log('INIT')
-        let airport_list = [...new Set(type_render(null, data)
-            .filter(d => id === d['0'].toLowerCase())
-            .map(d => d['1']))]
-        $('#state_control .suggestions').html(airport_list.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join(""))
 
-
-        let max_value = airport_list.length
-        if (max_value <= 3) {
+        if (total <= 3) {
 
             $('#num_airports')
-                .attr('max', max_value)
+                .attr('max', total)
                 .val(1)
 
             let box = $('#num_airports')[0].getBoundingClientRect()
@@ -145,7 +185,6 @@ function state_map_render(data, id){
 
         INIT = id
     }
-
 
 
 }
@@ -335,12 +374,22 @@ $(document).ready(function (){
 
     timeSlotSelector()
 
-    $('#num_airports').on('input', function (){
+
+    $('#state_control .form-check-input').on("change", function (){
         reset_airports()
+        setTimeout(function (){
+            let id = $('#map-container svg g.state path.zoomed')
+                .filter((i,element) => !element.classList[0].includes('-'))
+                .map((i, element) => element.classList[0])[0]
+            populateStateDelays(id)
+        }, 50)
+    });
+
+    $('#num_airports').on('input', function (){
         let id = $('#map-container svg g.state path.zoomed')
             .filter((i,element) => !element.classList[0].includes('-'))
             .map((i, element) => element.classList[0])[0]
-
+        reset_airports()
         populateStateDelays(id)
     })
 
@@ -450,6 +499,32 @@ function initializeSlider(){
     })
 }
 
+function init_airport_list_sorted(id, data){
+
+    let airport_list = [...new Set(type_render(null, data)
+        .filter(d => id === d['0'].toLowerCase())
+        .map(d => d['1']))]
+
+    let sorted_list = type_render(null, data)
+        .filter(d => id === d['0'].toLowerCase())
+
+    sorted_list = sorted_list.reduce((acc, v) => {
+        acc[v['1']] = (acc[v['1']] || 0);
+        ['3', '4', '5', '6', '7'].forEach(idx => {
+            acc[v['1']] += v[idx]
+        })
+        return acc;
+    }, {});
+
+    const sortedAirports = Object.entries(sorted_list)
+        .sort(([, a], [, b]) => b - a)  // Sort by total delays descending
+        .map(d => d[0]);
+
+    $('#state_control .suggestions').html(sortedAirports.map(v => `<div class="dropdown-item text-wrap">${v}</div>`).join(""))
+
+    return airport_list.length
+}
+
 function airportSelector(){
 
     $('#state_control .search').on('focus', function (){
@@ -478,7 +553,15 @@ function airportSelector(){
     })
 
     $('#state_control .suggestions').on('click',' .dropdown-item',function (){
-        $(this).toggleClass('selected')
+        if($(this).hasClass('selected') ||
+            $('#state_control .suggestions .dropdown-item.selected').length < $('#num_airports').val()){
+            $(this).toggleClass('selected')
+            reset_airports()
+            let id = $('#map-container svg g.state path.zoomed')
+                .filter((i,element) => !element.classList[0].includes('-'))
+                .map((i, element) => element.classList[0])[0]
+            populateStateDelays(id)
+        }
     })
 
 
@@ -494,6 +577,11 @@ function timeSlotSelector(){
 
     $('#state_control #time_slots .btn').on('click', function (){
         $(this).toggleClass('active')
+        reset_airports()
+        let id = $('#map-container svg g.state path.zoomed')
+            .filter((i,element) => !element.classList[0].includes('-'))
+            .map((i, element) => element.classList[0])[0]
+        populateStateDelays(id)
     })
 
 }

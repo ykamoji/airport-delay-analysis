@@ -219,7 +219,7 @@ $(document).ready(function () {
     });
 
     $('#searchbox .form-check-input').on("change", function (){
-        populateMap()
+        setTimeout(function (){populateMap()}, 50)
     });
 
 
@@ -229,7 +229,7 @@ $(document).ready(function () {
         $(this).next().children('.progress-bar').removeClass("focused")
     })
 
-    $('#searchbox .check-single .form-check-input').change(function () {
+    $('.check-single .form-check-input').change(function () {
         let $other_input = $(this).parent().siblings().children('.form-check-input')
 
         if($other_input.prop('checked'))
