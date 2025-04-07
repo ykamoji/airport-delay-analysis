@@ -91,14 +91,13 @@ def preprocess(path):
     complete_data = 0
     total_size_approx = 0
 
-    updated_headers = ["ID"] + HEADERS[:]
+    updated_headers = HEADERS[:]
     updated_headers.insert(4, DERIVED_HEADERS[0])
     updated_headers.insert(5, DERIVED_HEADERS[1])
     updated_headers.insert(8, DERIVED_HEADERS[2])
     write_header = True
 
     files = ['2023/'+m+'_23' for m in months] + ['2024/'+m+'_24' for m in months]
-    id_counter = 0
     for file in files:
         total = 0
         parsed = 0
@@ -127,10 +126,7 @@ def preprocess(path):
 
                     dataset.append(extracted_rows)
 
-                    extracted_rows["ID"] = id_counter
-
                     parsed += 1
-                    id_counter += 1
                 total += 1
 
         complete_data += parsed

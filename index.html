@@ -25,6 +25,7 @@
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
     <script src="js/stateDelays.js"></script>
+    <script src="js/trends.js"></script>
 </head>
 <body>
 
@@ -483,7 +484,7 @@
                                         type="month"
 
                                         min="2023-01"
-                                        max="2024-11"
+                                        max="2024-12"
                                         scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn
@@ -533,7 +534,7 @@
                                         header-color="primary"
                                         type="month"
                                         min="2023-01"
-                                        max="2024-11"
+                                        max="2024-12"
                                         scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn
@@ -664,8 +665,67 @@
         </div>
     </div>
 </div>
-<div id="trends">
 
+<div id="trends" class="container-fluid pb-5">
+    <div class="container-fluid row justify-content-center">
+        <div class="col-sm-9">
+            <svg id="week_comparison" style="position: absolute;left: 30%">
+                <g id="compare">
+                    <g id="x-axis"></g>
+                    <g id="y-axis"></g>
+                    <g id="plot"></g>
+                </g>
+            </svg>
+            <svg id="trends-graph">
+                <g id="plot">
+                    <g id="x-axis"></g>
+                    <g id="y-axis"></g>
+                    <g>
+                        <g id="line-segments"></g>
+                        <g id="points"></g>
+                    </g>
+                    <g id="volume">
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div class="col-sm-2" id="trends-controls">
+            <div class="mt-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="carrier-line-delay">
+                    <label class="form-check-label" for="carrier-line-delay">Carrier</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="weather-line-delay">
+                    <label class="form-check-label" for="weather-line-delay">Weather</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="nas-line-delay">
+                    <label class="form-check-label" for="nas-line-delay">NAS</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="security-line-delay">
+                    <label class="form-check-label" for="security-line-delay">Security</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="late_aircraft-line-delay">
+                    <label class="form-check-label" for="late_aircraft-line-delay">Late Aircraft</label>
+                </div>
+            </div>
+            <div class="check-single mt-4">
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input rounded-0" type="checkbox" id="weekday-line-week">
+                        <label class="form-check-label" for="weekday-line-week">Weekday</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input rounded-0" type="checkbox" id="weekend-line-week">
+                        <label class="form-check-label" for="weekend-line-week">Weekend</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
