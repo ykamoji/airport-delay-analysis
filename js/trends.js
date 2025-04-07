@@ -64,6 +64,8 @@ function data_render(data){
 
     // console.log(transformed_data)
 
+    CACHE.set('current_trend_data', transformed_data)
+
     filter_data(transformed_data)
 }
 
@@ -108,6 +110,38 @@ function filter_data(data, control){
     trend_render(filter_data)
 }
 
+function get_trends_controls(){
+
+    let controls = {
+        "week":null,
+        "delays_control":[]
+    }
+
+    let $form = $("#trends-controls input")
+
+    for (let i = 0; i < $form.length; i++) {
+        let $ele = $($form[i])
+
+        let id = $ele.attr('id')
+
+        if(id.includes('delay')){
+            if($ele.prop('checked')){
+                controls['delays_control'].push(DELAY_DATA_MAPPING[id.split('-')[0]] - 5)
+            }
+        }
+        else if(id.includes('week')){
+            if($ele.prop('checked')){
+                let k = id.split('-')[0]
+                controls['week'] = k==='weekday'
+            }
+        }
+    }
+
+    // console.log(controls)
+
+    return controls
+}
+
 function render_line(data) {
 
     let max_val = Math.max(...data.map(d => d.delays))
@@ -141,36 +175,155 @@ function render_line(data) {
         .duration(1000)
         .call(d3.axisLeft(y))
 
-    const line_width_scale = d3.scaleLinear()
+    const intensity_color = d3.scaleLinear()
         .domain([0, d3.max(data, d => d.delays)])
-        .range([0.5, 7])
+        .range([1, 5])
 
 
     const segments = data.slice(1).map((d, i) => [data[i], d])
 
-    const lines = d3.select('#trends-graph #line-segments').selectAll('line').data(segments)
+    const lines = d3.select('#trends-graph #line-segments')
+        .selectAll('line')
+        .data(segments)
 
-    lines.enter()
-        .append('line')
-        .attr('x1', d=> x(d[0].label) + x.bandwidth() / 2)
-        .attr('y1', d=> y(d[0].delays))
-        .attr('x2', d=> x(d[1].label) + x.bandwidth() / 2)
-        .attr('y2', d=> y(d[1].delays))
-        .attr('stroke', d=> color((d[0].delays + d[1].delays)/2))
-        .attr('stroke-width', d=> line_width_scale(d[0].delays + d[0].delays))
+    function common_line_actions(d3Obj){
+        return d3Obj
+            .transition()
+            .duration(500)
+            .attr('x1', d=> x(d[0].label) + x.bandwidth() / 2)
+            .attr('y1', d=> y(d[0].delays))
+            .attr('x2', d=> x(d[1].label) + x.bandwidth() / 2)
+            .attr('y2', d=> y(d[1].delays))
+            .attr('stroke', d=> color((d[0].delays + d[1].delays)/2))
+            .attr('stroke-width', d=> intensity_color(d[0].delays + d[0].delays))
+    }
+
+    lines.join(
+        enter => common_line_actions(enter.append('line').style('opacity', 0))
+            .transition()
+            .duration(600)
+            .style('opacity', 1),
+        update => common_line_actions(update),
+        exit => exit.remove()
+    )
 
 
-    const points = d3.select('#trends-graph #points').selectAll('circle').data(data)
+    const points = d3.select('#trends-graph #points')
+        .selectAll('circle')
+        .data(data)
 
-    points.enter()
-        .append('circle')
-        .attr('r', d => line_width_scale(d.delays))
-        .attr('cx', d=>x(d.label) + x.bandwidth() / 2)
-        .attr('cy', d=>y(d.delays))
-        .attr('stroke-width', d=> line_width_scale(d.delays))
-        .attr('fill', d=>color(d.delays))
+    const radius = d3.scaleLinear()
+        .domain([0, max_val])
+        .range([1, 6])
+
+    function common_points_actions(d3Obj){
+        return d3Obj
+            .transition()
+            .duration(500)
+            .attr('id', d=> d.label)
+            .attr('r', d => radius(d.delays))
+            .attr('cx', d=>x(d.label) + x.bandwidth() / 2)
+            .attr('cy', d=>y(d.delays))
+            .attr('stroke-width', d=> intensity_color(max_val - d.delays))
+            .attr('stroke', d=> color(d.delays))
+            .attr('fill', 'whitesmoke')
+    }
+
+    points.join(
+        enter => common_points_actions(enter.append('circle').style('opacity', 0))
+            .transition()
+            .duration(600)
+            .style('opacity', 1),
+        update => common_points_actions(update),
+        exit => exit.remove()
+    ).on("mouseenter", (e)=>  render_comparing(d3.select(e.target).node().getAttribute('id')))
 
 }
+
+function render_comparing(label){
+
+    let data = CACHE.get('current_trend_data').filter(d=> d.label === label)[0]
+
+    let {delays_control } = get_trends_controls()
+
+    let delay_idx = delays_control
+    if (delay_idx.length === 0) {
+        delay_idx = d3.range(5)
+    }
+
+    let focused_data = []
+    focused_data.push({label:'Weekday', delays: delay_idx.reduce((sum, key) => sum + data.weekday.counts[key], 0) / 1000})
+    focused_data.push({label:'Weekend', delays: delay_idx.reduce((sum, key) => sum + data.weekend.counts[key], 0) / 1000})
+
+
+    const chart_width = 200;
+    const chart_height = 250;
+    const margin = { left: 45, bottom: 20, top: 20, right: 20 };
+    const height = chart_height - margin.top - margin.bottom
+    const width = chart_width - margin.left - margin.right
+
+    d3.select('#week_comparison')
+        .attr("width", chart_width)
+        .attr("height", chart_height)
+
+    d3.select('#week_comparison #compare')
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")")
+
+    let x = d3.scaleBand()
+        .domain(d3.map(focused_data, d => d.label))
+        .range([0, width])
+        .padding(0.5)
+
+    d3.select('#week_comparison #x-axis')
+        .attr("transform", `translate(0,${height})`)
+        .transition()
+        .duration(1000)
+        .call(d3.axisBottom(x).tickSizeOuter(0))
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(focused_data, d => d.delays)])
+        .range([height, 0])
+        .nice()
+
+    d3.select('#week_comparison #y-axis')
+        .transition()
+        .duration(1000)
+        .call(d3.axisLeft(y))
+
+    const bars = d3.select('#week_comparison #plot')
+        .selectAll('rect').data(focused_data)
+
+    let max_val = Math.max(...focused_data.map(d => d.count))
+
+    const color = d3.scaleSequential([0, max_val], d3.interpolateGnBu)
+
+    function common_actions(d3Obj){
+        return d3Obj
+            .attr("width", x.bandwidth())
+            .attr("x", d => x(d.label))
+            .attr("y", d => y(d.delays))
+            .attr("height", d => height - y(d.delays))
+            .attr('fill', d => color(d.delays))
+    }
+
+    bars.join(
+        enter => common_actions(enter.append('rect'))
+            .style('opacity', 0)
+            .transition()
+            .duration(1000)
+            .style('opacity', 0.7),
+        update => common_actions(update.transition().duration(1000))
+            .style('opacity', 0.7),
+        exit => exit.transition()
+            .duration(1000)
+            .style('opacity', 0)
+            .remove()
+    )
+
+
+}
+
 
 function render_volume(data) {
 
@@ -190,72 +343,35 @@ function render_volume(data) {
     let max_val = Math.max(...data.map(d => d.count))
     const color = d3.scaleSequential([0, max_val], d3.interpolateGnBu)
 
-    bars.join(
-        enter => enter
-            .append('rect')
+    function common_actions(d3Obj){
+        return d3Obj
             .attr("width", x.bandwidth())
             .attr("x", d => x(d.label))
             .attr("y", d => y(d.count) + HEIGHT - height)
             .attr("height", d => height - y(d.count))
             .attr('fill', d => color(d.count))
+    }
+
+    bars.join(
+        enter => common_actions(enter.append('rect'))
             .style('opacity', 0)
             .transition()
             .duration(1000)
             .style('opacity', 0.7),
-        update => update
-            .transition()
-            .duration(1000)
-            .attr("width", x.bandwidth())
-            .attr("x", d => x(d.label))
-            .attr("y", d => y(d.count) + HEIGHT - height)
-            .attr("height", d => height - y(d.count))
-            .attr('fill', d => color(d.count))
+        update => common_actions(update.transition().duration(1000))
             .style('opacity', 0.7),
-
         exit => exit.transition()
             .duration(1000)
             .style('opacity', 0)
             .remove()
     )
 }
-
-function get_trends_controls(){
-
-    let controls = {
-        "week":null,
-        "delays_control":[]
-    }
-
-    let $form = $("#trends-controls input")
-
-    for (let i = 0; i < $form.length; i++) {
-        let $ele = $($form[i])
-
-        let id = $ele.attr('id')
-
-        if(id.includes('delay')){
-            if($ele.prop('checked')){
-                controls['delays_control'].push(DELAY_DATA_MAPPING[id.split('-')[0]] - 5)
-            }
-        }
-        else if(id.includes('week')){
-            if($ele.prop('checked')){
-                let k = id.split('-')[0]
-                controls['week'] = k==='weekday'
-            }
-        }
-    }
-
-    // console.log(controls)
-
-    return controls
-}
-
 function trend_render(data){
 
     render_line(data)
 
     render_volume(data)
+
 }
 
 $(document).ready(function(){
