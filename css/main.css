@@ -535,7 +535,11 @@ body {
 #trends-graph #line{
     fill: whitesmoke;
     stroke-width: 3;
-    stroke: royalblue;
+    /*stroke: royalblue;*/
+}
+
+#trends-graph #volume rect{
+    /*fill: red;*/
 }
 
 
