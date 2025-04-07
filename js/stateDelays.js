@@ -141,10 +141,6 @@ function state_map_render(data, id){
 
     let filtered_data = state_data_search(data, id)
 
-    // console.log(filtered_data)
-
-    // $($('.nav-link')[1]).click()
-
     let dataValues = filtered_data.map(d => d['8'])
     let minVal = Math.min(...dataValues)
     let maxVal = Math.max(...dataValues)
@@ -470,6 +466,7 @@ $(document).ready(function (){
         $('#state-chart #delay-group path').removeClass('hovering')
         $('#state-chart #delay-group text').css({'opacity':0}).removeClass('hovering')
     })
+
 })
 
 

@@ -25,7 +25,7 @@ $(document).ready(function () {
         el: '#app2',
         vuetify: new Vuetify(),
         data: () => ({
-            date: '2024-11',
+            date: '2024-12',
             modal: false
         }),
         methods :{

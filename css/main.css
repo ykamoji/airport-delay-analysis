@@ -528,3 +528,14 @@ body {
     line-height: 2;
 }
 
+#trends-graph{
+    cursor: pointer;
+}
+
+#trends-graph #line{
+    fill: whitesmoke;
+    stroke-width: 3;
+    stroke: royalblue;
+}
+
+

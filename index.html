@@ -25,6 +25,7 @@
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
     <script src="js/stateDelays.js"></script>
+    <script src="js/trends.js"></script>
 </head>
 <body>
 
@@ -483,7 +484,7 @@
                                         type="month"
 
                                         min="2023-01"
-                                        max="2024-11"
+                                        max="2024-12"
                                         scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn
@@ -533,7 +534,7 @@
                                         header-color="primary"
                                         type="month"
                                         min="2023-01"
-                                        max="2024-11"
+                                        max="2024-12"
                                         scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn
@@ -664,8 +665,19 @@
         </div>
     </div>
 </div>
-<div id="trends">
 
+<div id="trends" class="container-fluid pb-5 text-center">
+    <div class="container-fluid">
+        <svg id="trends-graph">
+            <g id="plot">
+                <g id="x-axis"></g>
+                <g id="y-axis"></g>
+                <g>
+                    <path id="line"></path>
+                </g>
+            </g>
+        </svg>
+    </div>
 </div>
 
 
