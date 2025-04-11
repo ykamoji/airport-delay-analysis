@@ -47,7 +47,7 @@
 </nav>
 
 <div id="map_distribution" class="row">
-    <div id="map-container" class="col-10">
+    <div id="map-container" class="col-8">
         <div id="map-header" class=""></div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
             <g class="legend"></g>
@@ -316,10 +316,10 @@
                 </g>
                 <path class="separator" fill="none" d="m 215,493 v 55 l 36,45 m -251,-168 h 147 l 68,68 h 85 l 54,54 v 46"/>
         </g>
-
+            <g id="placeholder"></g>
         </svg>
         <div class="container-fluid airport-base">
-            <span class="name text-wrap"></span>
+            <div class="name text-wrap"></div>
             <i class="fas fa-map-marker-alt loc"></i>
             <div class="airport">
                 <div class="point"><span class="rank"></span></div>
@@ -350,7 +350,7 @@
             </div>
         </div>
     </div>
-    <div id="searchbox" class="col-2">
+    <div id="searchbox" class="col-2 d-none">
         <div class="input-group row mt-5">
             <i class="bi bi-search search-icon col-1 mt-2"></i>
             <div class="col-10">
@@ -669,13 +669,6 @@
 <div id="trends" class="container-fluid pb-5">
     <div class="container-fluid row justify-content-center">
         <div class="col-sm-9">
-            <svg id="week_comparison" style="position: absolute;left: 30%">
-                <g id="compare">
-                    <g id="x-axis"></g>
-                    <g id="y-axis"></g>
-                    <g id="plot"></g>
-                </g>
-            </svg>
             <svg id="trends-graph">
                 <g id="plot">
                     <g id="x-axis"></g>
@@ -685,6 +678,18 @@
                         <g id="points"></g>
                     </g>
                     <g id="volume">
+                    </g>
+                    <g id="week_comparison">
+                        <g transform="translate(-50, 0)">
+                            <rect id="weekday_delay"></rect>
+                            <rect id="weekday_no_delay"></rect>
+                            <text font-size="10px">Weekday</text>
+                        </g>
+                        <g transform="translate(10, 0)">
+                            <rect id="weekend_delay"></rect>
+                            <rect id="weekend_no_delay"></rect>
+                            <text font-size="10px">Weekend</text>
+                        </g>
                     </g>
                 </g>
             </svg>

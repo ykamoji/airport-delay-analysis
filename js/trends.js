@@ -236,90 +236,61 @@ function render_line(data) {
             .style('opacity', 1),
         update => common_points_actions(update),
         exit => exit.remove()
-    ).on("mouseenter", (e)=>  render_comparing(d3.select(e.target).node().getAttribute('id')))
+    ).on("click", (e)=>  render_comparing(d3.select(e.target)))
 
 }
 
-function render_comparing(label){
+function render_comparing(element){
+
+    let label = element.attr('id')
+    let x = element.attr('cx')
+    let y = element.attr('cy') - 25
+    // console.log(element.attr('x'), element.attr('y'))
+
+    d3.select('#trends-graph #plot #week_comparison')
+        .attr('transform', `translate(${x}, ${y})`)
 
     let data = CACHE.get('current_trend_data').filter(d=> d.label === label)[0]
 
-    let {delays_control } = get_trends_controls()
+    let {delays_control} = get_trends_controls()
 
     let delay_idx = delays_control
     if (delay_idx.length === 0) {
         delay_idx = d3.range(5)
     }
 
-    let focused_data = []
-    focused_data.push({label:'Weekday', delays: delay_idx.reduce((sum, key) => sum + data.weekday.counts[key], 0) / 1000})
-    focused_data.push({label:'Weekend', delays: delay_idx.reduce((sum, key) => sum + data.weekend.counts[key], 0) / 1000})
+    let weekday_delays = delay_idx.reduce((sum, key) => sum + data.weekday.counts[key], 0) / 1000
+    let weekend_delays = delay_idx.reduce((sum, key) => sum + data.weekend.counts[key], 0) / 1000
+
+    d3.select('#trends-graph #plot #week_comparison #weekday_delay')
+        .attr('x', 10)
+        .attr('y', -weekday_delays*0.5-20)
+        .attr('width', 10)
+        .attr('height', weekday_delays*0.5)
+        .attr('fill', 'orangered')
+
+    d3.select('#trends-graph #plot #week_comparison #weekday_no_delay')
+        .attr('x', 21)
+        .attr('y', -weekday_delays-20)
+        .attr('width', 10)
+        .attr('height', weekday_delays)
+        .attr('fill', 'green')
+
+    d3.select('#trends-graph #plot #week_comparison #weekend_delay')
+        .attr('x', 10)
+        .attr('y', -weekend_delays*0.5-20)
+        .attr('width', 10)
+        .attr('height', weekend_delays*0.5)
+        .attr('fill', 'orangered')
+
+    d3.select('#trends-graph #plot #week_comparison #weekend_no_delay')
+        .attr('x', 21)
+        .attr('y', -weekend_delays-20)
+        .attr('width', 10)
+        .attr('height', weekend_delays)
+        .attr('fill', 'green')
 
 
-    const chart_width = 200;
-    const chart_height = 250;
-    const margin = { left: 45, bottom: 20, top: 20, right: 20 };
-    const height = chart_height - margin.top - margin.bottom
-    const width = chart_width - margin.left - margin.right
-
-    d3.select('#week_comparison')
-        .attr("width", chart_width)
-        .attr("height", chart_height)
-
-    d3.select('#week_comparison #compare')
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")")
-
-    let x = d3.scaleBand()
-        .domain(d3.map(focused_data, d => d.label))
-        .range([0, width])
-        .padding(0.5)
-
-    d3.select('#week_comparison #x-axis')
-        .attr("transform", `translate(0,${height})`)
-        .transition()
-        .duration(1000)
-        .call(d3.axisBottom(x).tickSizeOuter(0))
-
-    const y = d3.scaleLinear()
-        .domain([0, d3.max(focused_data, d => d.delays)])
-        .range([height, 0])
-        .nice()
-
-    d3.select('#week_comparison #y-axis')
-        .transition()
-        .duration(1000)
-        .call(d3.axisLeft(y))
-
-    const bars = d3.select('#week_comparison #plot')
-        .selectAll('rect').data(focused_data)
-
-    let max_val = Math.max(...focused_data.map(d => d.count))
-
-    const color = d3.scaleSequential([0, max_val], d3.interpolateGnBu)
-
-    function common_actions(d3Obj){
-        return d3Obj
-            .attr("width", x.bandwidth())
-            .attr("x", d => x(d.label))
-            .attr("y", d => y(d.delays))
-            .attr("height", d => height - y(d.delays))
-            .attr('fill', d => color(d.delays))
-    }
-
-    bars.join(
-        enter => common_actions(enter.append('rect'))
-            .style('opacity', 0)
-            .transition()
-            .duration(1000)
-            .style('opacity', 0.7),
-        update => common_actions(update.transition().duration(1000))
-            .style('opacity', 0.7),
-        exit => exit.transition()
-            .duration(1000)
-            .style('opacity', 0)
-            .remove()
-    )
 
 
 }
