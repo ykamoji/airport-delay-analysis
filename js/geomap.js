@@ -476,7 +476,8 @@ function populateState(id, step){
 
         // console.log(state_population)
 
-        let radius = [25, 35, 45, 55, 65, 70].reverse()
+        let radius = [25, 30, 40, 50, 60, 65].reverse()
+
         state_population.forEach((airport, c)=> {
 
             let rank = airport.get('rank')
@@ -515,30 +516,45 @@ function populateState(id, step){
                 }
             }
 
-            let top_val = airport_coordinates_cache.get(airport_location)['t']//points[c]['t']
-            let left_val = airport_coordinates_cache.get(airport_location)['l']//points[c]['l']
+            let x = airport_coordinates_cache.get(airport_location)['x']
+            let y = airport_coordinates_cache.get(airport_location)['y']
+
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+
+            $(circle).attr({
+                cx: x,
+                cy: y,
+                r: 0.1,
+                fill: "none",
+                stroke: "none",
+            })
+
+            $('#map-container svg #placeholder').append(circle)
+
+            x = circle.getBoundingClientRect().left
+            y = circle.getBoundingClientRect().top
 
             $($airports[c])
                 .find('.loc')
                 .css({
-                    "top": top_val - 20  + 'px',
-                    "left": left_val - 20 + 'px',
+                    "top": (y - 20)  + 'px',
+                    "left": (x - 20) + 'px',
                 }).fadeIn(300)
 
             $($airports[c])
                 .find('.name')
-                .text(airport_location)
+                .html(airport_location)
                 .css({
-                    "top": top_val - 20  + 'px',
-                    "left": left_val + 'px',
-                }).fadeIn(300)
+                    "top": y - 30 + 'px',
+                    "left": x + 'px',
+                })
 
 
             $($airports[c])
                 .find('.airport')
                 .css({
-                "top": top_val + 'px',
-                "left": left_val + 'px',
+                "top": y + 'px',
+                "left": x + 'px',
             }).fadeIn(300)
 
 
@@ -546,8 +562,8 @@ function populateState(id, step){
                 .addClass('show')
                 .find('.stats')
                 .css({
-                "top": top_val + radius[rank] + 5 + 'px',
-                "left": left_val - 100 + 'px',
+                "top": y + radius[rank] + 5 + 'px',
+                "left": x - 100 + 'px',
             })
 
         })
@@ -568,6 +584,8 @@ function reset_state() {
         '#map-container .airport-base .card-title',
         '#map-container .airport-base .stats .table tr th:nth-of-type(2)',
     ]
+
+    $('#map-container svg #placeholder').find('circle').remove()
 
     clear_contents.forEach(content => $(content).html(''))
 
@@ -655,8 +673,8 @@ $(document).ready(function () {
                         time_to_hide = 600
                     }
                     setTimeout(function() {
-                        $(html).attr('y', RESET_COORDINATE_MAP.get(inner_id) - 5)
-                        $(html).parent().css('font-size', '2px')
+                        $(html).attr('y', RESET_COORDINATE_MAP.get(inner_id) - (scale < 5 ? 0 : 5))
+                        $(html).parent().css('font-size', scale < 5 ? '4px' : '2px')
                     }, time_to_hide)
                 })
                 populateState(id, 'enter')
@@ -711,10 +729,12 @@ $(document).ready(function () {
                 $(ele).addClass('highlight-out')
             }
         })
+        $(this).find('.name').fadeIn(300)
     }).on('mouseleave',function () {
         $airport_base.find('.stats')
             .css({'z-index':'10'})
             .fadeOut(0)
+        $airport_base.find('.name').hide(0)
         $airport_base.removeClass('highlight-out')
     })
 
