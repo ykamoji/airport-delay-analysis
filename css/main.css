@@ -92,7 +92,10 @@ body {
 }
 
 #map-container svg .state text{
-    font-size: 7px;
+    font-size: 9px;
+    font-weight: 600;
+    text-anchor:middle;
+    fill: black;
 }
 
 #map-container svg .state .borders path{
@@ -467,7 +470,9 @@ body {
     color: #0d6efd;
 }
 
-#state_control #time_slots{}
+#state_control #time_slots .fa-solid{
+    font-size: 1em !important;
+}
 
 #state_control #time_slots span{
     font-size: 10px;
@@ -485,16 +490,16 @@ body {
     border-color: var(--bs-btn-hover-border-color);
 }
 
-
-#state_distribution .legend_color{
-    position: relative;
-    width: 20px;
-    height: 20px;
+#state_legend{
+    position: absolute;
+    top: 100px;
+    right: 200px;
+    font-size: 14px;
 }
 
-#state_distribution .legend_name{
-    position: relative;
-    left: 10px;
+#state_distribution .legend_color{
+    width: 20px;
+    height: 20px;
 }
 
 #state_distribution .legend-0 .legend_color{
@@ -518,10 +523,8 @@ body {
 }
 
 #state_distribution .legend_val{
-    position: relative;
     font-size: 12px;
     font-weight: bolder;
-    left: 20px;
     line-height: 2;
 }
 

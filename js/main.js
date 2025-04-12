@@ -94,6 +94,13 @@ $(document).ready(function () {
         $($toggle_svg[r]).css('color','white')
 
         populateMap()
+
+        if($('#map-container svg').hasClass('zooming')){
+            let id = $('#map-container svg g.state path.zoomed')
+                .filter((i,element) => !element.classList[0].includes('-'))
+                .map((i, element) => element.classList[0])[0]
+            populateStateDelays(id)
+        }
     })
 
     $('#map-container svg path').each((idx, state) => {
@@ -115,10 +122,6 @@ $(document).ready(function () {
 
             text.setAttribute("x", x+'')
             text.setAttribute("y", y+'')
-            text.setAttribute("text-anchor", "middle")
-            text.setAttribute("font-size", "7px")
-            text.setAttribute("font-weight", "bolder")
-            text.setAttribute("fill", "black")
             text.setAttribute("id", "text-"+state_id.toLowerCase())
             text.textContent = state_id
             // console.log(state_id)
@@ -264,12 +267,13 @@ $(document).ready(function () {
     $("#searchbox").hide(0)
     $('#controls-btn').click(function(){
 
-        let translated_y = $("#searchbox").css('display') === 'none' ? 200 : -200; //$("#searchbox")[0].getBoundingClientRect().height
+        // let height = $("#searchbox")[0].getBoundingClientRect().height
+
+        let translated_y = $("#searchbox").css('display') === 'none' ? 200 : -200; //
 
         $('#map-container svg #placeholder circle').each((c, circle) => {
             let x = $('.airport-base .airport')[c].getBoundingClientRect().left
             let y = $('.airport-base .airport')[c].getBoundingClientRect().top
-            console.log($('.airport-base .airport')[c].getBoundingClientRect())
             set_airport_location(x, y + translated_y, circle, c, null, null)
         })
         $("#searchbox").slideToggle(500, "linear")

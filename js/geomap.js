@@ -337,8 +337,8 @@ function geo_map_render(data){
             else return d
         })
         .attr("font-size", (d,i)=>{
-            if(labels[i] === legend_desc) return "8px"
-            return "7px"
+            if(labels[i] === legend_desc) return "9px"
+            return "8px"
         })
         .attr("alignment-baseline", "middle")
 
@@ -544,9 +544,9 @@ function populateState(id, step){
                     airport_coordinates_cache.set(airport_location, points[c])
                 }
                 else{
-                    let new_point = {'t':0,'l':0}
-                    new_point['t'] = points[c]['t'] + (Math.random() > 0.5 ?  Math.random(): -Math.random())*50
-                    new_point['l'] = points[c]['l'] + (Math.random() > 0.5 ?  Math.random(): -Math.random())*50
+                    let new_point = {'x':0,'y':0}
+                    new_point['x'] = points[c]['x'] + (Math.random() > 0.5 ?  Math.random(): -Math.random())*50
+                    new_point['y'] = points[c]['y'] + (Math.random() > 0.5 ?  Math.random(): -Math.random())*50
                     airport_coordinates_cache.set(airport_location, new_point)
                 }
             }
@@ -761,7 +761,7 @@ $(document).ready(function () {
             $('#map-container svg g.state text tspan:nth-of-type(2)').each((idx, html) => {
                 let id = $(html).parent().attr('id').split('-')[1]
                 let reset_value = RESET_COORDINATE_MAP.get(id)
-                $(html).attr('y', reset_value).parent().css('font-size','7px')
+                $(html).attr('y', reset_value).parent().css('font-size','9px')
             })
             $('#map-container svg g.state text').removeClass('not-zoomed')
         }, 300)

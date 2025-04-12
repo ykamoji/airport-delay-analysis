@@ -1,7 +1,7 @@
-const RANGE = {min:100, max: 200}
+const RANGE = {min:100, max: 150}
 const MIN_DELAY = 5
-const EXTEND_RADIUS = 275
-const centerX = 350, centerY = 300;
+const EXTEND_RADIUS = 240
+const centerX = 240, centerY = 200;
 let INIT = null
 
 function populateStateDelays(id){
@@ -23,7 +23,8 @@ function get_state_controls(){
     let controls = {
         'time_slots': null,
         'type': null,
-        'num_airports': parseInt($('#selected_num_airports span').html()),
+        "is_count": $('#toggle-slider').hasClass('turn'),
+        'num_airports': null,
         'airports': []
     }
 
@@ -47,6 +48,9 @@ function get_state_controls(){
 
     controls['airports'] = airport_names
 
+    let num_val = $('#selected_num_airports span').html()
+    controls['num_airports'] = parseInt(num_val ? num_val: 5)
+
     return controls
 }
 
@@ -65,7 +69,7 @@ function calc_total_delay(row){
 }
 
 
-function airports_squeeze(data){
+function airports_squeeze(is_count, data){
 
     let worklist = []
 
@@ -80,11 +84,11 @@ function airports_squeeze(data){
 
     data.forEach(d => {
         let airport = worklist.find(w => w['1'] === d['1']);
-        ['3', '4', '5', '6', '7'].forEach(idx => airport[idx] += d[idx])
+        ['3', '4', '5', '6', '7'].forEach(idx => airport[idx] += is_count ? (d[idx] > 0 ? 1: 0) : d[idx])
     })
 
     worklist.forEach(v => {
-        ['3', '4', '5', '6', '7'].forEach(idx => v[idx] = (v[idx] / 1000))
+        ['3', '4', '5', '6', '7'].forEach(idx => v[idx] = is_count ? v[idx] : (v[idx] / 1000))
         v['8'] = calc_total_delay(v)
     })
 
@@ -112,25 +116,25 @@ function airports_render(airports, data){
 
 function state_data_search(data, id){
 
-    let {time_slots,type,num_airports, airports} = get_state_controls()
+    let {time_slots,type, is_count, num_airports, airports} = get_state_controls()
 
     let data_list = type_render(type, data)
+
+    data_list = airports_render(airports, data_list)
 
     data_list = states_render([id], data_list, '0')
 
     data_list = time_slot_render(time_slots, data_list)
 
-    data_list = airports_squeeze(data_list)
-
-    data_list = airports_render(airports, data_list)
+    data_list = airports_squeeze(is_count, data_list)
 
     if(num_airports !== null){
         data_list = data_list.slice(0, num_airports)
     }
 
     // console.log("Type:",type, "\nNum Airports:",num_airports, "\nTime Slots:", time_slots, "\nAirports:", airports.length,
-    //     "\nResults", data_list.length)
-
+    //     "\nis_count", is_count, "\nResults", data_list.length)
+    //
     // console.log(data_list)
 
     return data_list
@@ -165,20 +169,9 @@ function state_map_render(data, id){
         // console.log('INIT')
 
         if (total <= 3) {
-
             // $('#num_airports')
             //     .attr('max', total)
-            //     .val(1)
-            //
-            // let box = $('#num_airports')[0].getBoundingClientRect()
-            //
-            // console.log(box)
-            //
-            // $('#selected_num_airports')
-            //     .css({'left': box.width + 10 })
-            //     .find('span')
-            //     .html(1)
-
+            //     .val(total)
         }
 
         INIT = id
@@ -266,8 +259,8 @@ function resetSegmentedAirport(){
     }).css({'opacity': 0})
 
     $('#state_legend')
+        .fadeOut(0)
         .toggleClass('d-flex')
-        .fadeOut(100)
 }
 
 
@@ -422,14 +415,14 @@ $(document).ready(function (){
             $state_chart.addClass('hovering')
             $(this).addClass('hovering')
             let index = $(this).attr('id').split('-')[1]
-            $('#state-chart #airport-details #text-'+index).attr('font-size', '12px')
+            $('#state-chart #airport-details #text-'+index).attr('font-size', '15px')
         }
     }).on('mouseleave',function (){
         if(!$state_chart.hasClass('zoomed')) {
             $state_chart.removeClass('hovering')
             $('#airport-details path').removeClass('hovering')
             $('#state-chart #airport-details text')
-                .attr('font-size', '9px')
+                .attr('font-size', '12px')
         }
     }).on('click', function (){
         $state_chart.removeClass('hovering')
