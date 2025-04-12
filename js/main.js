@@ -261,4 +261,9 @@ $(document).ready(function () {
 
     })
 
+    $("#searchbox").hide(0)
+    $('#controls-btn').click(function(){
+        $("#searchbox").slideToggle(500, "linear")
+    })
+
 });

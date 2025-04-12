@@ -225,6 +225,11 @@ body {
 
 }
 
+
+#searchbox #filters {
+    transition: height 0.5s ease-in-out;
+}
+
 #searchbox #toggle-container{
     display: flex;
     border-radius: 10px;
@@ -346,19 +351,8 @@ body {
     font-size: 16px;
 }
 
-#searchbox #delay-filter-label{
-    position: relative;
-    font-weight: bold;
-    left:-20px
-}
 
-#searchbox .control{
-    position: relative;
-    font-size: 15px;
-    left:-20px
-}
-
-#searchbox .control .v-label, #searchbox .control .v-text-field__slot input{
+#searchbox .v-label, #searchbox .v-text-field__slot input{
     font-size: 14px;
 }
 
