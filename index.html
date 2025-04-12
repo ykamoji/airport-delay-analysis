@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,220 +47,264 @@
 
 <div id="map_distribution">
     <div class="container pb-1">
-        <button id="controls-btn"  class="col-2 btn btn-outline-success rounded-0" type="button">Search & Filter</button>
+        <button id="controls-btn" class="col-2 btn btn-outline-danger rounded-0 fw-semibold" type="button">Search & Filter</button>
     </div>
-    <div id="searchbox" class="container row ms-5 me-5">
-        <div class="col-2">
-            <i class="bi bi-search search-icon mt-2" style="position: absolute;"></i>
-            <div class="ms-4">
-                <input type="text" id="states-search" class="search form-control" placeholder="States"
-                       autocomplete="off">
-                <div class="progress" role="progressbar" style="height: 2px">
-                    <div class="progress-bar bg-success"></div>
+    <div id="searchbox" class="container-fluid row">
+        <div id="geo_controls" class="col-6 row">
+            <div class="col-4">
+                <i class="bi bi-search search-icon mt-2" style="position: absolute;"></i>
+                <div class="ms-4">
+                    <input type="text" id="states-search" class="search form-control" placeholder="States"
+                           autocomplete="off">
+                    <div class="progress" role="progressbar" style="height: 2px">
+                        <div class="progress-bar bg-success"></div>
+                    </div>
+                    <div class="suggestions dropdown-menu"></div>
                 </div>
-                <div class="suggestions dropdown-menu"></div>
+                <div class="selected-items"></div>
             </div>
-            <div class="selected-items"></div>
-        </div>
-        <div class="col-2">
-            <i class="bi bi-search search-icon mt-2" style="position: absolute;"></i>
-            <div class="ms-4">
-                <input type="text" id="airlines-search" class="search form-control" placeholder="Airlines"
-                       autocomplete="off">
-                <div class="progress" role="progressbar" style="height: 2px">
-                    <div class="progress-bar bg-success"></div>
+            <div class="col-4">
+                <i class="bi bi-search search-icon mt-2" style="position: absolute;"></i>
+                <div class="ms-4">
+                    <input type="text" id="airlines-search" class="search form-control" placeholder="Airlines"
+                           autocomplete="off">
+                    <div class="progress" role="progressbar" style="height: 2px">
+                        <div class="progress-bar bg-success"></div>
+                    </div>
+                    <div class="suggestions dropdown-menu"></div>
                 </div>
-                <div class="suggestions dropdown-menu"></div>
+                <div class="selected-items"></div>
             </div>
-            <div class="selected-items"></div>
-        </div>
-        <div class="col-1 check-single">
-            <div class="form-check">
-                <input class="form-check-input rounded-0" type="checkbox" id="origin-type">
-                <label class="form-check-label" for="origin-type">Departures</label>
+            <div class="col-2 check-single">
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="origin-type">
+                    <label class="form-check-label" for="origin-type">Departures</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="dest-type">
+                    <label class="form-check-label" for="dest-type">Arrivals</label>
+                </div>
             </div>
-            <div class="form-check">
-                <input class="form-check-input rounded-0" type="checkbox" id="dest-type">
-                <label class="form-check-label" for="dest-type">Arrivals</label>
-            </div>
-        </div>
-        <div class="col-1 check-single">
-            <div class="form-check">
-                <input class="form-check-input rounded-0" type="checkbox" id="weekday-week">
-                <label class="form-check-label" for="weekday-week">Weekday</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input rounded-0" type="checkbox" id="weekend-week">
-                <label class="form-check-label" for="weekend-week">Weekend</label>
-            </div>
+            <div class="col-2 check-single">
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="weekday-week">
+                    <label class="form-check-label" for="weekday-week">Weekday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input rounded-0" type="checkbox" id="weekend-week">
+                    <label class="form-check-label" for="weekend-week">Weekend</label>
+                </div>
 
-        </div>
-        <div class="mt-2 d-flex">
-            <div class="form-check form-switch border-top border-bottom border-start border-dark-subtle pe-4 pt-2 pb-2 ps-5">
-                <input class="form-check-input" type="checkbox" id="carrier-delay">
-                <label class="form-check-label" for="carrier-delay">Carrier</label>
             </div>
-            <div class="form-check form-switch border-top border-bottom border-dark-subtle pe-4 pt-2 pb-2">
-                <input class="form-check-input" type="checkbox" id="weather-delay">
-                <label class="form-check-label" for="weather-delay">Weather</label>
+            <div class="mt-2 d-flex">
+                <div class="form-check form-switch border-top border-bottom border-start border-dark-subtle pe-4 pt-2 pb-2 ps-5">
+                    <input class="form-check-input" type="checkbox" id="carrier-delay">
+                    <label class="form-check-label" for="carrier-delay">Carrier</label>
+                </div>
+                <div class="form-check form-switch border-top border-bottom border-dark-subtle pe-4 pt-2 pb-2">
+                    <input class="form-check-input" type="checkbox" id="weather-delay">
+                    <label class="form-check-label" for="weather-delay">Weather</label>
+                </div>
+                <div class="form-check form-switch border-top border-bottom border-dark-subtle pe-4 pt-2 pb-2">
+                    <input class="form-check-input" type="checkbox" id="nas-delay">
+                    <label class="form-check-label" for="nas-delay">NAS <span
+                            style="font-size: 11px">(National Air System)</span></label>
+                </div>
+                <div class="form-check form-switch border-top border-bottom border-dark-subtle pe-4 pt-2 pb-2">
+                    <input class="form-check-input" type="checkbox" id="security-delay">
+                    <label class="form-check-label" for="security-delay">Security</label>
+                </div>
+                <div class="form-check form-switch border-top border-bottom border-end border-dark-subtle pt-2 pb-2 pe-3">
+                    <input class="form-check-input" type="checkbox" id="late_aircraft-delay">
+                    <label class="form-check-label" for="late_aircraft-delay">Late Aircraft</label>
+                </div>
             </div>
-            <div class="form-check form-switch border-top border-bottom border-dark-subtle pe-4 pt-2 pb-2">
-                <input class="form-check-input" type="checkbox" id="nas-delay">
-                <label class="form-check-label" for="nas-delay">NAS <span
-                        style="font-size: 11px">(National Air System)</span></label>
-            </div>
-            <div class="form-check form-switch border-top border-bottom border-dark-subtle pe-4 pt-2 pb-2">
-                <input class="form-check-input" type="checkbox" id="security-delay">
-                <label class="form-check-label" for="security-delay">Security</label>
-            </div>
-            <div class="form-check form-switch border-top border-bottom border-end border-dark-subtle pt-2 pb-2 pe-3">
-                <input class="form-check-input" type="checkbox" id="late_aircraft-delay">
-                <label class="form-check-label" for="late_aircraft-delay">Late Aircraft</label>
-            </div>
-        </div>
-        <div class="d-flex flex-row mt-4 ps-3 gap-5">
-            <div id="app1" style="max-height: 50px;">
-                <v-app style="background-color: inherit;">
-                    <v-main>
-                        <v-dialog
-                                ref="dialog"
-                                v-model="modal"
-                                :close-on-content-click="false"
-                                :return-value.sync="date"
-                                transition="scale-transition"
-                                offset-y
-                                max-width="300px"
-                                min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                        id="from-date"
+            <div class="d-flex flex-row mt-4 ps-3 gap-5">
+                <div id="app1" style="max-height: 50px;overflow: hidden">
+                    <v-app style="background-color: inherit;">
+                        <v-main>
+                            <v-dialog
+                                    ref="dialog"
+                                    v-model="modal"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    transition="scale-transition"
+                                    offset-y
+                                    max-width="300px"
+                                    min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                            id="from-date"
+                                            v-model="date"
+                                            label="Start Date"
+                                            prepend-icon="mdi-calendar"
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                         v-model="date"
-                                        label="Start Date"
-                                        prepend-icon="mdi-calendar"
-                                        readonly
-                                        v-bind="attrs"
-                                        v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                    v-model="date"
-                                    color="primary"
-                                    header-color="primary"
-                                    type="month"
+                                        color="primary"
+                                        header-color="primary"
+                                        type="month"
 
-                                    min="2023-01"
-                                    max="2024-12"
-                                    scrollable>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                        text
-                                        color="primary"
-                                        @click="onDateCleared">
-                                    CLEAR
-                                </v-btn>
-                                <v-btn
-                                        text
-                                        color="primary"
-                                        @click="onDateSelected">
-                                    OK
-                                </v-btn>
-                            </v-date-picker>
-                        </v-dialog>
-                    </v-main>
-                </v-app>
-            </div>
-            <div id="app2" style="max-height: 50px;">
-                <v-app style="background-color: inherit;">
-                    <v-main>
-                        <v-dialog
-                                ref="dialog"
-                                v-model="modal"
-                                :close-on-content-click="false"
-                                :return-value.sync="date"
-                                transition="scale-transition"
-                                offset-y
-                                max-width="300px"
-                                min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                        id="to-date"
+                                        min="2023-01"
+                                        max="2024-12"
+                                        scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                            text
+                                            color="primary"
+                                            @click="onDateCleared">
+                                        CLEAR
+                                    </v-btn>
+                                    <v-btn
+                                            text
+                                            color="primary"
+                                            @click="onDateSelected">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-main>
+                    </v-app>
+                </div>
+                <div id="app2" style="max-height: 50px;overflow: hidden">
+                    <v-app style="background-color: inherit;">
+                        <v-main>
+                            <v-dialog
+                                    ref="dialog"
+                                    v-model="modal"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    transition="scale-transition"
+                                    offset-y
+                                    max-width="300px"
+                                    min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                            id="to-date"
+                                            v-model="date"
+                                            label="End Date"
+                                            prepend-icon="mdi-calendar"
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
                                         v-model="date"
-                                        label="End Date"
-                                        prepend-icon="mdi-calendar"
-                                        readonly
-                                        v-bind="attrs"
-                                        v-on="on"
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                    v-model="date"
-                                    color="primary"
-                                    header-color="primary"
-                                    type="month"
-                                    min="2023-01"
-                                    max="2024-12"
-                                    scrollable>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                        text
                                         color="primary"
-                                        @click="onDateCleared">
-                                    CLEAR
-                                </v-btn>
-                                <v-btn
-                                        text
-                                        color="primary"
-                                        @click="onDateSelected">
-                                    OK
-                                </v-btn>
-                            </v-date-picker>
-                        </v-dialog>
-                    </v-main>
-                </v-app>
-            </div>
-            <div class="ms-5 d-flex align-items-center">
-                <label class="p-1 form-check-label toggle-btn turn">Tally</label>
-                <div id="delay-toggle" class="p-1 ">
-                    <div id="toggle-container">
-                        <div id="toggle-slider">
-                        </div>
-                        <div class="toggle-switch turn"
-                             style="flex: 1 1 0; display: flex; justify-content: center; align-items: center; z-index: 1; cursor: pointer;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" style="color: white">
-                                <mask id="mask0_643_2069" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"
-                                      style="mask-type: alpha;">
-                                    <rect width="24" height="24" fill="whitesmoke"></rect>
-                                </mask>
-                                <g mask="url(#mask0_643_2069)">
-                                    <path d="M5 11.25C3.89543 11.25 3 10.3546 3 9.25V5C3 3.89543 3.89543 3 5 3H9.25C10.3546 3 11.25 3.89543 11.25 5V9.25C11.25 10.3546 10.3546 11.25 9.25 11.25H5ZM5 21C3.89543 21 3 20.1046 3 19V14.75C3 13.6454 3.89543 12.75 5 12.75H9.25C10.3546 12.75 11.25 13.6454 11.25 14.75V19C11.25 20.1046 10.3546 21 9.25 21H5ZM14.75 11.25C13.6454 11.25 12.75 10.3546 12.75 9.25V5C12.75 3.89543 13.6454 3 14.75 3H19C20.1046 3 21 3.89543 21 5V9.25C21 10.3546 20.1046 11.25 19 11.25H14.75ZM14.75 21C13.6454 21 12.75 20.1046 12.75 19V14.75C12.75 13.6454 13.6454 12.75 14.75 12.75H19C20.1046 12.75 21 13.6454 21 14.75V19C21 20.1046 20.1046 21 19 21H14.75Z"
-                                          fill="currentColor">
-                                    </path>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="toggle-switch"
-                             style="flex: 1 1 0; display: flex; justify-content: center; align-items: center; z-index: 1; cursor: pointer; height: 100%;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" style="color: rgba(255, 255, 255, 0.5);">
-                                <mask id="mask0_677_622" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"
-                                      style="mask-type: alpha;">
-                                    <rect width="24" height="24" fill="whitesmoke"></rect>
-                                </mask>
-                                <g mask="url(#mask0_677_622)">
-                                    <path d="M5 19C3.89543 19 3 18.1046 3 17V14.75C3 13.6454 3.89543 12.75 5 12.75H19C20.1046 12.75 21 13.6454 21 14.75V17C21 18.1046 20.1046 19 19 19H5ZM5 11.25C3.89543 11.25 3 10.3546 3 9.25V7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7V9.25C21 10.3546 20.1046 11.25 19 11.25H5Z"
-                                          fill="currentColor">
-                                    </path>
-                                </g>
-                            </svg>
+                                        header-color="primary"
+                                        type="month"
+                                        min="2023-01"
+                                        max="2024-12"
+                                        scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                            text
+                                            color="primary"
+                                            @click="onDateCleared">
+                                        CLEAR
+                                    </v-btn>
+                                    <v-btn
+                                            text
+                                            color="primary"
+                                            @click="onDateSelected">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-main>
+                    </v-app>
+                </div>
+                <div class="ms-5 d-flex align-items-center">
+                    <label class="p-1 form-check-label toggle-btn turn">Tally</label>
+                    <div id="delay-toggle" class="p-1 ">
+                        <div id="toggle-container">
+                            <div id="toggle-slider">
+                            </div>
+                            <div class="toggle-switch turn"
+                                 style="flex: 1 1 0; display: flex; justify-content: center; align-items: center; z-index: 1; cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" style="color: white">
+                                    <mask id="mask0_643_2069" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
+                                          height="24"
+                                          style="mask-type: alpha;">
+                                        <rect width="24" height="24" fill="whitesmoke"></rect>
+                                    </mask>
+                                    <g mask="url(#mask0_643_2069)">
+                                        <path d="M5 11.25C3.89543 11.25 3 10.3546 3 9.25V5C3 3.89543 3.89543 3 5 3H9.25C10.3546 3 11.25 3.89543 11.25 5V9.25C11.25 10.3546 10.3546 11.25 9.25 11.25H5ZM5 21C3.89543 21 3 20.1046 3 19V14.75C3 13.6454 3.89543 12.75 5 12.75H9.25C10.3546 12.75 11.25 13.6454 11.25 14.75V19C11.25 20.1046 10.3546 21 9.25 21H5ZM14.75 11.25C13.6454 11.25 12.75 10.3546 12.75 9.25V5C12.75 3.89543 13.6454 3 14.75 3H19C20.1046 3 21 3.89543 21 5V9.25C21 10.3546 20.1046 11.25 19 11.25H14.75ZM14.75 21C13.6454 21 12.75 20.1046 12.75 19V14.75C12.75 13.6454 13.6454 12.75 14.75 12.75H19C20.1046 12.75 21 13.6454 21 14.75V19C21 20.1046 20.1046 21 19 21H14.75Z"
+                                              fill="currentColor">
+                                        </path>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="toggle-switch"
+                                 style="flex: 1 1 0; display: flex; justify-content: center; align-items: center; z-index: 1; cursor: pointer; height: 100%;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" style="color: rgba(255, 255, 255, 0.5);">
+                                    <mask id="mask0_677_622" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
+                                          height="24"
+                                          style="mask-type: alpha;">
+                                        <rect width="24" height="24" fill="whitesmoke"></rect>
+                                    </mask>
+                                    <g mask="url(#mask0_677_622)">
+                                        <path d="M5 19C3.89543 19 3 18.1046 3 17V14.75C3 13.6454 3.89543 12.75 5 12.75H19C20.1046 12.75 21 13.6454 21 14.75V17C21 18.1046 20.1046 19 19 19H5ZM5 11.25C3.89543 11.25 3 10.3546 3 9.25V7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7V9.25C21 10.3546 20.1046 11.25 19 11.25H5Z"
+                                              fill="currentColor">
+                                        </path>
+                                    </g>
+                                </svg>
+                            </div>
                         </div>
                     </div>
+                    <label class="p-1 form-check-label toggle-btn">Count</label>
                 </div>
-                <label class="p-1 form-check-label toggle-btn">Count</label>
+            </div>
+        </div>
+        <div id="state_control" class="col-6 row mt-0">
+            <div class="col-6">
+                <div class="input-group">
+                    <i class="bi bi-search search-icon col-1"></i>
+                    <div class="col-8 p-0">
+                        <input type="text" id="airports-search" class="search form-control" placeholder="Airports"
+                               autocomplete="off">
+                        <div class="progress" role="progressbar" style="height: 2px">
+                            <div class="progress-bar bg-success"></div>
+                        </div>
+                        <div class="suggestions dropdown-menu"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="time_slots" class="col-6">
+                <button type="button" class="btn btn-outline-secondary rounded-0" data-id="1">
+                    <img src="https://img.icons8.com/?size=100&id=9314&format=png&color=000000" height="25px"/><br>
+                    <span>Morning</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary rounded-0" data-id="2">
+                    <i class="fa-solid fa-sun fs-4"></i><br>
+                    <span>Afternoon</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary rounded-0" data-id="3">
+                    <img src="https://img.icons8.com/?size=100&id=3455&format=png&color=000000" height="25px"/><br>
+                    <span>Evening</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary rounded-0" data-id="0">
+                    <i class="fa-solid fa-moon fs-4"></i><br>
+                    <span>Night</span>
+                </button>
+            </div>
+            <div class="col-12 text-center">
+                <label for="num_airports" class="form-label" style="font-size: 14px">Number of Airports</label>
+                <input type="range" class="form-label" id="num_airports" min="1" max="10" value="3">
+                <div id="selected_num_airports">
+                    <i class="fa-solid fa-caret-up fs-2"></i>
+                    <span></span>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <div class="row">
         <div id="map-container" class="col-8">
             <div id="map-header" class=""></div>
@@ -570,58 +614,6 @@
 </div>
 
 <div id="state_distribution" class="container-fluid">
-    <div id="state_control" class="offset-sm-1 row gx-3 gy-2 mt-5 justify-content-center">
-        <div class="col-sm-3">
-            <label for="num_airports" class="form-label" style="font-size: 14px">Number of Airports</label>
-            <input type="range" class="form-label" id="num_airports" min="1" max="10" value="3">
-            <div id="selected_num_airports">
-                <i class="fa-solid fa-caret-up fs-2"></i>
-                <span></span>
-            </div>
-        </div>
-        <div id="time_slots" class="col-sm-3 p-0">
-            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="1">
-                <img src="https://img.icons8.com/?size=100&id=9314&format=png&color=000000" height="25px"/><br>
-                <span>Morning</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="2">
-                <i class="fa-solid fa-sun fs-4"></i><br>
-                <span>Afternoon</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="3">
-                <img src="https://img.icons8.com/?size=100&id=3455&format=png&color=000000" height="25px"/><br>
-                <span>Evening</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary rounded-0" data-id="0">
-                <i class="fa-solid fa-moon fs-4"></i><br>
-                <span>Night</span>
-            </button>
-        </div>
-        <div class="check-single col-sm-2">
-            <div class="d-flex flex-wrap gap-3">
-                <div class="form-check">
-                    <input class="form-check-input rounded-0" type="checkbox" id="airport-origin">
-                    <label class="form-check-label" for="airport-origin">Departures</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input rounded-0" type="checkbox" id="airport-dest">
-                    <label class="form-check-label" for="airport-dest">Arrivals</label>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4 p-0 mt-0">
-            <div class="input-group">
-            <i class="bi bi-search search-icon col-1"></i>
-            <div class="col-8 p-0">
-                <input type="text" id="airports-search" class="search form-control" placeholder="Airports" autocomplete="off">
-                <div class="progress" role="progressbar" style="height: 2px">
-                    <div class="progress-bar bg-success"></div>
-                </div>
-                <div class="suggestions dropdown-menu"></div>
-            </div>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="offset-sm-1 col-sm-5 text-center">
             <svg xmlns="http://www.w3.org/2000/svg" id="state-chart" width="1200" height="800" viewBox="50 0 600 600">

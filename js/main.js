@@ -52,7 +52,7 @@ $(document).ready(function () {
 
     const $toggle_switch = $('.toggle-switch')
     const $toggle_svg = $('.toggle-switch svg')
-    const $toggle_btn = $('#searchbox .toggle-btn')
+    const $toggle_btn = $('#geo_controls .toggle-btn')
     const $toggle_slider = $('#toggle-slider')
 
     $toggle_btn.click(function (){
@@ -155,7 +155,7 @@ $(document).ready(function () {
     }
 
 
-    $("#searchbox .search").on("input", function () {
+    $("#geo_controls .search").on("input", function () {
         let value = $(this).val();
         let id = $(this).attr('id').split('-')[0]
         if (value.length > 0) {
@@ -166,7 +166,7 @@ $(document).ready(function () {
     });
 
 
-    $("#searchbox .suggestions").on("click", ".dropdown-item", function () {
+    $("#geo_controls .suggestions").on("click", ".dropdown-item", function () {
 
         let selectedText = $(this).text();
 
@@ -205,11 +205,11 @@ $(document).ready(function () {
 
     $(document).click(function (e) {
         if (!$(e.target).closest(".position-relative").length) {
-            $("#searchbox .suggestions").removeClass("show");
+            $("#searchbox #geo_controls .suggestions").removeClass("show");
         }
     });
 
-    $(".selected-items").on("click", ".remove", function () {
+    $("#geo_controls .selected-items").on("click", ".remove", function () {
         let itemToRemove = $(this).data("item");
 
         let $selectedContainer = $(this).parent().parent()
@@ -218,12 +218,12 @@ $(document).ready(function () {
         updateSelectedItems($selectedContainer, id);
     });
 
-    $('#searchbox .form-check-input').on("change", function (){
+    $('#searchbox #geo_controls .form-check-input').on("change", function (){
         setTimeout(function (){populateMap()}, 50)
     });
 
 
-    $("#searchbox input, #state_control input").focusin(function (){
+    $("#searchbox input").focusin(function (){
         $(this).next().children('.progress-bar').addClass("focused")
     }).focusout(function (){
         $(this).next().children('.progress-bar').removeClass("focused")
@@ -263,7 +263,19 @@ $(document).ready(function () {
 
     $("#searchbox").hide(0)
     $('#controls-btn').click(function(){
+
+        let translated_y = $("#searchbox").css('display') === 'none' ? 200 : -200; //$("#searchbox")[0].getBoundingClientRect().height
+
+        $('#map-container svg #placeholder circle').each((c, circle) => {
+            let x = $('.airport-base .airport')[c].getBoundingClientRect().left
+            let y = $('.airport-base .airport')[c].getBoundingClientRect().top
+            console.log($('.airport-base .airport')[c].getBoundingClientRect())
+            set_airport_location(x, y + translated_y, circle, c, null, null)
+        })
         $("#searchbox").slideToggle(500, "linear")
+        setTimeout(function (){
+            initializeSlider()
+        }, 200)
     })
 
 });

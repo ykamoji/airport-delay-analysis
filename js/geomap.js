@@ -1,3 +1,4 @@
+const RADIUS = [25, 30, 40, 50, 60, 65].reverse()
 function get_controls(){
 
     let controls = {
@@ -13,7 +14,7 @@ function get_controls(){
         "is_count":$('#toggle-slider').hasClass('turn')
     }
 
-    let $form = $("#searchbox input")
+    let $form = $("#searchbox #geo_controls input")
 
     for (let i = 0; i < $form.length; i++) {
         let $ele = $($form[i])
@@ -435,6 +436,42 @@ function airport_ordering(airports){
     return airports.sort((a, b) => a.get('airport').localeCompare(b.get('airport')))
 }
 
+function set_airport_location(x, y, circle, c, airport_location, radius) {
+
+    let $airports = $('.airport-base')
+
+    $($airports[c])
+        .find('.loc')
+        .css({
+            "top": (y - 20) + 'px',
+            "left": (x - 20) + 'px',
+        }).fadeIn(300)
+
+    $($airports[c])
+        .find('.name')
+        .html(airport_location !== null ? airport_location : $($airports[c]).find('.name').html())
+        .css({
+            "top": y - 30 + 'px',
+            "left": x + 'px',
+        })
+
+    $($airports[c])
+        .find('.airport')
+        .css({
+            "top": y + 'px',
+            "left": x + 'px',
+        }).fadeIn(300)
+
+
+    $($airports[c])
+        .addClass('show')
+        .find('.stats')
+        .css({
+            "top": y + (radius !== null ? radius : RADIUS[$(circle).attr('data_rank')]) + 5 + 'px',
+            "left": x - 100 + 'px',
+        })
+}
+
 function populateState(id, step){
 
     let $airports = $('.airport-base')
@@ -476,13 +513,11 @@ function populateState(id, step){
 
         // console.log(state_population)
 
-        let radius = [25, 30, 40, 50, 60, 65].reverse()
-
         state_population.forEach((airport, c)=> {
 
             let rank = airport.get('rank')
 
-            $($airports[c]).find('.point').css('--radius', radius[rank] +'px')
+            $($airports[c]).find('.point').css('--radius', RADIUS[rank] +'px')
 
             $($airports[c]).find('.rank').text(rank+1)
 
@@ -525,6 +560,7 @@ function populateState(id, step){
                 cx: x,
                 cy: y,
                 r: 0.1,
+                data_rank: rank,
                 fill: "none",
                 stroke: "none",
             })
@@ -534,38 +570,7 @@ function populateState(id, step){
             x = circle.getBoundingClientRect().left
             y = circle.getBoundingClientRect().top
 
-            $($airports[c])
-                .find('.loc')
-                .css({
-                    "top": (y - 20)  + 'px',
-                    "left": (x - 20) + 'px',
-                }).fadeIn(300)
-
-            $($airports[c])
-                .find('.name')
-                .html(airport_location)
-                .css({
-                    "top": y - 30 + 'px',
-                    "left": x + 'px',
-                })
-
-
-            $($airports[c])
-                .find('.airport')
-                .css({
-                "top": y + 'px',
-                "left": x + 'px',
-            }).fadeIn(300)
-
-
-            $($airports[c])
-                .addClass('show')
-                .find('.stats')
-                .css({
-                "top": y + radius[rank] + 5 + 'px',
-                "left": x - 100 + 'px',
-            })
-
+            set_airport_location(x, y, circle, c, airport_location, RADIUS[rank]);
         })
 
         CACHE.set('airport_coordinates', airport_coordinates_cache)

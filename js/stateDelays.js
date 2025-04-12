@@ -166,16 +166,18 @@ function state_map_render(data, id){
 
         if (total <= 3) {
 
-            $('#num_airports')
-                .attr('max', total)
-                .val(1)
-
-            let box = $('#num_airports')[0].getBoundingClientRect()
-
-            $('#selected_num_airports')
-                .css({'left': box.width + 10 })
-                .find('span')
-                .html(1)
+            // $('#num_airports')
+            //     .attr('max', total)
+            //     .val(1)
+            //
+            // let box = $('#num_airports')[0].getBoundingClientRect()
+            //
+            // console.log(box)
+            //
+            // $('#selected_num_airports')
+            //     .css({'left': box.width + 10 })
+            //     .find('span')
+            //     .html(1)
 
         }
 
@@ -376,8 +378,6 @@ function populateAirport($pie, index, airport_cache){
 
 $(document).ready(function (){
 
-    initializeSlider()
-
     airportSelector()
 
     timeSlotSelector()
@@ -492,6 +492,8 @@ function initializeSlider(){
     let $slider = $('#num_airports')
     let $slider_value = $('#selected_num_airports')
 
+    // $slider_value.toggleClass('d-none')
+
     let slider_cord = $slider[0].getBoundingClientRect()
     let slider_value_cord = $slider_value[0].getBoundingClientRect()
 
@@ -536,10 +538,10 @@ function init_airport_list_sorted(id, data){
 
 function airportSelector(){
 
-    $('#state_control .search').on('focus', function (){
+    $('#state_control #airports-search').on('focus', function (){
         if(CACHE.has('airport_details')) $(this).next().next().addClass("show")
     }).on('input', function (){
-            if(!CACHE.has('airport_details')) return
+        if(!CACHE.has('airport_details')) return
         $(this).next().next().addClass("show");
         let value = $(this).val();
         let search_list = CACHE.get('airport_details').get('data').map(d => d['1'])
@@ -575,8 +577,8 @@ function airportSelector(){
 
 
     $(document).click((e)=>{
-        if(!$('#state_control')[0].contains(e.target)){
-            $("#state_control .suggestions").removeClass("show");
+        if(!$('#state_control #airports-search').parent('div')[0].contains(e.target)){
+            $("#state_control .suggestions").removeClass("show")
         }
     })
 }

@@ -132,7 +132,7 @@ body {
 #map-container .airport-base .airport, #map-container .airport-base .loc, #map-container .airport-base .stats{
     position: absolute;
     cursor: pointer;
-    transition: all 0.5s ease;
+    transition: all 0.5s linear;
     transform-origin: center;
     z-index: 20;
 }
@@ -222,7 +222,7 @@ body {
 }
 
 #searchbox{
-
+    font-size: 15px;
 }
 
 
@@ -268,9 +268,8 @@ body {
     transform: translateX(100%);
 }
 
-#searchbox .search-icon, #state_control .search-icon {
-    position: relative;
-    font-size: 16px;
+#searchbox .search-icon, #state_control .search-icon{
+    font-size: 15px;
     color: #aaa;
 }
 
