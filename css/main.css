@@ -1,10 +1,14 @@
+:root {
+    --bg-color:#faf0e6
+}
+
 html {
     scroll-behavior: smooth;
 }
 
 
 body {
-    background-color: whitesmoke;
+    background-color: var(--bg-color);
 }
 
 .nav-link{
@@ -15,7 +19,7 @@ body {
     position: absolute;
     bottom: 10px;
     height: 3px;
-    background-color: whitesmoke;
+    background-color: var(--bg-color);
     transition: all 0.3s ease;
 }
 
@@ -257,7 +261,7 @@ body {
 #searchbox .toggle-btn{
     cursor: pointer;
     user-select: none;
-    border-bottom: 2px solid whitesmoke;
+    border-bottom: 2px solid var(--bg-color);
 }
 
 #searchbox .toggle-btn.turn {
@@ -314,7 +318,7 @@ body {
     margin-top: 2px;
     border-radius: 0;
     overflow-y: auto;
-    background-color: whitesmoke;
+    background-color: var(--bg-color);
     max-height: 300px;
 }
 
@@ -397,6 +401,10 @@ body {
     user-select: none;
 }
 
+#state-chart #airport-details path, #state-chart #delay-group path{
+    stroke: var(--bg-color)
+}
+
 #state-chart.hovering #airport-details path:not(.hovering){
     stroke-width:0.5;
 }
@@ -446,8 +454,44 @@ body {
 }
 
 #state_control #num_airports{
+    -webkit-appearance: none;
     margin-left: 10px;
+    height: 8px;
+    background: transparent;
     cursor: pointer;
+}
+
+
+#state_control #num_airports::-webkit-slider-runnable-track {
+    background: #ffa94d;
+    height: 8px;
+    border-radius: 4px;
+}
+
+#state_control #num_airports::-moz-range-track {
+    border-radius: 4px;
+}
+
+#state_control #num_airports::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: #e34a33;
+    position: relative;
+    top:-5px;
+    border-radius: 100%;
+    height: 20px;
+    width: 20px;
+}
+
+#state_control #num_airports::-moz-range-thumb {
+    background: #e34a33;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    border: none;
+}
+
+#state_control #num_airports:focus {
+    outline: none;
 }
 
 #state_control #selected_num_airports{
@@ -455,19 +499,20 @@ body {
     line-height:1;
     text-align: center;
     font-weight: bold;
+    top:10px;
     position: relative;
     height: 20px;
     width: 20px;
     border-radius: 0 0 100% 100%;
-    color: whitesmoke;
-    background-color: #0d6efd;
+    color: var(--bg-color);
+    background-color: brown;
 }
 
 #state_control #selected_num_airports i{
     position: absolute;
     top:-18px;
     left: 0px;
-    color: #0d6efd;
+    color: brown;
 }
 
 #state_control #time_slots .fa-solid{
@@ -484,22 +529,31 @@ body {
     padding-left: 18px;
 }
 
+#state_control #time_slots .btn{
+    transition: transform 0.5s ease;
+}
+
+#state_control #time_slots .btn:hover{
+    background-color: brown;
+    transform: scale(1.1);
+}
+
 #state_control #time_slots .btn.active{
     color: var(--bs-btn-hover-color);
-    background-color: var(--bs-btn-hover-bg);
-    border-color: var(--bs-btn-hover-border-color);
+    background-color: brown;
+    border-color: brown;
 }
 
 #state_legend{
     position: absolute;
-    top: 100px;
-    right: 200px;
-    font-size: 14px;
+    font-size: 15px;
+    transition: top 0.5s linear;
 }
 
+
 #state_distribution .legend_color{
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
 }
 
 #state_distribution .legend-0 .legend_color{
@@ -533,7 +587,7 @@ body {
 }
 
 #trends-graph #line{
-    fill: whitesmoke;
+    fill: var(--bg-color);
     stroke-width: 3;
     /*stroke: royalblue;*/
 }
@@ -541,5 +595,11 @@ body {
 #trends-graph #volume rect{
     /*fill: red;*/
 }
+
+#trends-graph #points circle{
+    fill: var(--bg-color)
+}
+
+
 
 

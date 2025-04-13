@@ -265,21 +265,19 @@
                 </div>
             </div>
         </div>
-        <div id="state_control" class="offset-1 col-3 d-flex flex-column mt-0">
-            <div class="pb-5 align-self-start">
-                <div class="input-group">
-                    <i class="bi bi-search search-icon"></i>
-                    <div class="col-8 p-0">
-                        <input type="text" id="airports-search" class="search form-control" placeholder="Airports"
-                               autocomplete="off">
-                        <div class="progress" role="progressbar" style="height: 2px">
-                            <div class="progress-bar bg-success"></div>
-                        </div>
-                        <div class="suggestions dropdown-menu"></div>
+        <div id="state_control" class="col-6 mt-0 text-center">
+            <div class="d-flex flex-row justify-content-center pb-4">
+                <i class="bi bi-search search-icon mt-2"></i>
+                <div class="p-0 ps-2 w-50">
+                    <input type="text" id="airports-search" class="search form-control" placeholder="Airports"
+                           autocomplete="off">
+                    <div class="progress" role="progressbar" style="height: 2px">
+                        <div class="progress-bar bg-success"></div>
                     </div>
+                    <div class="suggestions dropdown-menu"></div>
                 </div>
             </div>
-            <div class="pt-2 pb-2 align-self-start">
+            <div class="pt-2 pb-4">
                 <label for="num_airports" class="form-label" style="font-size: 14px">Number of Airports</label>
                 <input type="range" class="form-label" id="num_airports" min="1" max="10" value="5">
                 <div id="selected_num_airports">
@@ -287,7 +285,7 @@
                     <span></span>
                 </div>
             </div>
-            <div id="time_slots" class="align-self-start">
+            <div id="time_slots" class="">
                 <button type="button" class="btn btn-outline-secondary rounded-0" data-id="1">
                     <img src="https://img.icons8.com/?size=100&id=9314&format=png&color=000000" height="20px"/><br>
                     <span>Morning</span>
@@ -307,7 +305,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row" id="map_overview">
         <div id="map-container" class="col-7 pe-0">
             <div id="map-header" class=""></div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
@@ -707,48 +705,48 @@
         </div>
         <div id="state_distribution" class="col-5 ps-0">
             <div class="d-flex flex-column">
-                <svg xmlns="http://www.w3.org/2000/svg" id="state-chart" viewBox="0 0 600 600">
+                <svg id="state-chart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
                     <g id="airport-details">
-                        <path stroke="whitesmoke" stroke-width="3"></path>
+                        <path stroke-width="3"></path>
                         <text font-size="12px"></text>
                     </g>
                     <g id="delay-group">
-                        <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-0"></path>
-                        <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-1"></path>
-                        <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-2"></path>
-                        <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-3"></path>
-                        <path stroke="whitesmoke" stroke-width="3" style="opacity: 0;" class="hovering-4"></path>
+                        <path stroke-width="3" style="opacity: 0;" class="hovering-0"></path>
+                        <path stroke-width="3" style="opacity: 0;" class="hovering-1"></path>
+                        <path stroke-width="3" style="opacity: 0;" class="hovering-2"></path>
+                        <path stroke-width="3" style="opacity: 0;" class="hovering-3"></path>
+                        <path stroke-width="3" style="opacity: 0;" class="hovering-4"></path>
                         <text font-size="12px" style="opacity: 0;" class="hovering-0"></text>
                         <text font-size="12px" style="opacity: 0;" class="hovering-1"></text>
                         <text font-size="12px" style="opacity: 0;" class="hovering-2"></text>
                         <text font-size="12px" style="opacity: 0;" class="hovering-3"></text>
                         <text font-size="12px" style="opacity: 0;" class="hovering-4"></text>
                     </g>
-                    <text id="zoomed-text" font-size="13px" font-weight="bold" style="opacity: 0"></text>
+                    <text id="zoomed-text" font-size="11px" font-weight="bold" style="opacity: 0"></text>
                 </svg>
             </div>
-            <div id="state_legend" class="d-flex flex-row">
-                <div class="pe-3 d-flex flex-column align-items-center legend-0">
+            <div id="state_legend" class="d-flex flex-column">
+                <div class="pb-2 d-flex flex-row gap-3 legend-0">
                     <div class="legend_color"></div>
                     <div class="legend_name">Carrier</div>
                     <div class="legend_val"></div>
                 </div>
-                <div class="pe-3 d-flex flex-column align-items-center legend-1">
+                <div class="pb-2 d-flex flex-row gap-3 legend-1">
                     <div class="legend_color align-self-center"></div>
-                    <div class="legend_name align-self-end">Weather</div>
+                    <div class="legend_name">Weather</div>
                     <div class="legend_val"></div>
                 </div>
-                <div class="pe-3 d-flex flex-column align-items-center legend-2">
+                <div class="pb-2 d-flex flex-row gap-3 legend-2">
                     <div class="legend_color align-self-center"></div>
                     <div class="legend_name">NAS</div>
                     <div class="legend_val"></div>
                 </div>
-                <div class="pe-3 d-flex flex-column align-items-center legend-3">
+                <div class="pb-2 d-flex flex-row gap-3 legend-3">
                     <div class="legend_color align-self-center"></div>
                     <div class="legend_name">Security</div>
                     <div class="legend_val"></div>
                 </div>
-                <div class="pe-3 d-flex flex-column align-items-center legend-4">
+                <div class="pb-2 d-flex flex-row gap-3 legend-4">
                     <div class="legend_color align-self-center"></div>
                     <div class="legend_name">Late Aircraft</div>
                     <div class="legend_val"></div>

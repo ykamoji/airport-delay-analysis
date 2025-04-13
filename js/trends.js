@@ -226,7 +226,6 @@ function render_line(data) {
             .attr('cy', d=>y(d.delays))
             .attr('stroke-width', d=> intensity_color(max_val - d.delays))
             .attr('stroke', d=> color(d.delays))
-            .attr('fill', 'whitesmoke')
     }
 
     points.join(

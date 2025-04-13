@@ -267,8 +267,6 @@ $(document).ready(function () {
     $("#searchbox").hide(0)
     $('#controls-btn').click(function(){
 
-        // let height = $("#searchbox")[0].getBoundingClientRect().height
-
         let translated_y = $("#searchbox").css('display') === 'none' ? 200 : -200; //
 
         $('#map-container svg #placeholder circle').each((c, circle) => {
@@ -277,9 +275,16 @@ $(document).ready(function () {
             set_airport_location(x, y + translated_y, circle, c, null, null)
         })
         $("#searchbox").slideToggle(500, "linear")
+
         setTimeout(function (){
             initializeSlider()
         }, 200)
+
+        let current = parseInt($('#state_legend').css('top').split('px')[0])
+        $('#state_legend').css({
+            'top':  current + translated_y + 'px'
+        })
+
     })
 
 });
