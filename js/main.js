@@ -267,6 +267,8 @@ $(document).ready(function () {
     $("#searchbox").hide(0)
     $('#controls-btn').click(function(){
 
+        $('#caret').toggleClass('caret-rotate')
+
         let translated_y = $("#searchbox").css('display') === 'none' ? 200 : -200; //
 
         $('#map-container svg #placeholder circle').each((c, circle) => {
