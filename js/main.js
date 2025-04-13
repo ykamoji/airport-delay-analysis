@@ -52,7 +52,7 @@ $(document).ready(function () {
 
     const $toggle_switch = $('.toggle-switch')
     const $toggle_svg = $('.toggle-switch svg')
-    const $toggle_btn = $('#searchbox .toggle-btn')
+    const $toggle_btn = $('#geo_controls .toggle-btn')
     const $toggle_slider = $('#toggle-slider')
 
     $toggle_btn.click(function (){
@@ -94,6 +94,13 @@ $(document).ready(function () {
         $($toggle_svg[r]).css('color','white')
 
         populateMap()
+
+        if($('#map-container svg').hasClass('zooming')){
+            let id = $('#map-container svg g.state path.zoomed')
+                .filter((i,element) => !element.classList[0].includes('-'))
+                .map((i, element) => element.classList[0])[0]
+            populateStateDelays(id)
+        }
     })
 
     $('#map-container svg path').each((idx, state) => {
@@ -115,10 +122,6 @@ $(document).ready(function () {
 
             text.setAttribute("x", x+'')
             text.setAttribute("y", y+'')
-            text.setAttribute("text-anchor", "middle")
-            text.setAttribute("font-size", "7px")
-            text.setAttribute("font-weight", "bolder")
-            text.setAttribute("fill", "black")
             text.setAttribute("id", "text-"+state_id.toLowerCase())
             text.textContent = state_id
             // console.log(state_id)
@@ -155,7 +158,7 @@ $(document).ready(function () {
     }
 
 
-    $("#searchbox .search").on("input", function () {
+    $("#geo_controls .search").on("input", function () {
         let value = $(this).val();
         let id = $(this).attr('id').split('-')[0]
         if (value.length > 0) {
@@ -166,7 +169,7 @@ $(document).ready(function () {
     });
 
 
-    $("#searchbox .suggestions").on("click", ".dropdown-item", function () {
+    $("#geo_controls .suggestions").on("click", ".dropdown-item", function () {
 
         let selectedText = $(this).text();
 
@@ -205,11 +208,11 @@ $(document).ready(function () {
 
     $(document).click(function (e) {
         if (!$(e.target).closest(".position-relative").length) {
-            $("#searchbox .suggestions").removeClass("show");
+            $("#searchbox #geo_controls .suggestions").removeClass("show");
         }
     });
 
-    $(".selected-items").on("click", ".remove", function () {
+    $("#geo_controls .selected-items").on("click", ".remove", function () {
         let itemToRemove = $(this).data("item");
 
         let $selectedContainer = $(this).parent().parent()
@@ -218,12 +221,12 @@ $(document).ready(function () {
         updateSelectedItems($selectedContainer, id);
     });
 
-    $('#searchbox .form-check-input').on("change", function (){
+    $('#searchbox #geo_controls .form-check-input').on("change", function (){
         setTimeout(function (){populateMap()}, 50)
     });
 
 
-    $("#searchbox input, #state_control input").focusin(function (){
+    $("#searchbox input").focusin(function (){
         $(this).next().children('.progress-bar').addClass("focused")
     }).focusout(function (){
         $(this).next().children('.progress-bar').removeClass("focused")
@@ -259,6 +262,24 @@ $(document).ready(function () {
             behavior: 'smooth'
         });
 
+    })
+
+    $("#searchbox").hide(0)
+    $('#controls-btn').click(function(){
+
+        // let height = $("#searchbox")[0].getBoundingClientRect().height
+
+        let translated_y = $("#searchbox").css('display') === 'none' ? 200 : -200; //
+
+        $('#map-container svg #placeholder circle').each((c, circle) => {
+            let x = $('.airport-base .airport')[c].getBoundingClientRect().left
+            let y = $('.airport-base .airport')[c].getBoundingClientRect().top
+            set_airport_location(x, y + translated_y, circle, c, null, null)
+        })
+        $("#searchbox").slideToggle(500, "linear")
+        setTimeout(function (){
+            initializeSlider()
+        }, 200)
     })
 
 });

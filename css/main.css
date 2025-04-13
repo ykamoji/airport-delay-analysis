@@ -92,7 +92,10 @@ body {
 }
 
 #map-container svg .state text{
-    font-size: 7px;
+    font-size: 9px;
+    font-weight: 600;
+    text-anchor:middle;
+    fill: black;
 }
 
 #map-container svg .state .borders path{
@@ -132,7 +135,7 @@ body {
 #map-container .airport-base .airport, #map-container .airport-base .loc, #map-container .airport-base .stats{
     position: absolute;
     cursor: pointer;
-    transition: all 0.5s ease;
+    transition: all 0.5s linear;
     transform-origin: center;
     z-index: 20;
 }
@@ -222,7 +225,12 @@ body {
 }
 
 #searchbox{
+    font-size: 15px;
+}
 
+
+#searchbox #filters {
+    transition: height 0.5s ease-in-out;
 }
 
 #searchbox #toggle-container{
@@ -263,9 +271,8 @@ body {
     transform: translateX(100%);
 }
 
-#searchbox .search-icon, #state_control .search-icon {
-    position: relative;
-    font-size: 16px;
+#searchbox .search-icon, #state_control .search-icon{
+    font-size: 15px;
     color: #aaa;
 }
 
@@ -346,19 +353,8 @@ body {
     font-size: 16px;
 }
 
-#searchbox #delay-filter-label{
-    position: relative;
-    font-weight: bold;
-    left:-20px
-}
 
-#searchbox .control{
-    position: relative;
-    font-size: 15px;
-    left:-20px
-}
-
-#searchbox .control .v-label, #searchbox .control .v-text-field__slot input{
+#searchbox .v-label, #searchbox .v-text-field__slot input{
     font-size: 14px;
 }
 
@@ -474,7 +470,9 @@ body {
     color: #0d6efd;
 }
 
-#state_control #time_slots{}
+#state_control #time_slots .fa-solid{
+    font-size: 1em !important;
+}
 
 #state_control #time_slots span{
     font-size: 10px;
@@ -492,16 +490,16 @@ body {
     border-color: var(--bs-btn-hover-border-color);
 }
 
-
-#state_distribution .legend_color{
-    position: relative;
-    width: 20px;
-    height: 20px;
+#state_legend{
+    position: absolute;
+    top: 100px;
+    right: 200px;
+    font-size: 14px;
 }
 
-#state_distribution .legend_name{
-    position: relative;
-    left: 10px;
+#state_distribution .legend_color{
+    width: 20px;
+    height: 20px;
 }
 
 #state_distribution .legend-0 .legend_color{
@@ -525,10 +523,8 @@ body {
 }
 
 #state_distribution .legend_val{
-    position: relative;
     font-size: 12px;
     font-weight: bolder;
-    left: 20px;
     line-height: 2;
 }
 
