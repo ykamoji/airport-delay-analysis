@@ -1,6 +1,8 @@
 import csv
 import argparse
 import os
+import json
+import datetime
 
 DELAYS = [
     # Delay details
@@ -72,6 +74,11 @@ def check_delay(row):
     return False
 
 
+def is_weekday(row):
+    date = datetime.date(int(row['YEAR']), int(row['MONTH']), int(row['DAY_OF_MONTH']))
+    return date.weekday() < 5
+
+
 def add_derived_data(extracted_row, row):
     extracted_row['AIRLINE_NAME'] = AIRLINES_MAPPING[row['OP_UNIQUE_CARRIER']]
     extracted_row['ORIGIN_AIRPORT_NAME'] = AIRPORT_MAPPING[row['ORIGIN']]
@@ -91,6 +98,8 @@ def preprocess(path):
     complete_data = 0
     total_size_approx = 0
 
+    week_delay_map = []
+
     updated_headers = HEADERS[:]
     updated_headers.insert(4, DERIVED_HEADERS[0])
     updated_headers.insert(5, DERIVED_HEADERS[1])
@@ -98,7 +107,7 @@ def preprocess(path):
     write_header = True
 
     files = ['2023/'+m+'_23' for m in months] + ['2024/'+m+'_24' for m in months]
-    for file in files:
+    for month, file in enumerate(files):
         total = 0
         parsed = 0
         file_name = '/' + file + '.csv'
@@ -114,6 +123,16 @@ def preprocess(path):
 
         print(f"File size = {f_size:.2f} MB")
 
+        week_delays = {
+            'weekday': {
+                'delays': [0, 0, 0, 0, 0],
+                'no_delays': [0, 0, 0, 0, 0]
+            },
+            'weekend': {
+                'delays': [0, 0, 0, 0, 0],
+                'no_delays': [0, 0, 0, 0, 0]
+            },
+        }
         with open(path + file_name, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
@@ -126,11 +145,17 @@ def preprocess(path):
 
                     dataset.append(extracted_rows)
 
+                    for idx, delay in enumerate(DELAYS):
+                        k = 'weekday' if is_weekday(row) else 'weekend'
+                        d = 'delays' if int(float(row[delay])) > 0 else 'no_delays'
+                        week_delays[k][d][idx] += 1
                     parsed += 1
                 total += 1
 
         complete_data += parsed
         print(f"Total={total} \t Parsed={parsed}")
+        print(f"{file.split('/')[0]+'-'+str(month % 12 + 1)}, Delays:{week_delays}")
+        week_delay_map.append({(file.split('/')[0]+'-'+str(month % 12 + 1)): week_delays})
 
         compressed = parsed / total
         print(f"Compressed = {compressed:.3f} %")
@@ -144,7 +169,8 @@ def preprocess(path):
             for data in dataset:
                 writer.writerow(data)
 
-        dataset.clear()
+    with open(path + '/all_week.json', 'w') as outfile:
+        json.dump(week_delay_map, outfile)
 
     print(f"\nTotal data size = {complete_data}")
     print(f"Total size approx = {total_size_approx:.2f} MB")
