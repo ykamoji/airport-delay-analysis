@@ -24,8 +24,6 @@
     <script src="js/airport_locations.js"></script>
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
-    <script src="js/stateDelays.js"></script>
-    <script src="js/trends.js"></script>
 </head>
 <body>
 
@@ -281,7 +279,7 @@
             <div class="pt-2 pb-4">
                 <label for="num_airports" class="form-label" style="font-size: 14px">Number of Airports</label>
                 <input type="range" class="form-label" id="num_airports" min="1" max="10" value="5">
-                <div id="selected_num_airports">
+                <div id="selected_num_airports" class="d-none">
                     <i class="fa-solid fa-caret-up fs-2"></i>
                     <span></span>
                 </div>
@@ -704,120 +702,13 @@
                 </div>
             </div>
         </div>
-        <div id="state_distribution" class="col-5 ps-0">
-            <div class="d-flex flex-column">
-                <svg id="state-chart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
-                    <g id="airport-details">
-                        <path stroke-width="3"></path>
-                        <text font-size="12px"></text>
-                    </g>
-                    <g id="delay-group">
-                        <path stroke-width="3" style="opacity: 0;" class="hovering-0"></path>
-                        <path stroke-width="3" style="opacity: 0;" class="hovering-1"></path>
-                        <path stroke-width="3" style="opacity: 0;" class="hovering-2"></path>
-                        <path stroke-width="3" style="opacity: 0;" class="hovering-3"></path>
-                        <path stroke-width="3" style="opacity: 0;" class="hovering-4"></path>
-                        <text font-size="12px" style="opacity: 0;" class="hovering-0"></text>
-                        <text font-size="12px" style="opacity: 0;" class="hovering-1"></text>
-                        <text font-size="12px" style="opacity: 0;" class="hovering-2"></text>
-                        <text font-size="12px" style="opacity: 0;" class="hovering-3"></text>
-                        <text font-size="12px" style="opacity: 0;" class="hovering-4"></text>
-                    </g>
-                    <text id="zoomed-text" font-size="11px" font-weight="bold" style="opacity: 0"></text>
-                </svg>
-            </div>
-            <div id="state_legend" class="d-flex flex-column">
-                <div class="pb-2 d-flex flex-row gap-3 legend-0">
-                    <div class="legend_color"></div>
-                    <div class="legend_name">Carrier</div>
-                    <div class="legend_val"></div>
-                </div>
-                <div class="pb-2 d-flex flex-row gap-3 legend-1">
-                    <div class="legend_color align-self-center"></div>
-                    <div class="legend_name">Weather</div>
-                    <div class="legend_val"></div>
-                </div>
-                <div class="pb-2 d-flex flex-row gap-3 legend-2">
-                    <div class="legend_color align-self-center"></div>
-                    <div class="legend_name">NAS</div>
-                    <div class="legend_val"></div>
-                </div>
-                <div class="pb-2 d-flex flex-row gap-3 legend-3">
-                    <div class="legend_color align-self-center"></div>
-                    <div class="legend_name">Security</div>
-                    <div class="legend_val"></div>
-                </div>
-                <div class="pb-2 d-flex flex-row gap-3 legend-4">
-                    <div class="legend_color align-self-center"></div>
-                    <div class="legend_name">Late Aircraft</div>
-                    <div class="legend_val"></div>
-                </div>
-            </div>
-        </div>
+        <div id="state_distribution" class="col-5 bg-danger-subtle fs-1 text-center">Visualisation #2</div>
     </div>
 </div>
 
-
-<div id="trends" class="container-fluid pb-5">
-    <div class="container-fluid row justify-content-center">
-        <div class="col-sm-9">
-            <svg id="trends-graph">
-                <g id="plot">
-                    <g id="x-axis"></g>
-                    <g id="y-axis"></g>
-                    <g>
-                        <g id="line-segments"></g>
-                        <g id="points"></g>
-                    </g>
-                    <g id="volume">
-                    </g>
-                    <g id="week_comparison" class>
-                        <g id="week-x-axis"></g>
-                        <g id="week-y-axis"></g>
-                        <g id="week-bars"></g>
-                    </g>
-                </g>
-            </svg>
-        </div>
-        <div class="offset-1 col-sm-2 align-self-center row" id="trends-controls">
-            <div class="ms-5">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="carrier-line-delay">
-                    <label class="form-check-label" for="carrier-line-delay">Carrier</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="weather-line-delay">
-                    <label class="form-check-label" for="weather-line-delay">Weather</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="nas-line-delay">
-                    <label class="form-check-label" for="nas-line-delay">NAS</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="security-line-delay">
-                    <label class="form-check-label" for="security-line-delay">Security</label>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="late_aircraft-line-delay">
-                    <label class="form-check-label" for="late_aircraft-line-delay">Late Aircraft</label>
-                </div>
-            </div>
-            <div class="ms-5 mt-4 check-single">
-                <div class="d-flex flex-wrap gap-3">
-                    <div class="form-check">
-                        <input class="form-check-input rounded-0" type="checkbox" id="weekday-line-week">
-                        <label class="form-check-label" for="weekday-line-week">Weekday</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input rounded-0" type="checkbox" id="weekend-line-week">
-                        <label class="form-check-label" for="weekend-line-week">Weekend</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div id="trends" class="container-fluid mt-5 bg-danger-subtle fs-1 text-center" style="height: 600px">
+    Visualisation #3
 </div>
-
 
 </body>
 </html>
