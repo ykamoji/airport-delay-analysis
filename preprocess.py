@@ -133,6 +133,7 @@ def preprocess(path):
                 'no_delays': [0, 0, 0, 0, 0]
             },
         }
+        weekdays_count = 0
         with open(path + file_name, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
@@ -145,16 +146,24 @@ def preprocess(path):
 
                     dataset.append(extracted_rows)
 
-                    for idx, delay in enumerate(DELAYS):
-                        k = 'weekday' if is_weekday(row) else 'weekend'
-                        d = 'delays' if int(float(row[delay])) > 0 else 'no_delays'
-                        week_delays[k][d][idx] += 1
+                k = 'weekday' if is_weekday(row) else 'weekend'
+                if is_weekday(row): weekdays_count += 1
+                for idx, delay in enumerate(DELAYS):
+                    d = 'delays' if row[delay] and float(row[delay]) > 0 else 'no_delays'
+                    week_delays[k][d][idx] += 1
                     parsed += 1
                 total += 1
 
         complete_data += parsed
         print(f"Total={total} \t Parsed={parsed}")
-        print(f"{file.split('/')[0]+'-'+str(month % 12 + 1)}, Delays:{week_delays}")
+
+        for week, values in week_delays.items():
+            norm = weekdays_count if week == 'weekday' else total - weekdays_count
+            for k in week_delays[week].keys():
+                for i in range(5):
+                    week_delays[week][k][i] = round(week_delays[week][k][i] * 100 / norm, 3)
+
+        print(f"{file.split('/')[0]+'-'+str(month % 12 + 1)}, Delays: {week_delays}")
         week_delay_map.append({(file.split('/')[0]+'-'+str(month % 12 + 1)): week_delays})
 
         compressed = parsed / total
@@ -168,6 +177,8 @@ def preprocess(path):
                 write_header = False
             for data in dataset:
                 writer.writerow(data)
+
+        dataset.clear()
 
     with open(path + '/all_week.json', 'w') as outfile:
         json.dump(week_delay_map, outfile)

@@ -37,12 +37,11 @@ body {
 
 .caret-icon {
     display: inline-block;
-    transform: scale(1.5);
     transition: transform 0.5s ease;
 }
 
 .caret-rotate {
-    transform: scale(1.5) rotate(-180deg)
+    transform: rotate(-180deg)
 }
 
 #map-container .state {
@@ -605,7 +604,7 @@ body {
     /*fill: red;*/
 }
 
-#trends-graph #points circle{
+#trends-graph #points circle.base{
     fill: var(--bg-color)
 }
 

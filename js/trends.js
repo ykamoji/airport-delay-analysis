@@ -1,6 +1,6 @@
 const CHART_WIDTH = 1200;
-const CHART_HEIGHT = 500;
-const MARGIN = { left: 45, bottom: 20, top: 20, right: 20 };
+const CHART_HEIGHT = 700;
+const MARGIN = { left: 25, bottom: 20, top: 300, right: 100 };
 const HEIGHT = CHART_HEIGHT - MARGIN.top - MARGIN.bottom
 const WIDTH = CHART_WIDTH - MARGIN.left - MARGIN.right
 
@@ -14,6 +14,14 @@ function populateTrends(){
         $.getJSON("assets/all_trends.json", function(data) {
             CACHE.set('all_trends', data)
             data_render(data)
+        });
+    }
+}
+
+function load_weekend_data(){
+    if (!CACHE.has('all_week')) {
+        $.getJSON("assets/all_week.json", function (data) {
+            CACHE.set('all_week', data)
         });
     }
 }
@@ -69,7 +77,7 @@ function data_render(data){
     filter_data(transformed_data)
 }
 
-function filter_data(data, control){
+function filter_data(data){
 
     let { week, delays_control } = get_trends_controls()
 
@@ -214,17 +222,20 @@ function render_line(data) {
 
     const radius = d3.scaleLinear()
         .domain([0, max_val])
-        .range([1, 6])
+        .range([3, 7])
 
     function common_points_actions(d3Obj){
         return d3Obj
             .transition()
             .duration(500)
-            .attr('id', d=> d.label)
+            .attr('id', d=> d.date)
+            .attr('class', 'base')
+            .attr('data-delays', d=> d.delays)
             .attr('r', d => radius(d.delays))
+            .attr('data-r', d => radius(d.delays))
             .attr('cx', d=>x(d.label) + x.bandwidth() / 2)
             .attr('cy', d=>y(d.delays))
-            .attr('stroke-width', d=> intensity_color(max_val - d.delays))
+            .attr('stroke-width', d=> intensity_color(max_val - d.delays) + 0.5)
             .attr('stroke', d=> color(d.delays))
     }
 
@@ -235,21 +246,46 @@ function render_line(data) {
             .style('opacity', 1),
         update => common_points_actions(update),
         exit => exit.remove()
-    ).on("click", (e)=>  render_comparing(d3.select(e.target)))
+    )
+        .on("click", (e) => {
+            let point = d3.select(e.target)
+            let $week_graph = $('#trends-graph #plot #week_comparison')
+            let current_graph = $week_graph.attr('class')
+
+            if (current_graph !== point.attr('id')) {
+                if(current_graph === '') $week_graph.fadeIn(500)
+                $week_graph.attr('class', point.attr('id'))
+                render_comparing(point, current_graph === '')
+            } else {
+                $week_graph.attr('class', '')
+                $week_graph.fadeOut(500)
+            }
+
+        })
+        .on("mouseenter", (e)=>  {
+            let point = d3.select(e.target)
+            point.classed('base', !point.classed('base'))
+            point.transition()
+                .duration(300)
+                .attr('fill', color(point.attr('data-delays')))
+                .attr('r', point.attr('data-r')*2)
+        })
+        .on("mouseleave", (e)=>  {
+            let point = d3.select(e.target)
+            point.classed('base', !point.classed('base'))
+            point
+                .transition()
+                .duration(300)
+                .attr('r', point.attr('data-r'))
+        })
 
 }
 
-function render_comparing(element){
+function render_comparing(element, entering){
 
     let label = element.attr('id')
-    let x = element.attr('cx')
-    let y = element.attr('cy') - 25
-    // console.log(element.attr('x'), element.attr('y'))
 
-    d3.select('#trends-graph #plot #week_comparison')
-        .attr('transform', `translate(${x}, ${y})`)
-
-    let data = CACHE.get('current_trend_data').filter(d=> d.label === label)[0]
+    let data = CACHE.get('all_week').filter(d=> Object.keys(d)[0] === label)[0][label]
 
     let {delays_control} = get_trends_controls()
 
@@ -258,39 +294,106 @@ function render_comparing(element){
         delay_idx = d3.range(5)
     }
 
-    let weekday_delays = delay_idx.reduce((sum, key) => sum + data.weekday.counts[key], 0) / 1000
-    let weekend_delays = delay_idx.reduce((sum, key) => sum + data.weekend.counts[key], 0) / 1000
+    let trans_data = [
+        {
+            group:'Weekday',
+            no_delay: delay_idx.reduce((sum, key) => sum + data.weekday.no_delays[key], 0) / delay_idx.length,
+            delay: delay_idx.reduce((sum, key) => sum + data.weekday.delays[key], 0) / delay_idx.length
+        },
+        {
+            group:'Weekend',
+            no_delay: delay_idx.reduce((sum, key) => sum + data.weekend.no_delays[key], 0) / delay_idx.length,
+            delay: delay_idx.reduce((sum, key) => sum + data.weekend.delays[key], 0) / delay_idx.length
+        }
+    ]
 
-    d3.select('#trends-graph #plot #week_comparison #weekday_delay')
-        .attr('x', 10)
-        .attr('y', -weekday_delays*0.5-20)
-        .attr('width', 10)
-        .attr('height', weekday_delays*0.5)
-        .attr('fill', 'orangered')
+    let x = element.attr('cx')
+    let y = element.attr('cy')
+    let width = 180
+    let height= 150
+    let adj_x = -50
+    let adj_y = -60
 
-    d3.select('#trends-graph #plot #week_comparison #weekday_no_delay')
-        .attr('x', 21)
-        .attr('y', -weekday_delays-20)
-        .attr('width', 10)
-        .attr('height', weekday_delays)
-        .attr('fill', 'green')
+    const subgroups = ["delay","no_delay"];
+    const groups = trans_data.map(d => d.group);
 
-    d3.select('#trends-graph #plot #week_comparison #weekend_delay')
-        .attr('x', 10)
-        .attr('y', -weekend_delays*0.5-20)
-        .attr('width', 10)
-        .attr('height', weekend_delays*0.5)
-        .attr('fill', 'orangered')
+    if(entering){
+        d3.select('#trends-graph #plot #week_comparison')
+            .attr('transform', `translate(${x}, ${y})`)
+            .style('opacity', 0)
+            .transition()
+            .duration(500)
+            .style('opacity', 1)
+    }
+    else {
+        d3.select('#trends-graph #plot #week_comparison')
+            .transition()
+            .duration(500)
+            .attr('transform', `translate(${x}, ${y})`)
+    }
 
-    d3.select('#trends-graph #plot #week_comparison #weekend_no_delay')
-        .attr('x', 21)
-        .attr('y', -weekend_delays-20)
-        .attr('width', 10)
-        .attr('height', weekend_delays)
-        .attr('fill', 'green')
+    let x_scale = d3.scaleBand()
+        .domain(groups)
+        .range([0, width])
+        .padding([0.2])
 
+    d3.select('#week_comparison #week-x-axis')
+        .attr("transform", `translate(${adj_x},${adj_y})`)
+        .call(d3.axisBottom(x_scale).tickSizeOuter(0))
 
+    const y_scale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([height, 0])
+        .nice()
 
+    d3.select('#week_comparison #week-y-axis')
+        .attr("transform", `translate(${adj_x},${adj_y-height})`)
+        .call(d3.axisLeft(y_scale).ticks(4))
+
+    const xSubgroup = d3.scaleBand()
+        .domain(subgroups)
+        .range([0, x_scale.bandwidth()])
+        .padding([0.05])
+
+    const color = d3.scaleOrdinal()
+        .domain(subgroups)
+        .range(d3.schemeSet2);
+
+    const week_bars = d3.select('#week_comparison #week-bars')
+        .attr("transform", `translate(${adj_x},${adj_y-height})`)
+        .selectAll('.group_bars').data(trans_data)
+
+    function common_week_actions(d3Obj){
+        let barGroups =  d3Obj.attr("transform", d => `translate(${x_scale(d.group)},0)`)
+            .attr('class','group_bars')
+            .selectAll("rect")
+            .data(d => subgroups.map(key => {return {key: key, value: d[key]};}))
+
+        function common_bar_actions(barObj) {
+             return barObj
+                .attr("x", d => xSubgroup(d.key))
+                .attr("y", d => y_scale(d.value))
+                .attr("width", xSubgroup.bandwidth())
+                .attr("height", d => height - y_scale(d.value))
+                .attr("fill", d => color(d.key))
+        }
+
+        barGroups.join(
+            enter=> common_bar_actions(enter.append('rect'))
+                .style('opacity', 0)
+                .transition()
+                .duration(1000)
+                .style('opacity', 1),
+            update => common_bar_actions(update.transition().duration(1000))
+        )
+
+        return barGroups
+    }
+
+    week_bars.join(
+        enter => common_week_actions(enter.append('g')),
+        update => common_week_actions(update),
+    )
 
 }
 
@@ -301,7 +404,7 @@ function render_volume(data) {
         .domain(d3.map(data, d => d.label))
         .range([0, WIDTH])
 
-    const height =  250
+    const height =  200
     const y = d3.scaleLinear()
         .domain([0, d3.max(data, d => d.count)])
         .range([height, 0])
@@ -345,7 +448,12 @@ function trend_render(data){
 }
 
 $(document).ready(function(){
+
     populateTrends()
+
+    load_weekend_data()
+
+    $('#trends-graph #plot #week_comparison').hide(0)
 
     $("#trends-controls .form-check-input").on('change', function (){
         setTimeout(function (){populateTrends()}, 50)

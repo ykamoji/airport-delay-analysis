@@ -30,7 +30,7 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-sm-top">
-    <div class="container-fluid">
+    <div class="container-fluid ms-3">
         <a class="navbar-brand fs-4" href="https://ykamoji.github.io/airport-delay-analysis/">Airport Delay Analysis</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -52,7 +52,7 @@
             <span id="caret" class="ms-5 caret-icon">&#9660;</span>
         </button>
     </div>
-    <div id="searchbox" class="container-fluid row ">
+    <div id="searchbox" class="container-fluid row ps-5">
         <div id="geo_controls" class="col-6 row">
             <div class="col-4">
                 <i class="bi bi-search search-icon mt-2" style="position: absolute;"></i>
@@ -771,23 +771,16 @@
                     </g>
                     <g id="volume">
                     </g>
-                    <g id="week_comparison">
-                        <g transform="translate(-50, 0)">
-                            <rect id="weekday_delay"></rect>
-                            <rect id="weekday_no_delay"></rect>
-                            <text font-size="10px">Weekday</text>
-                        </g>
-                        <g transform="translate(10, 0)">
-                            <rect id="weekend_delay"></rect>
-                            <rect id="weekend_no_delay"></rect>
-                            <text font-size="10px">Weekend</text>
-                        </g>
+                    <g id="week_comparison" class>
+                        <g id="week-x-axis"></g>
+                        <g id="week-y-axis"></g>
+                        <g id="week-bars"></g>
                     </g>
                 </g>
             </svg>
         </div>
-        <div class="col-sm-2" id="trends-controls">
-            <div class="mt-3">
+        <div class="offset-1 col-sm-2 align-self-center row" id="trends-controls">
+            <div class="ms-5">
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="carrier-line-delay">
                     <label class="form-check-label" for="carrier-line-delay">Carrier</label>
@@ -809,7 +802,7 @@
                     <label class="form-check-label" for="late_aircraft-line-delay">Late Aircraft</label>
                 </div>
             </div>
-            <div class="check-single mt-4">
+            <div class="ms-5 mt-4 check-single">
                 <div class="d-flex flex-wrap gap-3">
                     <div class="form-check">
                         <input class="form-check-input rounded-0" type="checkbox" id="weekday-line-week">
