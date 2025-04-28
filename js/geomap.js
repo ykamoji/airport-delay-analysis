@@ -538,6 +538,7 @@ function populateState(id, step){
 
             let airport_location = airport.get('airport')+ ', '+airport.get('city')
 
+            $($airports[c]).attr('data-name', airport.get('airport'))
 
             if(!airport_coordinates_cache.has(airport_location)){
                 if(step === 'enter'){
@@ -594,7 +595,7 @@ function reset_state() {
 
     clear_contents.forEach(content => $(content).html(''))
 
-    reset_airports()
+    populateDefaultStateDelays()
 }
 
 
@@ -735,12 +736,32 @@ $(document).ready(function () {
             }
         })
         $(this).find('.name').fadeIn(300)
+
+        let data_name = $(this).attr('data-name')
+        let corresponding_pie = $('#state-chart #airport-details path')
+            .filter((i, element) => $(element).attr('data-name') === data_name)
+        if(corresponding_pie.length === 1){
+            $('#state-chart').toggleClass('hovering')
+            $(corresponding_pie[0]).toggleClass('hovering')
+            hover_enlarge($(corresponding_pie[0]))
+        }
+
+
     }).on('mouseleave',function () {
         $airport_base.find('.stats')
             .css({'z-index':'10'})
             .fadeOut(0)
         $airport_base.find('.name').hide(0)
         $airport_base.removeClass('highlight-out')
+        $('#state-chart').removeClass('hovering')
+        $('#state-chart #airport-details path').removeClass('hovering')
+
+        let data_name = $(this).attr('data-name')
+        let corresponding_pie = $('#state-chart #airport-details path')
+            .filter((i, element) => $(element).attr('data-name') === data_name)
+        if(corresponding_pie.length === 1){
+            hover_reset($(corresponding_pie[0]))
+        }
     })
 
     function reset_geo_map(){
