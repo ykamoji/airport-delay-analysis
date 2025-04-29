@@ -204,6 +204,7 @@ $(document).ready(function () {
                     </span>`
         }).join(""));
         populateMap()
+        populateDefaultStateDelays(selectedItems[id].map(st => STATES[st]))
     }
 
     $(document).click(function (e) {
