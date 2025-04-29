@@ -490,3 +490,23 @@ body {
 }
 
 
+#trends-graph{
+    cursor: pointer;
+    overflow: visible;
+}
+
+
+#trends-graph #line{
+    fill: var(--bg-color);
+    stroke-width: 3;
+    /*stroke: royalblue;*/
+}
+
+#trends-graph #volume rect{
+    /*fill: red;*/
+}
+
+#trends-graph #points circle.base{
+    fill: var(--bg-color)
+}
+
