@@ -24,6 +24,7 @@
     <script src="js/airport_locations.js"></script>
     <script src="js/main.js"></script>
     <script src="js/geomap.js"></script>
+    <script src="js/trends.js"></script>
 </head>
 <body>
 
@@ -706,8 +707,61 @@
     </div>
 </div>
 
-<div id="trends" class="container-fluid mt-5 bg-danger-subtle fs-1 text-center" style="height: 600px">
-    Visualisation #3
+<div id="trends" class="container-fluid text-center" style="margin-top: 20%;margin-bottom:3%;">
+    <div class="ms-5">
+        <svg id="trends-graph">
+            <g id="plot">
+                <g id="x-axis"></g>
+                <g id="y-axis"></g>
+                <g>
+                    <g id="line-segments"></g>
+                    <g id="points"></g>
+                </g>
+                <g id="volume">
+                </g>
+                <g id="week_comparison" class>
+                    <g id="week-x-axis"></g>
+                    <g id="week-y-axis"></g>
+                    <g id="week-bars"></g>
+                    <g id="legend"></g>
+                </g>
+            </g>
+        </svg>
+    </div>
+    <div class="mt-4 d-flex flex-row justify-content-center gap-5" id="trends-controls">
+        <div class="ms-5 me-5 d-flex flex-row gap-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="carrier-line-delay">
+                <label class="form-check-label" for="carrier-line-delay">Carrier</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="weather-line-delay">
+                <label class="form-check-label" for="weather-line-delay">Weather</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="nas-line-delay">
+                <label class="form-check-label" for="nas-line-delay">NAS</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="security-line-delay">
+                <label class="form-check-label" for="security-line-delay">Security</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="late_aircraft-line-delay">
+                <label class="form-check-label" for="late_aircraft-line-delay">Late Aircraft</label>
+            </div>
+        </div>
+        <div class="ms-5 check-single d-flex flex-wrap gap-3">
+            <div class="form-check">
+                <input class="form-check-input rounded-0" type="checkbox" id="weekday-line-week">
+                <label class="form-check-label" for="weekday-line-week">Weekday</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input rounded-0" type="checkbox" id="weekend-line-week">
+                <label class="form-check-label" for="weekend-line-week">Weekend</label>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
