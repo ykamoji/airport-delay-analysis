@@ -484,11 +484,116 @@ body {
 }
 
 #state_control #time_slots .btn.active{
-    color: var(--bs-btn-hover-color);
+    /*color: var(--bs-btn-hover-color);*/
     background-color: brown;
     border-color: brown;
 }
 
+
+#state-chart{
+    cursor: pointer;
+}
+
+#state-chart #airport-details path, #state-chart #middle_circle{
+    transition: all 0.5s ease;
+    user-select: none;
+}
+
+#state-chart #airport-details text{
+    opacity: 0;
+    transition: opacity, font-size 0.5s ease;
+    user-select: none;
+}
+
+#state-chart #airport-details path, #state-chart #delay-group path{
+    stroke: var(--bg-color)
+}
+
+#state-chart.hovering #airport-details path:not(.hovering){
+    stroke-width:0.5;
+}
+
+#state-chart.hovering #airport-details path.hovering{
+    filter: drop-shadow(4px 4px 8px #ccc);
+    stroke-width:5;
+}
+
+
+#state-chart.zoomed #middle_circle{
+    opacity: 0;
+}
+
+#state-chart.zoomed #airport-details path:not(.zoomed), #state-chart.zoomed #airport-details text{
+    opacity: 0!important;
+}
+
+#state-chart #delay-group path{
+    transition: opacity 1s ease;
+    cursor: pointer;
+}
+
+#state-chart #delay-group text{
+    fill: royalblue;
+    font-weight: bold;
+}
+
+#state-chart #delay-group .hovering.hovering-0{
+    fill:#a463f2
+}
+
+#state-chart #delay-group .hovering.hovering-1{
+    fill: #e377c2
+}
+
+#state-chart #delay-group .hovering.hovering-2{
+    fill: #17becf
+}
+
+#state-chart #delay-group .hovering.hovering-3{
+    fill: #bcbd22
+}
+
+#state-chart #delay-group .hovering.hovering-4{
+    fill: #7f7f7f
+}
+
+#state_legend{
+    position: absolute;
+    font-size: 15px;
+    transition: top 0.5s linear;
+}
+
+
+#state_distribution .legend_color{
+    width: 25px;
+    height: 25px;
+}
+
+#state_distribution .legend-0 .legend_color{
+    background-color:#a463f2
+}
+
+#state_distribution .legend-1 .legend_color{
+    background-color: #e377c2
+}
+
+#state_distribution .legend-2 .legend_color{
+    background-color: #17becf
+}
+
+#state_distribution .legend-3 .legend_color{
+    background-color: #bcbd22
+}
+
+#state_distribution .legend-4 .legend_color{
+    background-color: #7f7f7f
+}
+
+#state_distribution .legend_val{
+    font-size: 12px;
+    font-weight: bolder;
+    line-height: 2;
+}
 
 #trends-graph{
     cursor: pointer;
@@ -509,4 +614,3 @@ body {
 #trends-graph #points circle.base{
     fill: var(--bg-color)
 }
-
