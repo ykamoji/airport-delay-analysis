@@ -494,7 +494,6 @@ body {
     cursor: pointer;
 }
 
-
 #state-chart #airport-details path, #state-chart #middle_circle{
     transition: all 0.5s ease;
     user-select: none;
@@ -596,4 +595,22 @@ body {
     line-height: 2;
 }
 
+#trends-graph{
+    cursor: pointer;
+    overflow: visible;
+}
 
+
+#trends-graph #line{
+    fill: var(--bg-color);
+    stroke-width: 3;
+    /*stroke: royalblue;*/
+}
+
+#trends-graph #volume rect{
+    /*fill: red;*/
+}
+
+#trends-graph #points circle.base{
+    fill: var(--bg-color)
+}
