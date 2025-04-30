@@ -10,7 +10,7 @@ function populateStateDelays(id){
         state_map_render(CACHE.get('all_states'), id)
     }
     else{
-        $.getJSON("assets/all_state_data.json", function(data) {
+        $.getJSON("assets/data/all_state_data.json", function(data) {
             CACHE.set('all_states', data)
             CACHE.set('airport_details', new Map())
             state_map_render(data, id)
@@ -24,7 +24,7 @@ function populateDefaultStateDelays(states){
         default_state_map_render(CACHE.get('all_states'), states)
     }
     else{
-        $.getJSON("assets/all_state_data.json", function(data) {
+        $.getJSON("assets/data/all_state_data.json", function(data) {
             CACHE.set('all_states', data)
             CACHE.set('airport_details', new Map())
             default_state_map_render(data, states)

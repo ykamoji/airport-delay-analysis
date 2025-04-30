@@ -11,7 +11,7 @@ function populateTrends(){
         data_render(CACHE.get('all_trends'))
     }
     else{
-        $.getJSON("assets/all_trends.json", function(data) {
+        $.getJSON("assets/data/all_trends.json", function(data) {
             CACHE.set('all_trends', data)
             data_render(data)
         });
@@ -20,7 +20,7 @@ function populateTrends(){
 
 function load_weekend_data(){
     if (!CACHE.has('all_week')) {
-        $.getJSON("assets/all_week.json", function (data) {
+        $.getJSON("assets/data/all_week.json", function (data) {
             CACHE.set('all_week', data)
         });
     }

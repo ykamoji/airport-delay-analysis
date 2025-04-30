@@ -257,7 +257,7 @@ function populateMap(){
         geo_map_render(CACHE.get('all_summerized'))
     }
     else{
-        $.getJSON("assets/all_summerized.json", function(data) {
+        $.getJSON("assets/data/all_summerized.json", function(data) {
             CACHE.set('all_summerized', data)
             geo_map_render(data)
         });
