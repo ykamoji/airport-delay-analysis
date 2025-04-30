@@ -1,6 +1,6 @@
 const CHART_WIDTH = 1400;
 const CHART_HEIGHT = 550;
-const MARGIN = { left: 25, bottom: 20, top: 50, right: 100 };
+const MARGIN = { left: 25, bottom: 20, top: 50, right: 300 };
 const HEIGHT = CHART_HEIGHT - MARGIN.top - MARGIN.bottom
 const WIDTH = CHART_WIDTH - MARGIN.left - MARGIN.right
 
@@ -479,6 +479,7 @@ function render_volume(data) {
         .selectAll('rect').data(data)
 
     let max_val = Math.max(...data.map(d => d.count))
+    let min_val = Math.min(...data.map(d => d.count))
     const color = d3.scaleSequential([0, max_val], d3.interpolateGnBu)
 
     function common_actions(d3Obj){
@@ -503,8 +504,84 @@ function render_volume(data) {
             .style('opacity', 0)
             .remove()
     )
+
+    let labels = []
+    let limits = Math.round((max_val - min_val)/ 4)
+    if(limits > 0){
+        labels = d3.range(min_val, max_val, limits)
+    }
+    else {
+        labels = d3.range(min_val, max_val, 0.2)
+    }
+
+
+    labels = [0, ...labels]
+
+    let map_svg_legend = d3.select('#trends-graph #legend')
+
+    map_svg_legend.selectAll('#trends-graph #legend rect').remove()
+    map_svg_legend.selectAll('#trends-graph #legend text').remove()
+
+    map_svg_legend
+        .attr('transform', `translate(${WIDTH},${-150})`)
+
+
+    const legend_start_x = 5
+    const x_size = 30
+    // const x_gap = count ? 5 : 10
+
+    map_svg_legend.selectAll("rect")
+        .data(labels)
+        .enter()
+        .append("rect")
+        .attr("x", (d, i) => legend_start_x + i * x_size)
+        .attr("y", 10)
+        .attr("width", x_size)
+        .attr("height", x_size)
+        .attr("fill", (d,i) => {
+            if(i > 0) return color(d)
+            else return '#faf0e6'
+        })
+
+    const legend_desc = 'Delays (count)'
+
+    labels.push(legend_desc)
+
+    map_svg_legend.selectAll("text")
+        .data(labels)
+        .enter()
+        .append("text")
+        .attr("x", (d, i) => {
+            if(labels[i] === legend_desc) return legend_start_x + i * x_size + 10
+            else if (i === 0) return legend_start_x + x_size - 5
+            return legend_start_x + i * x_size + x_size / 1.5
+        })
+        .attr("y", (d, i) => {
+            if(labels[i] === legend_desc) return x_size - 5
+            return 10 + x_size + 10
+        })
+        .text(d => {
+            if(parseInt(d)){
+                if(d > 200) return (d/1000).toFixed(2)+'M'
+                return d.toFixed(0)+'K'
+            }
+            else if(parseFloat(d)){
+                return d.toFixed(2)+'K'
+            }
+            else return d
+        })
+        .attr("font-size", (d,i)=>{
+            if(labels[i] === legend_desc) return "9px"
+            return "8px"
+        })
+        .attr("alignment-baseline", "middle")
+
 }
 function trend_render(data){
+
+    d3.select('#trends-graph #y_label')
+        .attr("y", - MARGIN.left - 40)
+        .attr("x", - (CHART_HEIGHT / 2))
 
     render_line(data)
 

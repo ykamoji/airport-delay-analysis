@@ -292,10 +292,10 @@ function geo_map_render(data){
 
     const color = d3.scaleSequential([min_val, max_val],d3.interpolateOranges)
 
-    let map_svg = d3.select('#map-container svg g.legend')
+    let map_svg_legend = d3.select('#map-container svg g.legend')
 
-    map_svg.selectAll('#map-container svg .legend rect').remove()
-    map_svg.selectAll('#map-container svg .legend text').remove()
+    map_svg_legend.selectAll('#map-container svg .legend rect').remove()
+    map_svg_legend.selectAll('#map-container svg .legend text').remove()
 
     // console.log(labels)
 
@@ -303,7 +303,7 @@ function geo_map_render(data){
     const x_size = 25.1
     // const x_gap = count ? 5 : 10
 
-    map_svg.selectAll("rect")
+    map_svg_legend.selectAll("rect")
         .data(labels)
         .enter()
         .append("rect")
@@ -317,7 +317,7 @@ function geo_map_render(data){
 
     labels.push(legend_desc)
 
-    map_svg.selectAll("text")
+    map_svg_legend.selectAll("text")
         .data(labels)
         .enter()
         .append("text")
