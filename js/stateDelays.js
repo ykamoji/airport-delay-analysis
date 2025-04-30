@@ -188,7 +188,7 @@ function renderPieChart(data, states) {
 
 function default_state_map_render(data, states){
 
-    console.log(states)
+    // console.log(states)
     if(states === undefined){
         renderPieChart(data, Object.keys(AIRPORT_POINTS))
     }
