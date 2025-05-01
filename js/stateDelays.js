@@ -308,7 +308,7 @@ function resetSegmentedAirport(){
 
     $('#state_legend')
         .fadeOut(0)
-        .toggleClass('d-flex')
+        .removeClass('d-flex')
 }
 
 
@@ -428,7 +428,7 @@ function populateAirport($pie, index, airport_cache){
         let angle = (index * anglePerSegment + anglePerSegment ) * (180 / Math.PI)
         let adj_control_height = $("#searchbox").css('display') === 'none' ? 0 : 200;
         $('#state_legend')
-            .toggleClass('d-flex')
+            .addClass('d-flex')
             .css({
                 'left': (angle <= 180 ? box.left + 50 : box.left + box.width - 250) + 'px',
                 'top': (angle >= 80 && angle <= 290 ?  350 : 150) + adj_control_height + 'px'
@@ -449,7 +449,7 @@ $(document).ready(function (){
     populateDefaultStateDelays()
 
     $('#state_legend')
-        .toggleClass('d-flex')
+        .removeClass('d-flex')
         .hide(0)
 
 

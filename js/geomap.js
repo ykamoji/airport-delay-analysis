@@ -343,7 +343,7 @@ function geo_map_render(data){
         .attr("alignment-baseline", "middle")
 
 
-    $('#map-container svg path').each((idx, st)=> {
+    $('#map-container svg .state path').each((idx, st)=> {
         // $(st).css("fill", null)
         let id = $(st).attr('class')
         let $text = $('#text-' + id)
@@ -604,12 +604,12 @@ $(document).ready(function () {
 
     const svg = d3.select("#map-container svg")
 
-    const g = svg.select("g.state");
+    const map_holder = svg.select("g#map_holder");
 
     const zoom = d3.zoom()
         .scaleExtent([1, 5])
         .on("zoom", (event) => {
-            g.attr("transform", event.transform);
+            map_holder.attr("transform", event.transform);
         });
 
 
@@ -625,7 +625,7 @@ $(document).ready(function () {
             }
 
             reset_state()
-
+            resetSegmentedAirport()
             if($(this).hasClass('zoomed')){
                 reset_geo_map()
                 return
@@ -660,7 +660,7 @@ $(document).ready(function () {
             $('#map-container svg').addClass('zooming')
 
 
-            $('#map-container svg g.state g.borders path').each((idx, ele)=>{
+            $('#map-container svg g.borders path').each((idx, ele)=>{
                 let border_id = $(ele).attr('class')
 
                 if(border_id.includes(id)){
@@ -702,9 +702,7 @@ $(document).ready(function () {
 
             event.stopPropagation();
 
-            $('#map-container svg .state .borders path').removeClass('hovered')
-
-            $('#map-container svg g.state g.borders path').each((idx, ele)=>{
+            $('#map-container svg g.borders path').each((idx, ele)=>{
                 let border_id = $(ele).attr('class')
 
                 if(border_id.includes(id)){
@@ -720,6 +718,7 @@ $(document).ready(function () {
                 return
             }
             $('#map-container svg').removeClass('hovered')
+            $('#map-container svg g.borders path').removeClass('hovered')
     })
 
 
@@ -769,9 +768,10 @@ $(document).ready(function () {
         svg.transition()
             .duration(500)
             .call(zoom.transform, d3.zoomIdentity);
+
         $('#map-container svg g.legend').css('opacity',1)
+        $('#map-container svg path').removeClass('zoomed')
         $('#map-container svg').removeClass('zooming')
-        $('#map-container svg .state path').removeClass('zoomed')
         $('#map-container svg g.state text')
             .removeClass('zoomed')
             .addClass('not-zoomed')
