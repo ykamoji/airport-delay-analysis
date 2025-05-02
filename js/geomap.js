@@ -279,18 +279,19 @@ function geo_map_render(data){
     let min_val = Math.min(...delay_population.values())
     let num_limit = [...delay_population.values()].reduce((c, v) => c + (v > 0 ? 1 : 0), 0);
     let is_count = $('#toggle-slider').hasClass('turn')
-
+    let color = null
     let labels = []
     if(num_limit > 8){
         num_limit = 8
         labels = d3.range(min_val, max_val, Math.round((max_val - min_val)/ num_limit))
+        color =  d3.scaleSequential([min_val, max_val],d3.interpolateOranges)
     }
     else{
         labels = [...delay_population.values()].sort((a,b) => a-b)
         // console.log(labels)
+        color =  d3.scaleSequential([0, max_val],d3.interpolateOranges)
     }
 
-    const color = d3.scaleSequential([min_val, max_val],d3.interpolateOranges)
 
     let map_svg_legend = d3.select('#map-container svg g.legend')
 
