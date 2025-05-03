@@ -491,20 +491,20 @@ $(document).ready(function (){
             let index = $(this).attr('id').split('-')[1]
             $('#state-chart #airport-details #text-'+index).attr('font-size', '15px')
             hover_enlarge($(this))
-        }
-        
-        let data_name = $(this).attr('data-name')
-        let corresponding_airport = $('#map-container .airport-base')
-            .filter((i, element) => $(element).attr('data-name') === data_name)
 
-        if(corresponding_airport){
-            $('#map-container svg').toggleClass('hovered')
-            $('#map-container .airport-base').addClass('highlight-out')
-            $(corresponding_airport[0]).removeClass('highlight-out')
-            $(corresponding_airport[0]).find('.stats')
-                .css({'z-index':'20'})
-                .fadeIn(0)
-            $(corresponding_airport[0]).find('.name').fadeIn(300)
+            let data_name = $(this).attr('data-name')
+            let corresponding_airport = $('#map-container .airport-base')
+                .filter((i, element) => $(element).attr('data-name') === data_name)
+
+            if(corresponding_airport){
+                $('#map-container svg').toggleClass('hovered')
+                $('#map-container .airport-base').addClass('highlight-out')
+                $(corresponding_airport[0]).removeClass('highlight-out')
+                $(corresponding_airport[0]).find('.stats')
+                    .css({'z-index':'20'})
+                    .fadeIn(0)
+                $(corresponding_airport[0]).find('.name').fadeIn(300)
+            }
         }
 
     }).on('mouseleave',function (){
@@ -515,14 +515,15 @@ $(document).ready(function (){
                 .attr('font-size', '12px')
 
             hover_reset($(this))
+
+            let $airport_base = $('.airport-base')
+            $('#map-container svg').removeClass('hovered')
+            $airport_base.removeClass('highlight-out')
+            $airport_base.find('.stats')
+                .css({'z-index':'10'})
+                .fadeOut(0)
+            $airport_base.find('.name').hide(0)
         }
-        let $airport_base = $('.airport-base')
-        $('#map-container svg').removeClass('hovered')
-        $airport_base.removeClass('highlight-out')
-        $airport_base.find('.stats')
-            .css({'z-index':'10'})
-            .fadeOut(0)
-        $airport_base.find('.name').hide(0)
 
 
     }).on('click', function (){
