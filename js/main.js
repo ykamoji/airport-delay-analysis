@@ -248,9 +248,9 @@ $(document).ready(function () {
         })
     }
 
-    $('.nav-link.active').each((active, ele) => set_slider_width(ele))
+    $('.nav-link.active.slide').each((active, ele) => set_slider_width(ele))
 
-    $('.nav-link').click(function (e){
+    $('.nav-link.slide').click(function (e){
         e.preventDefault()
         $('.nav-link').removeClass('active')
         $(this).addClass('active')
