@@ -2,6 +2,13 @@
 
 Visit: [Airport Delay Visualization](https://ykamoji.github.io/airport-delay-analysis/)
 
+### Steps for Running
+
+- Download repository.
+- Open index.html in browser.
+
+All the required libraries are present in the **assets** folder.
+
 ### Data
 
 The Bureau of Transportation Statistics (BTS) is a part of the Department of Transportation (DOT) and is the primary source of transportation data for the U.S. government. They collect, analyze, and disseminate data on all modes of transportation. This dataset, known as the “Airline On-Time Performance Data”, encompasses detailed records of scheduled and actual departure and arrival times for non-stop domestic flights reported by certified U.S. air carriers. 
